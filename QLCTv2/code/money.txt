@@ -1,0 +1,23 @@
+Balance:185
+Income:930
+Previous month:930
+Spending:745
+Hair cut:92
+Tra no phat:400
+Eat:190
+Unknown:16
+Drink:17
+Bang ca nhan:30
+Date:
+[1/8/2025]:838
+Previous month:930
+Hair cut:-92
+[2/8/2025]:-16
+Unknown:-16
+[3/8/2025]:-430
+Tra no phat:-400
+Eat:-30
+[4/8/2025]:-207
+Eat:-160
+Drink:-17
+Bang ca nhan:-30

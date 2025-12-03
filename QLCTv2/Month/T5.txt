@@ -1,0 +1,56 @@
+Balance:442
+Income:3268
+Referee:400
+Collecting debts:349
+CTV:500
+Mum:1200
+Unknown:9
+Dad:100
+Trung tam:710
+Spending:2826
+Bida:1432
+Eat:118
+Parking fee:43
+Drink:97
+TD:325
+Net:300
+4G:100
+Hair Cut:80
+Refuel:55
+Ice:7
+Unknown:4
+Shopping:265
+Date:
+[21/05/2025]:-200
+Hair Cut:-80
+Bida:-120
+[22/05/2025]:420
+Mum:500
+Parking fee:-5
+Eat:-35
+Bida:-40
+[23/05/2025]:-145
+Parking fee:-5
+Refuel:-55
+Bida:-85
+[25/05/2025]:-327
+Net:-100
+Ice:-3
+Bida:-233
+Unknown:9
+[26/05/2025]:-4
+Ice:-4
+[27/05/2025]:-8
+Parking fee:-8
+[28/05/2025]:-5
+Parking fee:-5
+[29/05/2025]:801
+Dad:100
+Trung tam:710
+Parking fee:-5
+Unknown:-4
+[30/05/2025]:-365
+Net:-100
+Shopping:-265
+[31/05/2025]:-32
+Drink:-32
