@@ -1,0 +1,10 @@
+django
+djangorestframework
+djangorestframework-simplejwt
+mysqlclient
+langchain
+openai
+pypdf2
+celery
+redis
+python-dotenv

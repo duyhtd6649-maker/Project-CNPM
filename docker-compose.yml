@@ -1,0 +1,47 @@
+
+
+services:
+  # 1. Database (MySQL)
+  db:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_DATABASE: career_db
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: password123
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+
+  # 2. Backend (Django)
+  backend:
+    build: ./backend
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    env_file: .env
+    depends_on:
+      - db
+
+  # 3. Frontend (ReactJS)
+  frontend:
+    build: ./frontend
+    # Mapping volume để khi bạn sửa code React ở ngoài, 
+    # trong Docker tự cập nhật (Hot Reload)
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules # Giữ node_modules riêng của container để tránh xung đột
+    ports:
+      - "3000:3000"
+    stdin_open: true # Cần thiết cho React script
+    tty: true
+
+volumes:
+  mysql_data:
