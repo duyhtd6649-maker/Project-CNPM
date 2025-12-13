@@ -78,6 +78,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+        'USER': 'root',
+        'PASSWORD': '',           
+        'HOST': 'localhost',      
+        'PORT': '3306',
     }
 }
 
@@ -121,3 +125,8 @@ STATIC_URL = 'static/'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173", 
 ]
+
+# CORS – cho frontend gọi API
+CORS_ALLOW_ALL_ORIGINS = True  # dev thôi
+
+AUTH_USER_MODEL = 'apps.users.User'
