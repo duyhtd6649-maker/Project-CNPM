@@ -127,6 +127,6 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 # CORS – cho frontend gọi API
-CORS_ALLOW_ALL_ORIGINS = True  # dev thôi
+CORS_ALLOW_ALL_ORIGINS = True  
 
 AUTH_USER_MODEL = 'apps.users.User'
