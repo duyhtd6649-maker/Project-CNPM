@@ -1,10 +1,7 @@
-django
-djangorestframework
-djangorestframework-simplejwt
-mysqlclient
-langchain
-openai
-pypdf2
-celery
-redis
-python-dotenv
+asgiref==3.11.0
+Django==6.0
+django-cors-headers==4.9.0
+PyMySQL==1.1.2
+python-dotenv==1.2.1
+sqlparse==0.5.4
+tzdata==2025.2
