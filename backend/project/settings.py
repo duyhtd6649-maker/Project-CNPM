@@ -76,8 +76,8 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'db_cnpm',
         'USER': 'root',
         'PASSWORD': '',           
         'HOST': 'localhost',      
@@ -129,4 +129,4 @@ CORS_ALLOWED_ORIGINS = [
 # CORS – cho frontend gọi API
 CORS_ALLOW_ALL_ORIGINS = True  
 
-AUTH_USER_MODEL = 'apps.users.User'
+AUTH_USER_MODEL = 'users.User'
