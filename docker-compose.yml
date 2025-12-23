@@ -1,47 +1,51 @@
-
+version: '3.8'
 
 services:
-  # 1. Database (MySQL)
+
   db:
     image: mysql:8.0
-    command: --default-authentication-plugin=mysql_native_password
+    container_name: careermatedb_container
     restart: always
     environment:
-      MYSQL_DATABASE: career_db
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: password123
+      MYSQL_DATABASE: careermatedb
+      MYSQL_ROOT_PASSWORD: HuynhDuy_123  
     volumes:
-      - mysql_data:/var/lib/mysql
+      - db_data:/var/lib/mysql     
     ports:
-      - "3307:3306"
+      - "3307:3306"                
 
-  # 2. Backend (Django)
+
   backend:
     build: ./backend
-    command: >
-      sh -c "python manage.py migrate &&
-             python manage.py runserver 0.0.0.0:8000"
+    container_name: careermate_backend
     volumes:
-      - ./backend:/app
+      - ./backend:/app             
     ports:
       - "8000:8000"
-    env_file: .env
     depends_on:
-      - db
+      - db                         
+    environment:
 
-  # 3. Frontend (ReactJS)
+      DB_HOST: db
+      DB_NAME: careermatedb
+      DB_USER: root
+      DB_PASSWORD: HuynhDuy_123          
+      DB_PORT: 3306
+   
+    command: >
+      sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+
+
   frontend:
     build: ./frontend
-    # Mapping volume để khi bạn sửa code React ở ngoài, 
-    # trong Docker tự cập nhật (Hot Reload)
+    container_name: careermate_frontend
     volumes:
       - ./frontend:/app
-      - /app/node_modules # Giữ node_modules riêng của container để tránh xung đột
+      - /app/node_modules         
     ports:
-      - "3000:3000"
-    stdin_open: true # Cần thiết cho React script
-    tty: true
+      - "5173:5173"
+    environment:
+      - CHOKIDAR_USEPOLLING=true   
 
 volumes:
-  mysql_data:
+  db_data:
