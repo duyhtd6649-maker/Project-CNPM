@@ -41,6 +41,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
+    'apps',
+    'api',
+    'database.apps.DatabaseConfig',
 ]
 
 MIDDLEWARE = [
@@ -128,3 +131,4 @@ STATIC_URL = 'static/'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173", 
 ]
+AUTH_USER_MODEL = 'database.Users'
