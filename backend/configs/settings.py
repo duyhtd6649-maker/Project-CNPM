@@ -11,11 +11,14 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+from dotenv import load_dotenv
 import os
 import pymysql
-pymysql.install_as_MySQLdb()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+pymysql.install_as_MySQLdb()
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR.parent / '.env')
+
 
 
 # Quick-start development settings - unsuitable for production
@@ -82,12 +85,12 @@ WSGI_APPLICATION = 'configs.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'careermatedb',      
-        'USER': 'root',
-        'PASSWORD': 'HuynhDuy_123',  
-        'HOST': os.getenv('DB_HOST', 'localhost'),     
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.mysql',       
+        'NAME': os.getenv('DB_NAME', 'careermatedb'),
+        'USER': os.getenv('DB_USER', 'root'),
+        'PASSWORD': os.getenv('DB_PASSWORD', 'HuynhDuy_123'),
+        'HOST': os.getenv('DB_HOST', 'localhost'),       
+        'PORT': os.getenv('DB_PORT', '3306'),
     }
 }
 
