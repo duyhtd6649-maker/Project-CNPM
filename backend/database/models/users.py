@@ -37,3 +37,12 @@ class Candidates(models.Model):
     class Meta:
         db_table = 'Candidates'
         app_label = 'database'
+
+class Recruiters(models.Model):
+    id = models.CharField(db_column='Id', primary_key=True, max_length=255,default=uuid.uuid4,editable=False)  # Field name made lowercase.
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, db_column='UserId',related_name='Recruiter_profile')  # Field name made lowercase.
+    company = models.ForeignKey('Companies', on_delete=models.SET_NULL, db_column='CompaniesId',null=True,blank=True,related_name='recruiters')  # Field name made lowercase.
+
+    class Meta:
+        db_table = 'Recruiters'
+        app_label = 'database'
