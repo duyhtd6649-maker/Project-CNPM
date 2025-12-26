@@ -7,4 +7,21 @@ from .serializers import UserSerializer
 
 @api_view(['GET'])
 def GetUserInfor(request):
-    return Response(UserSerializer().data)
+    user = Users.objects.all()
+    seriaizer = UserSerializer(user, many = True)
+    return Response(seriaizer.data)
+
+@api_view(['POST'])
+def AddUser(request):
+    serializer = UserSerializer(data = request.data)
+    if serializer.is_valid():
+        serializer.save()
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def GetUserbyUsername(request,username):
+    user = users_services.Get_User_by_username(username)
+    if user == None:
+        return Response({"detail":"User not found"},status=status.HTTP_404_NOT_FOUND)
+    serializer = UserSerializer(user)
+    return Response(serializer.data,status=status.HTTP_200_OK)

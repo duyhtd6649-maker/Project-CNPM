@@ -1,5 +1,5 @@
 import uuid
-from configs import settings
+from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
@@ -22,6 +22,9 @@ class Users(AbstractUser):
     class Meta:
         db_table = 'Users'
         app_label = 'database'
+    def __str__(self):
+        return f"User: {self.username}"
+
     
 class Candidates(models.Model):
     id = models.CharField(db_column='Id', primary_key=True, max_length=255,default=uuid.uuid4,editable=False)  # Field name made lowercase.
@@ -37,12 +40,47 @@ class Candidates(models.Model):
     class Meta:
         db_table = 'Candidates'
         app_label = 'database'
+    def __str__(self):
+        return f"Candidate: {self.user.username}"
 
 class Recruiters(models.Model):
     id = models.CharField(db_column='Id', primary_key=True, max_length=255,default=uuid.uuid4,editable=False)  # Field name made lowercase.
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, db_column='UserId',related_name='Recruiter_profile')  # Field name made lowercase.
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, db_column='UserId',related_name='recruiter_profile')  # Field name made lowercase.
     company = models.ForeignKey('Companies', on_delete=models.SET_NULL, db_column='CompaniesId',null=True,blank=True,related_name='recruiters')  # Field name made lowercase.
 
     class Meta:
         db_table = 'Recruiters'
         app_label = 'database'
+    def __str__(self):
+        return f"Recruiter: {self.user.username}"
+
+class Admins(models.Model):
+    id = models.CharField(db_column='Id', primary_key=True, max_length=255,default=uuid.uuid4,editable=False)  # Field name made lowercase.
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, db_column='UserId',related_name='rdmin_profile')  # Field name made lowercase.
+    code = models.CharField(db_column='Code',max_length=255,null=True,blank=True,unique=True)
+    class Meta:
+        db_table = 'Admins'
+        app_label = 'database'
+    def __str__(self):
+        return f"Admin: {self.user.username}"
+
+class Companies(models.Model):
+    id = models.CharField(db_column='Id', primary_key=True, max_length=255,default=uuid.uuid4,editable=False)  # Field name made lowercase.
+    name = models.CharField(db_column='Name', max_length=255, unique=True,null=False,blank=False)  # Field name made lowercase.
+    description = models.TextField(db_column='Description', blank=True, null=True)  # Field name made lowercase.
+    website = models.CharField(db_column='Website', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    logo_url = models.CharField(db_column='LogoUrl', max_length=500, blank=True, null=True)  # Field name made lowercase.
+    address = models.CharField(db_column='Address', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    tax_code = models.CharField(db_column='TaxCode', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    created_date = models.DateTimeField(db_column='CreatedDate', auto_now_add=True, null=True)  # Field name made lowercase.
+    created_by = models.CharField(db_column='CreatedBy', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    updated_date = models.DateTimeField(db_column='UpdatedDate', auto_now=True, null=True)  # Field name made lowercase.
+    updated_by = models.CharField(db_column='UpdatedBy', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    isdeleted = models.BooleanField(db_column='IsDeleted', default=False)  # Field name made lowercase. This field type is a guess.
+    note = models.CharField(db_column='Note', max_length=255, blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        db_table = 'companies'
+        app_label = 'database'
+    def __str__(self):
+        return f"Company: {self.name}"
