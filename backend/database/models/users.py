@@ -1,26 +1,39 @@
+import uuid
+from configs import settings
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-class Users(models.Model):
-    id = models.CharField(db_column='Id', primary_key=True, max_length=255)  # Field name made lowercase.
-    username = models.CharField(db_column='Username', unique=True, max_length=255)  # Field name made lowercase.
-    password = models.CharField(db_column='Password', max_length=255)  # Field name made lowercase.
-    email = models.CharField(db_column='Email', unique=True, max_length=255)  # Field name made lowercase.
+class Users(AbstractUser):
+    id = models.CharField(db_column='Id', primary_key=True, max_length=255,default=uuid.uuid4,editable=False)  # Field name made lowercase.
     phone = models.CharField(db_column='Phone', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    username = models.CharField(db_column='Username', max_length=255, unique=True)
+    password = models.CharField(db_column='Password', max_length=255)
+    email = models.EmailField(db_column='Email', max_length=255, unique=True)
     fullname = models.CharField(db_column='Fullname', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    avatarurl = models.CharField(db_column='AvatarUrl', max_length=500, blank=True, null=True)  # Field name made lowercase.
-    authprovider = models.CharField(db_column='AuthProvider', max_length=100, blank=True, null=True)  # Field name made lowercase.
-    isactive = models.TextField(db_column='IsActive', blank=True, null=True)  # Field name made lowercase. This field type is a guess.
-    createddate = models.DateField(db_column='CreatedDate', blank=True, null=True)  # Field name made lowercase.
-    createdby = models.CharField(db_column='CreatedBy', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    updateddate = models.DateField(db_column='UpdatedDate', blank=True, null=True)  # Field name made lowercase.
-    updatedby = models.CharField(db_column='UpdatedBy', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    isdeleted = models.TextField(db_column='IsDeleted', blank=True, null=True)  # Field name made lowercase. This field type is a guess.
+    avatar_url = models.CharField(db_column='AvatarUrl', max_length=500, blank=True, null=True)  # Field name made lowercase.
+    auth_provider = models.CharField(db_column='AuthProvider', max_length=100, blank=True, null=True)  # Field name made lowercase.
+    created_date = models.DateTimeField(db_column='CreatedDate', auto_now_add=True, null=True)  # Field name made lowercase.
+    created_by = models.CharField(db_column='CreatedBy', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    updated_date = models.DateTimeField(db_column='UpdatedDate', auto_now=True, null=True)  # Field name made lowercase.
+    updated_by = models.CharField(db_column='UpdatedBy', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    isdeleted = models.BooleanField(db_column='IsDeleted',default=False)  # Field name made lowercase. This field type is a guess.
     note = models.CharField(db_column='Note', max_length=255, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         db_table = 'Users'
-    app_label = 'database'
-    def __str__(self):
-        return self.username
+        app_label = 'database'
     
+class Candidates(models.Model):
+    id = models.CharField(db_column='Id', primary_key=True, max_length=255,default=uuid.uuid4,editable=False)  # Field name made lowercase.
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, db_column='UserId',related_name='candidate_profile')  # Field name made lowercase.
+    description = models.CharField(db_column='Description', max_length=500, blank=True, null=True)  # Field name made lowercase.
+    address = models.CharField(db_column='Address', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    date_of_birth = models.DateField(db_column='DateOfBirth', blank=True, null=True)  # Field name made lowercase.
+    is_open_to_work = models.BooleanField(db_column='OpenToWork', default=False)  # Field name made lowercase. This field type is a guess.
+    current_job_title = models.CharField(db_column='CurrentJobTitle', max_length=100, blank=True, null=True)  # Field name made lowercase.
+    expected_salary = models.BigIntegerField(db_column='ExpectedSalary', blank=True, null=True)  # Field name made lowercase.
+    experience = models.JSONField(db_column='Experience', blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        db_table = 'Candidates'
+        app_label = 'database'
