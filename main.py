@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from openai import OpenAI
 from typing import List
+import json
 
 app = FastAPI(title="AI Service")
 
@@ -11,16 +12,44 @@ client = OpenAI()
 def health():
     return {"status": "ok"}
 
-class Question(BaseModel):
+class CareerCoachRequest(BaseModel):
     question: str
 
-@app.post("/ai/career/coach")
-def career_coach(req: Question):
+class CareerCoachResponse(BaseModel):
+    expectedCareer: List[str]
+    overview: List[str]
+    skills: List[str]
+    learningPaths: List[str]
+
+@app.post(
+    "/ai/career/coach",
+    summary = "Career Coach"
+)
+def career_coach(req: CareerCoachRequest):
+    prompt = f"""
+    You are a professional career coach.
+
+    Answer the following question with career guidance and skill recommendations.
+    
+    Return result strictly in JSON with:
+- expectedCareer (list)
+- overview (list)
+- skills (list)
+- earningPaths (list)
+
+Return ONLY valid JSON. Do not include explanations, text, or markdown.
+
+    Question:
+    {req.question}
+    """
     response = client.responses.create(
         model="gpt-4.1-mini",
-        input=req.question
+        input=prompt
     )
-    return {"answer": response.output_text}
+    return {
+        "result": json.loads(response.output_text)
+    }
+
 
 
 class CvAnalyzerRequest(BaseModel):
@@ -49,6 +78,8 @@ Return result strictly in JSON with:
 - missingSkills (list)
 - recommendation (list)
 
+Return ONLY valid JSON. Do not include explanations, text, or markdown.
+
 CV:
 {req.cvText}
 """
@@ -58,7 +89,7 @@ CV:
     )
 
     return {
-        "resutl": response.output_text
+        "result": json.loads(response.output_text)
     }
 
 
