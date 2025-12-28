@@ -3,6 +3,7 @@ from . import views
 
 urlpatterns = [
     path('user/',views.GetUserInfor),
-    path('user/add',views.AddUser),
-    path('user/register',views.UserRegister)
+    path('user/add/',views.AddUser),
+    path('user/register/',views.UserRegister),
+    path('user/<str:username>/',views.GetUserbyUsername),
 ]
