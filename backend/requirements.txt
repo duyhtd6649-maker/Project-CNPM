@@ -17,3 +17,9 @@ sqlparse==0.5.4
 tzdata==2025.2
 pymysql           
 cryptographydjango-cors-headers==4.9.0
+cryptography
+fastapi
+uvicorn[standard]
+openai
+python-dotenv
+requests
