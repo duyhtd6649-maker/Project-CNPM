@@ -4,6 +4,8 @@ from rest_framework import status
 from apps import users_services
 from database.models.users import Users 
 from .serializers import UserSerializer
+import json
+import requests
 
 @api_view(['GET'])
 def GetUserInfor(request):
@@ -25,3 +27,18 @@ def GetUserbyUsername(request,username):
         return Response({"detail":"User not found"},status=status.HTTP_404_NOT_FOUND)
     serializer = UserSerializer(user)
     return Response(serializer.data,status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def UserRegister(request):
+    if users_services.Email_is_avai(request):
+        return Response({"detail":"Email is availabe or blank"})
+    if users_services.Password_is_weak(request):
+        return Response({"detail":"Password is weak or blank"})
+    if users_services.Username_is_avai(request):
+        return Response({"detail":"Username is available"})
+    else:
+        serializer = UserSerializer(data = request.data)
+        if serializer.is_valid():
+            serializer.save()
+        return Response(serializer.data)
+

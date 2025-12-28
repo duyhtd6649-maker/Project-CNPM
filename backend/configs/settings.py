@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'apps',
     'api',
     'database.apps.DatabaseConfig',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
@@ -88,8 +89,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',       
         'NAME': os.getenv('DB_NAME', 'careermatedb'),
         'USER': os.getenv('DB_USER', 'root'),
-        'PASSWORD': os.getenv('DB_PASSWORD', 'HuynhDuy_123'),
-        'HOST': os.getenv('DB_HOST', 'localhost'),       
+        'PASSWORD': os.getenv('DB_PASSWORD', '1234'),
+        'HOST': os.getenv('DB_HOST'),       
         'PORT': os.getenv('DB_PORT', '3306'),
     }
 }
@@ -113,6 +114,12 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ]
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
@@ -135,3 +142,4 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173", 
 ]
 AUTH_USER_MODEL = 'database.Users'
+
