@@ -7,6 +7,7 @@ from .serializers import UserSerializer
 import json
 import requests
 from rest_framework_simplejwt.tokens import RefreshToken
+import os
 
 @api_view(['GET'])
 def GetUserInfor(request):
@@ -47,25 +48,25 @@ def UserRegister(request):
 def GoogleLoginApi(self,request):
     auth_code = request.data.get('code')
     if not auth_code:
-            return Response({'error': 'Missing code'}, status=400)
+        return Response({'error': 'Missing code'}, status=400)
     payload = {
-            'client_id': 'YOUR_GOOGLE_CLIENT_ID',
-            'client_secret': 'YOUR_GOOGLE_CLIENT_SECRET',
-            'code': auth_code,
-            'grant_type': 'authorization_code',
-            'redirect_uri': 'http://localhost:5173/google-callback'
+        'client_id': os.getenv('GOOGLE_CLIENT_ID'),
+        'client_secret': os.getenv('GOOGLE_CLIENT_SECRET'),
+        'code': auth_code,
+        'grant_type': 'authorization_code',
+        'redirect_uri': os.getenv('GOOGLE_REDIRECT_URI')
     }
-    token_res = requests.post('https://oauth2.googleapis.com/token', data=payload)
-    token_json = token_res.json()
+    token_respone = requests.post('https://oauth2.googleapis.com/token', data=payload)
+    token_json = token_respone.json()
     if 'error' in token_json:
-            return Response({'error': 'Invalid code from Google'}, status=400)
+        return Response({'error': 'Invalid code from Google'}, status=400)
             
     access_token = token_json['access_token']
-    user_info_res = requests.get(
-            'https://www.googleapis.com/oauth2/v2/userinfo',
-            headers={'Authorization': f'Bearer {access_token}'}
+    user_info_respone = requests.get(
+        'https://www.googleapis.com/oauth2/v2/userinfo',
+        headers={'Authorization': f'Bearer {access_token}'}
     )
-    user_info = user_info_res.json()
+    user_info = user_info_respone.json()
     email = user_info.get('email')
     user, created = Users.objects.get_or_create(
         username=email,
@@ -81,6 +82,6 @@ def GoogleLoginApi(self,request):
         'refresh': str(refresh),
         'user': {
             'email': user.email,
-            'name': f"{user.first_name} {user.last_name}"
+            'fullname': f"{user.first_name} {user.last_name}"
         }
     })
