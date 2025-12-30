@@ -6,6 +6,7 @@ from database.models.users import Users
 from .serializers import UserSerializer
 import json
 import requests
+from rest_framework_simplejwt.tokens import RefreshToken
 
 @api_view(['GET'])
 def GetUserInfor(request):
@@ -42,3 +43,44 @@ def UserRegister(request):
             serializer.save()
         return Response(serializer.data)
 
+@api_view(['POST'])
+def GoogleLoginApi(self,request):
+    auth_code = request.data.get('code')
+    if not auth_code:
+            return Response({'error': 'Missing code'}, status=400)
+    payload = {
+            'client_id': 'YOUR_GOOGLE_CLIENT_ID',
+            'client_secret': 'YOUR_GOOGLE_CLIENT_SECRET',
+            'code': auth_code,
+            'grant_type': 'authorization_code',
+            'redirect_uri': 'http://localhost:5173/google-callback'
+    }
+    token_res = requests.post('https://oauth2.googleapis.com/token', data=payload)
+    token_json = token_res.json()
+    if 'error' in token_json:
+            return Response({'error': 'Invalid code from Google'}, status=400)
+            
+    access_token = token_json['access_token']
+    user_info_res = requests.get(
+            'https://www.googleapis.com/oauth2/v2/userinfo',
+            headers={'Authorization': f'Bearer {access_token}'}
+    )
+    user_info = user_info_res.json()
+    email = user_info.get('email')
+    user, created = Users.objects.get_or_create(
+        username=email,
+        defaults={
+            'email': email,
+            'first_name': user_info.get('given_name', ''),
+            'last_name': user_info.get('family_name', '')
+        }
+    )
+    refresh = RefreshToken.for_user(user)
+    return Response({
+        'access': str(refresh.access_token),
+        'refresh': str(refresh),
+        'user': {
+            'email': user.email,
+            'name': f"{user.first_name} {user.last_name}"
+        }
+    })

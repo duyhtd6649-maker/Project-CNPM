@@ -6,4 +6,5 @@ urlpatterns = [
     path('user/add/',views.AddUser),
     path('user/register/',views.UserRegister),
     path('user/<str:username>/',views.GetUserbyUsername),
+    path('auth/google/', views.GoogleLoginApi),
 ]
