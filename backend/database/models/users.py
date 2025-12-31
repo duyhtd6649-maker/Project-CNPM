@@ -7,7 +7,7 @@ class Users(AbstractUser):
     id = models.CharField(db_column='Id', primary_key=True, max_length=255,default=uuid.uuid4,editable=False)  # Field name made lowercase.
     role = models.ForeignKey('Roles', on_delete=models.SET_NULL, db_column='RoleId',null=True,blank=True,related_name='users')  # Field name made lowercase.
     phone = models.CharField(db_column='Phone', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    username = models.CharField(db_column='Username', max_length=255, unique=True)
+    username = models.CharField(db_column='Username', max_length=255, unique=True, null = True)
     password = models.CharField(db_column='Password', max_length=255)
     email = models.EmailField(db_column='Email', max_length=255, unique=True)
     fullname = models.CharField(db_column='Fullname', max_length=255, blank=True, null=True)  # Field name made lowercase.

@@ -31,20 +31,6 @@ def GetUserbyUsername(request,username):
     serializer = UserSerializer(user)
     return Response(serializer.data,status=status.HTTP_200_OK)
 
-@api_view(['POST'])
-def UserRegister(request):
-    if users_services.Email_is_avai(request):
-        return Response({"detail":"Email is availabe or blank"})
-    if users_services.Password_is_weak(request):
-        return Response({"detail":"Password is weak or blank"})
-    if users_services.Username_is_avai(request):
-        return Response({"detail":"Username is available"})
-    else:
-        serializer = UserSerializer(data = request.data)
-        if serializer.is_valid():
-            serializer.save()
-        return Response(serializer.data)
-    
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def HelloView(request):
