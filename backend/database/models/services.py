@@ -95,7 +95,7 @@ class Packages(models.Model):
         app_label = 'database'
 
 class Subscriptions(models.Model):
-    id = models.CharField(db_column='Id', primary_key=True, max_length=255)  # Field name made lowercase.
+    id = models.CharField(db_column='Id', primary_key=True, max_length=255,default=uuid.uuid4,editable=False)  # Field name made lowercase.
     user = models.ForeignKey('Users', on_delete=models.CASCADE, db_column='UserId', blank=True,related_name='subscriptions')  # Field name made lowercase.
     package = models.ForeignKey('Packages', on_delete=models.SET_NULL, db_column='PackageId', blank=True,null=True, related_name='subscriptions')  # Field name made lowercase.
     status = models.CharField(db_column='Status', max_length=20, blank=True, null=True)  # Field name made lowercase.
@@ -112,17 +112,19 @@ class Subscriptions(models.Model):
         app_label = 'database'
 
 class Refreshtokens(models.Model):
-    id = models.CharField(db_column='Id', primary_key=True, max_length=255)  # Field name made lowercase.
-    userid = models.ForeignKey('Users', models.DO_NOTHING, db_column='UserId', blank=True, null=True)  # Field name made lowercase.
-    token = models.CharField(db_column='Token', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    revoked = models.CharField(db_column='Revoked', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    publickey = models.CharField(db_column='PublicKey', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    useragent = models.CharField(db_column='UserAgent', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    ipaddress = models.CharField(db_column='IPAddress', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    expires = models.DateField(db_column='Expires', blank=True, null=True)  # Field name made lowercase.
-    createddate = models.DateField(db_column='CreatedDate', blank=True, null=True)  # Field name made lowercase.
-    createdby = models.CharField(db_column='CreatedBy', max_length=255, blank=True, null=True)  # Field name made lowercase.
-
-    class Meta:
+    id = models.CharField(db_column='Id', primary_key=True, max_length=255,default=uuid.uuid4,editable=False)  # Field name made lowercase.
+    user = models.ForeignKey('Users', on_delete=models.CASCADE, db_column='UserId', blank=True,related_name='refresh_tokens')  # Field name made lowercase.
+    token = models.TextField(db_column='Token', blank=True, null=True)   
+    is_revoked = models.BooleanField(db_column='IsRevoked', default=False)
+    public_key = models.CharField(db_column='PublicKey', max_length=255, blank=True, null=True)
+    user_agent = models.CharField(db_column='UserAgent', max_length=500, blank=True, null=True)
+    ip_address = models.CharField(db_column='IPAddress', max_length=50, blank=True, null=True)
+    expires = models.DateTimeField(db_column='Expires', blank=True, null=True)
+    created_date = models.DateTimeField(db_column='CreatedDate', auto_now_add=True)
+    created_by = models.CharField(db_column='CreatedBy', max_length=255, blank=True, null=True)
         
+    class Meta:
         db_table = 'refreshtokens'
+        app_label = 'database'
+    def __str__(self):
+        return f"Token for {self.user.username} - Expires: {self.expires}"

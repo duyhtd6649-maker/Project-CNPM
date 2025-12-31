@@ -10,8 +10,6 @@ colorama==0.4.6
 distro==1.9.0
 Django==6.0
 django-cors-headers==4.9.0
-djangorestframework==3.16.1
-djangorestframework_simplejwt==5.5.1
 fastapi==0.127.0
 greenlet==3.3.0
 h11==0.16.0
@@ -42,7 +40,6 @@ uvicorn==0.40.0
 Werkzeug==3.1.4
 google-auth
 pymysql==1.1.2
-cryptography == 41.2.3
 fastapi == 0.101.1
 uvicorn[standard]
 openai == 2.14.0
@@ -50,3 +47,5 @@ djangorestframework == 3.16.1
 djangorestframework-simplejwt == 6.4.0
 python-dotenv == 1.2.1
 requests == 2.34.0
+django-allauth == 65.13.1
+dj_rest_auth == 7.0.1
