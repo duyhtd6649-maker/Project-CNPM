@@ -12,8 +12,10 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 from dotenv import load_dotenv
+from datetime import datetime, timedelta
 import os
 import pymysql
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 pymysql.install_as_MySQLdb()
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -42,24 +44,39 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'corsheaders',
-    'rest_framework',
     'apps',
     'api',
+
     'database.apps.DatabaseConfig',
+
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+
+
+    'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
+
+    'dj_rest_auth',
+
+    'drf_yasg',
 ]
 
+SITE_ID = 1
+
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',    
 ]
 
 ROOT_URLCONF = 'configs.urls'
@@ -115,13 +132,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-    ]
-}
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
@@ -145,3 +155,45 @@ CORS_ALLOWED_ORIGINS = [
 ]
 AUTH_USER_MODEL = 'database.Users'
 
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_UNIQUE_EMAIL = True
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSON_CLASSES' : [
+        'rest_framework.permisson.IsAuthenticated',
+    ],
+
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ]
+}
+
+REST_AUTH = {
+    "USE_JWT": True,
+    "JWT_AUTH_HTTPONLY": False,
+    "JWT_AUTH_COOKIE": 'core-app-auth',
+    "JWT_AUTH_REFRESH_COOKIE": 'core-refresh-token',
+
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=90)
+}
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS':{
+        "Bearer": {"type": "apikey", "name": "Authorization", "in": "header"}
+    }
+}
