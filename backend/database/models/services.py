@@ -110,3 +110,19 @@ class Subscriptions(models.Model):
     class Meta:
         db_table = 'subscriptions'
         app_label = 'database'
+
+class Refreshtokens(models.Model):
+    id = models.CharField(db_column='Id', primary_key=True, max_length=255)  # Field name made lowercase.
+    userid = models.ForeignKey('Users', models.DO_NOTHING, db_column='UserId', blank=True, null=True)  # Field name made lowercase.
+    token = models.CharField(db_column='Token', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    revoked = models.CharField(db_column='Revoked', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    publickey = models.CharField(db_column='PublicKey', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    useragent = models.CharField(db_column='UserAgent', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    ipaddress = models.CharField(db_column='IPAddress', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    expires = models.DateField(db_column='Expires', blank=True, null=True)  # Field name made lowercase.
+    createddate = models.DateField(db_column='CreatedDate', blank=True, null=True)  # Field name made lowercase.
+    createdby = models.CharField(db_column='CreatedBy', max_length=255, blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        
+        db_table = 'refreshtokens'

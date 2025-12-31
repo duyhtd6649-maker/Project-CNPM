@@ -50,3 +50,4 @@ def UserRegister(request):
 def HelloView(request):
     content = {'message': 'hello'}
     return Response(content)
+
