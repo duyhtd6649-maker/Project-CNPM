@@ -15,11 +15,13 @@ PyMySQL==1.1.2
 python-dotenv==1.2.1
 sqlparse==0.5.4
 tzdata==2025.2
-pymysql           
+pymysql==1.1.2
 cryptographydjango-cors-headers==4.9.0
-cryptography
-fastapi
+cryptography == 41.2.3
+fastapi == 0.101.1
 uvicorn[standard]
-openai
-python-dotenv
-requests
+openai == 2.14.0
+djangorestframework == 3.16.1
+djangorestframework-simplejwt == 6.4.0
+python-dotenv == 1.2.1
+requests == 2.34.0
