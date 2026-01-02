@@ -1,13 +1,14 @@
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes,parser_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
-from apps import users_services
+from apps import users_services, cv_services
 from database.models.users import Users 
-from .serializers import UserSerializer
+from .serializers import UserSerializer, CVScanSerializer
 import json
 import requests
-from rest_framework_simplejwt.tokens import RefreshToken
 import os
 
 @api_view(['GET'])
@@ -37,3 +38,31 @@ def HelloView(request):
     content = {'message': 'hello'}
     return Response(content)
 
+@api_view(['POST'])
+@parser_classes([MultiPartParser, FormParser])
+def Analyze_Cv(request):
+    serializer = CVScanSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+
+    upload_file = serializer.validated_data['file']
+    target_job = serializer.validated_data['targetjob']
+    scanned_text = cv_services.extract_text_from_cv(upload_file)
+
+    if not scanned_text:
+        return Response({"detail": "PDF is blank or unreadable"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    payload = {"cvText":scanned_text,"targetJob":target_job}
+    try:
+        response = requests.post('http://localhost:8001/ai/cv/analyzer',json=payload, timeout=30)
+        response.raise_for_status()
+        data = response.json()
+        return Response(data.get("result"),status=status.HTTP_200_OK)
+    except requests.exceptions.ConnectionError:
+        return Response({"error":"Can't connect to AI server"}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+    except requests.exceptions.Timeout:
+        return Response({"error":"Timeout"}, status=status.HTTP_504_GATEWAY_TIMEOUT)
+    except requests.exceptions.RequestException as e:
+        return Response({"error": f"Error from AI Server: {str(e)}"}, status=status.HTTP_502_BAD_GATEWAY)
+
+
+    
