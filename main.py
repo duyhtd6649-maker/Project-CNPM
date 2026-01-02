@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from openai import OpenAI
 from typing import List
-from typing import Optional
+from typing import Optional, Dict
 import json
 
 app = FastAPI(title="AI Service")
@@ -57,7 +57,7 @@ Return ONLY valid JSON. Do not include explanations, text, or markdown.
 
 
 class CvAnalyzerRequest(BaseModel):
-    cvText: str
+    sections: Dict[str, str]
     targetJob: Optional[str] = None
 
 class CvAnalyzerResponse(BaseModel):
@@ -66,15 +66,23 @@ class CvAnalyzerResponse(BaseModel):
     missingSkills: List[str]
     recommendation: List[str]
 
+def merge_section(sections: dict) -> str:
+    merged = []
+    for k, v in sections.items():
+        merged.append(f"{k.upper()}:\n{v}")
+    return "\n\n".join(merged)
+
 @app.post(
     "/ai/cv/analyzer",
     summary = "CV Analyzer"
 )
 def analyze_cv(req: CvAnalyzerRequest):
+    cv_text = merge_section(req.sections)
+    job_infor = f"For the job {req.targetJob}" if req.targetJob else "for general career suitability"
     prompt = f"""
 You are an AI career coach.
 
-Analyze the following CV for the job: {req.targetJob}
+Analyze the following CV for the job: {job_infor}
 
 Return result strictly in JSON with:
 - overallScore (0-100)
@@ -85,7 +93,7 @@ Return result strictly in JSON with:
 Return ONLY valid JSON. Do not include explanations, text, or markdown.
 
 CV:
-{req.cvText}
+{cv_text}
 """
     response = client.responses.create(
         model="gpt-4.1-mini",
@@ -95,7 +103,6 @@ CV:
     return {
         "result": json.loads(response.output_text)
     }
-
 
 
 class MockInterviewRequest(BaseModel):
