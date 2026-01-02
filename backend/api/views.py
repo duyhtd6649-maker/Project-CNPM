@@ -7,9 +7,15 @@ from rest_framework import status
 from apps import users_services, cv_services
 from database.models.users import Users 
 from .serializers import UserSerializer, CVScanSerializer
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+from rest_framework.decorators import api_view, parser_classes, permission_classes
+from rest_framework.parsers import MultiPartParser, FormParser
 import json
 import requests
 import os
+
+
 
 @api_view(['GET'])
 def GetUserInfor(request):
@@ -37,6 +43,28 @@ def GetUserbyUsername(request,username):
 def HelloView(request):
     content = {'message': 'hello'}
     return Response(content)
+
+@swagger_auto_schema(
+    method='post',
+    operation_description="Upload CV PDF và Target Job để phân tích",
+    manual_parameters=[
+        openapi.Parameter(
+            name='file',
+            in_=openapi.IN_FORM,
+            type=openapi.TYPE_FILE,
+            required=True,
+            description='File PDF CV'
+        ),
+        openapi.Parameter(
+            name='targetjob',
+            in_=openapi.IN_FORM,
+            type=openapi.TYPE_STRING,
+            required=True,
+            description='Ví dụ: Senior Python Developer'
+        ),
+    ],
+    responses={200: 'Kết quả phân tích JSON', 400: 'Lỗi dữ liệu'}
+)
 
 @api_view(['POST'])
 @parser_classes([MultiPartParser, FormParser])
