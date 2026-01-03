@@ -1,2 +1,33 @@
+asgiref==3.11.0
+blinker==1.9.0
+certifi==2025.11.12
+click==8.3.1
+colorama==0.4.6
+distro==1.9.0
+Django==6.0
+django-cors-headers==4.9.0
+djangorestframework==3.16.1
+mysql-connector==2.2.9
+openai==2.14.0
+pydantic==2.12.5
+pydantic_core==2.41.5
+PyMySQL==1.1.2
+python-dotenv==1.2.1
+sqlparse==0.5.4
+tzdata==2025.2
+pymysql==1.1.2
+cryptographydjango-cors-headers==4.9.0
+cryptography == 41.2.3
+fastapi == 0.101.1
+uvicorn[standard]
+openai == 2.14.0
+djangorestframework == 3.16.1
+djangorestframework-simplejwt == 6.4.0
+python-dotenv == 1.2.1
+requests == 2.34.0
 axios==0.4.0
 djangorestframework_simplejwt==5.5.1
+django-allauth==65.2.0
+dj_rest_auth == 7.0.1django-allauth==65.13.1
+drf-yasg==1.21.11
+ 

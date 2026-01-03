@@ -9,12 +9,9 @@ from database.models.users import Users
 from .serializers import UserSerializer, CVScanSerializer
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from rest_framework.decorators import api_view, parser_classes, permission_classes
-from rest_framework.parsers import MultiPartParser, FormParser
 import json
 import requests
 import os
-
 
 @api_view(['GET'])
 def GetUserInfor(request):
