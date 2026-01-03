@@ -11,7 +11,6 @@ from rest_framework_simplejwt.views import (
 
 urlpatterns = [
     path('user/',views.GetUserInfor),
-    path('user/add/',views.AddUser),
     path('user/<str:username>/',views.GetUserbyUsername),
     path('accounts/', include('allauth.urls')),
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
@@ -24,5 +23,6 @@ urlpatterns = [
         'auth/password/reset/confirm/<str:uidb64>/<str:token>',
         PasswordResetConfirmView.as_view(),
         name = 'password_reset_confirm' 
-    )
+    ),
+    path('analyzecv/',views.Analyze_Cv),
 ]

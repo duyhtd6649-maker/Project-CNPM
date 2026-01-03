@@ -6,6 +6,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from openai import OpenAI
 from typing import List
+import json
 
 current_file_path = Path(__file__).resolve()
 project_root = current_file_path.parent.parent.parent
@@ -82,7 +83,12 @@ Analyze the following CV for the job: {req.targetJob}
 
 Return result strictly in JSON with:
 - overallScore (0-100)
-- strengths (list)
+- email (text)
+- phone (number)
+- education (list)
+- previous companies (list)
+- experience (list)
+- existingSkills (list)
 - missingSkills (list)
 - recommendation (list)
 

@@ -11,3 +11,14 @@ class UserSerializer(serializers.ModelSerializer):
 class CustomRegisterSerializer(RegisterSerializer):
     email = serializers.EmailField(required = True, validators = [UniqueValidator(queryset=Users.objects.all(),message="Email already exists!")])
 
+class CVScanSerializer(serializers.Serializer):
+    file = serializers.FileField(required=True)
+    targetjob = serializers.CharField(max_length=255)
+
+    def validate_file(self, value):
+        if not value.name.lower().endswith('.pdf'):
+            raise serializers.ValidationError("Chỉ chấp nhận file định dạng PDF.")
+        if value.size > 5 * 1024 * 1024:
+            raise serializers.ValidationError("File quá lớn. Vui lòng upload file dưới 5MB.")
+        return value
+
