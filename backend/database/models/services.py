@@ -3,7 +3,6 @@ from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from .users import Candidates, Users, Admins
-from .AI import Airequest
 
 class Auditlogs(models.Model):
     id = models.CharField(db_column='Id', primary_key=True, max_length=255,default=uuid.uuid4,editable=False)  # Field name made lowercase.

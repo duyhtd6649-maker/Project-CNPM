@@ -53,6 +53,7 @@ def GetUserbyUsername(request,username):
 )
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 @parser_classes([MultiPartParser, FormParser])
 def Analyze_Cv(request):
     serializer = CVScanSerializer(data=request.data)
