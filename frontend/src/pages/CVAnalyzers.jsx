@@ -21,7 +21,7 @@ const CVAnalyzer = () => {
     
     try {
         // Sửa URL này theo đúng endpoint login của bạn (thường là /api/token/ hoặc /api/login/)
-        const LOGIN_URL = 'http://127.0.0.1:8000/api/token/'; 
+        const LOGIN_URL = 'http://127.0.0.1:8000/api/login/'; 
         
         const res = await fetch(LOGIN_URL, {
             method: 'POST',

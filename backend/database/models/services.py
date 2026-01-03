@@ -111,20 +111,3 @@ class Subscriptions(models.Model):
         db_table = 'subscriptions'
         app_label = 'database'
 
-class Refreshtokens(models.Model):
-    id = models.CharField(db_column='Id', primary_key=True, max_length=255,default=uuid.uuid4,editable=False)  # Field name made lowercase.
-    user = models.ForeignKey('Users', on_delete=models.CASCADE, db_column='UserId', blank=True,related_name='refresh_tokens')  # Field name made lowercase.
-    token = models.TextField(db_column='Token', blank=True, null=True)   
-    is_revoked = models.BooleanField(db_column='IsRevoked', default=False)
-    public_key = models.CharField(db_column='PublicKey', max_length=255, blank=True, null=True)
-    user_agent = models.CharField(db_column='UserAgent', max_length=500, blank=True, null=True)
-    ip_address = models.CharField(db_column='IPAddress', max_length=50, blank=True, null=True)
-    expires = models.DateTimeField(db_column='Expires', blank=True, null=True)
-    created_date = models.DateTimeField(db_column='CreatedDate', auto_now_add=True)
-    created_by = models.CharField(db_column='CreatedBy', max_length=255, blank=True, null=True)
-        
-    class Meta:
-        db_table = 'refreshtokens'
-        app_label = 'database'
-    def __str__(self):
-        return f"Token for {self.user.username} - Expires: {self.expires}"
