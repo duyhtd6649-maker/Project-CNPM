@@ -221,14 +221,14 @@ REST_FRAMEWORK = {
 REST_AUTH = {
     "USE_JWT": True,
     "JWT_AUTH_HTTPONLY": False,
-    "JWT_AUTH_COOKIE": 'core-app-auth',
-    "JWT_AUTH_REFRESH_COOKIE": 'core-refresh-token',
+    "JWT_AUTH_COOKIE": None,
+    "JWT_AUTH_REFRESH_COOKIE": None,
     'REGISTER_SERIALIZER': 'api.serializers.CustomRegisterSerializer',
 
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=1),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1)
 }
 

@@ -3,12 +3,13 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 from rest_framework import status
 from apps import users_services, cv_services
 from database.models.users import Users 
-from .serializers import UserSerializer, CVScanSerializer
-from drf_yasg.utils import swagger_auto_schema
+from .serializers import UserSerializer, CVScanSerializer, LogoutSerializer, CandidateSerializer, BanUserSerializer
 from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 import json
 import requests
 import os
@@ -16,16 +17,41 @@ import os
 @api_view(['GET'])
 def GetUserInfor(request):
     user = Users.objects.all()
-    seriaizer = UserSerializer(user, many = True)
-    return Response(seriaizer.data)
+    serializer = UserSerializer(user, many = True)
+    return Response(serializer.data)
+
+@swagger_auto_schema(
+    method='put',
+    operation_description="ban",
+    request_body=BanUserSerializer,
+    responses={200: 'Kết quả phân tích JSON', 400: 'Lỗi dữ liệu'}
+)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def BanUser(request):
+    serializer = BanUserSerializer(data = request.data)
+    serializer.is_valid(raise_exception=True)
+    username = serializer.validated_data['username']
+    if users_services.Ban_User(username):
+        return Response({"detail":"Banned"},status=status.HTTP_202_ACCEPTED)
+    else:
+        return Response({"detail":"User not found"},status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def GetUserbyUsername(request,username):
     user = users_services.Get_User_by_username(username)
     if user == None:
         return Response({"detail":"User not found"},status=status.HTTP_404_NOT_FOUND)
     serializer = UserSerializer(user)
     return Response(serializer.data,status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def GetCandidatesInfor(request):
+    candidate = users_services.Get_All_Candidates()
+    serializer = CandidateSerializer(candidate, many = True)
+    return Response(serializer.data)
 
 @swagger_auto_schema(
     method='post',
@@ -75,6 +101,26 @@ def Analyze_Cv(request):
         return Response({"error":"Timeout"}, status=status.HTTP_504_GATEWAY_TIMEOUT)
     except requests.exceptions.RequestException as e:
         return Response({"error": f"Error from AI Server: {str(e)}"}, status=status.HTTP_502_BAD_GATEWAY)
+    
+
+@swagger_auto_schema(
+    method='post',
+    operation_description="Logout",
+    request_body=LogoutSerializer,
+    responses={200: 'Kết quả phân tích JSON', 400: 'Lỗi dữ liệu'}
+)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def logout(request):
+    serializer = LogoutSerializer(data = request.data)
+    serializer.is_valid(raise_exception=True)
+    refresh_token = serializer.validated_data['refresh']
+    if users_services.Black_list_token(refresh_token):
+        return Response({"detail":"Logout Success"},status=status.HTTP_200_OK)
+    else:
+        return Response({"detail":"Token not exsit or error"},status=status.HTTP_400_BAD_REQUEST)
+    
 
 
     
