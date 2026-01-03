@@ -16,6 +16,24 @@ def Ban_User(username):
         return True
     except Users.DoesNotExist:
         return False
+    
+def Remove_User(username):
+    try:
+        user = Users.objects.get(username = username)
+        user.delete()
+        return True
+    except Users.DoesNotExist:
+        return False
+    
+def User_is_active(username):
+    try:
+        user = Users.objects.get(username = username)
+        if user.is_active:
+            return True
+        else:
+            return False
+    except Users.DoesNotExist:
+        return False
 
 def Get_All_Candidates():
     try: 

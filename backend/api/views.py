@@ -7,7 +7,7 @@ from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, Bl
 from rest_framework import status
 from apps import users_services, cv_services
 from database.models.users import Users 
-from .serializers import UserSerializer, CVScanSerializer, LogoutSerializer, CandidateSerializer, BanUserSerializer
+from .serializers import UserSerializer, CVScanSerializer, LogoutSerializer, CandidateSerializer, UserNameSerializer
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 import json
@@ -23,18 +23,36 @@ def GetUserInfor(request):
 @swagger_auto_schema(
     method='put',
     operation_description="ban",
-    request_body=BanUserSerializer,
+    request_body=UserNameSerializer,
     responses={200: 'Kết quả phân tích JSON', 400: 'Lỗi dữ liệu'}
 )
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def BanUser(request):
-    serializer = BanUserSerializer(data = request.data)
+    serializer = UserNameSerializer(data = request.data)
     serializer.is_valid(raise_exception=True)
     username = serializer.validated_data['username']
     if users_services.Ban_User(username):
         return Response({"detail":"Banned"},status=status.HTTP_202_ACCEPTED)
+    else:
+        return Response({"detail":"User not found"},status=status.HTTP_400_BAD_REQUEST)
+
+@swagger_auto_schema(
+    method='put',
+    operation_description="remove",
+    request_body=UserNameSerializer,
+    responses={200: 'Kết quả phân tích JSON', 400: 'Lỗi dữ liệu'}
+)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def RemoveUser(request):
+    serializer = UserNameSerializer(data = request.data)
+    serializer.is_valid(raise_exception=True)
+    username = serializer.validated_data['username']
+    if users_services.Remove_User(username):
+        return Response({"detail":"Removed"},status=status.HTTP_202_ACCEPTED)
     else:
         return Response({"detail":"User not found"},status=status.HTTP_400_BAD_REQUEST)
 

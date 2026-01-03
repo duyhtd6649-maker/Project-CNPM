@@ -10,6 +10,7 @@ from rest_framework_simplejwt.views import (
 urlpatterns = [
     path('user/',views.GetUserInfor),
     path('banuser/',views.BanUser),
+    path('removeuser/',views.RemoveUser),
     path('user/<str:username>/',views.GetUserbyUsername),
     path('candidate/',views.GetCandidatesInfor),
     path('accounts/', include('allauth.urls')),
