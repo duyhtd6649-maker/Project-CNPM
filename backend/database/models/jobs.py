@@ -26,10 +26,10 @@ class Jobs(models.Model):
     companiesid = models.ForeignKey('Companies', on_delete=models.SET_NULL, db_column='CompanyId',null=True,blank=True,related_name='jobs')  # Field name made lowercase.
     title = models.CharField(db_column='Title', max_length=255)  # Field name made lowercase.
     description = models.TextField(db_column='Description', blank=True, null=True)  # Field name made lowercase.
-    requirement = models.JSONField(db_column='Requirement', null=True)
-    majors = models.JSONField(db_column='Majors', null=True) 
+    location = models.CharField(db_column='location',max_length=255,blank= True,null= False)
     skill = models.JSONField(db_column='Skills', null= True)
-    location = models.CharField(db_column='Location', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    salary_min = models.BigIntegerField(db_column= 'SalaryMin',null=True, blank=True) 
+    salary_max = models.BigIntegerField(db_column= 'SalaryMax',null=True, blank=True)
     created_date = models.DateTimeField(db_column='CreatedDate', auto_now_add=True, null=True)  # Field name made lowercase.
     created_by = models.CharField(db_column='CreatedBy', max_length=255, blank=True, null=True)  # Field name made lowercase.
     updated_date = models.DateTimeField(db_column='UpdatedDate', auto_now=True, null=True)  # Field name made lowercase.
