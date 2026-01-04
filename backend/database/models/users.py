@@ -5,7 +5,7 @@ from django.contrib.auth.models import AbstractUser
 
 class Users(AbstractUser):
     id = models.CharField(db_column='Id', primary_key=True, max_length=255,default=uuid.uuid4,editable=False)  # Field name made lowercase.
-    role = models.ForeignKey('Roles', on_delete=models.SET_NULL, db_column='RoleId',null=True,blank=True,related_name='users')  # Field name made lowercase.
+    role = models.CharField(db_column='Role', max_length= 255, null= True)
     phone = models.CharField(db_column='Phone', max_length=255, blank=True, null=True)  # Field name made lowercase.
     email = models.EmailField(unique=True, null= False, blank= True)
     fullname = models.CharField(db_column='Fullname', max_length=255, blank=True, null=True)  # Field name made lowercase.
@@ -83,19 +83,3 @@ class Companies(models.Model):
         app_label = 'database'
     def __str__(self):
         return f"Company: {self.name}"
-
-class Roles(models.Model):
-    id = models.CharField(db_column='Id', primary_key=True, max_length=255,default=uuid.uuid4,editable=False)  # Field name made lowercase.
-    rolename = models.CharField(db_column='RoleName', max_length=255)  # Field name made lowercase.
-    created_date = models.DateTimeField(db_column='CreatedDate', auto_now_add=True, null=True)  # Field name made lowercase.
-    created_by = models.CharField(db_column='CreatedBy', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    updated_date = models.DateTimeField(db_column='UpdatedDate', auto_now=True, null=True)  # Field name made lowercase.
-    updated_by = models.CharField(db_column='UpdatedBy', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    isdeleted = models.BooleanField(db_column='IsDeleted', default=False)  # Field name made lowercase. This field type is a guess.
-
-    class Meta:
-        db_table = 'roles'
-        app_label = 'database'
-    def __str__(self):
-        return f"Role: {self.rolename}"
-        

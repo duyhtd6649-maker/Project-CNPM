@@ -111,7 +111,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',       
         'NAME': os.getenv('DB_NAME', 'careermatedb'),
         'USER': os.getenv('DB_USER', 'root'),
-        'PASSWORD': os.getenv('DB_PASSWORD', '1234'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
         'HOST': os.getenv('DB_HOST'),       
         'PORT': os.getenv('DB_PORT', '3306'),
     }
@@ -155,7 +155,6 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 
-# CORS – cho frontend gọi API
 CORS_ALLOW_ALL_ORIGINS = True  
 
 AUTH_USER_MODEL = 'database.Users'
@@ -170,7 +169,6 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend', #for google
 )
 
-##################Login Goole##############################
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'SCOPE': [
@@ -195,7 +193,6 @@ ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 
-##################CAU HINH GUI MAIL########################
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_USE_TLS = True
 EMAIL_HOST = "smtp.gmail.com"
