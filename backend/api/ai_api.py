@@ -17,9 +17,13 @@ app = FastAPI(title="AI Service")
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
+
+
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+
 
 class CareerCoachRequest(BaseModel):
     question: str
@@ -32,7 +36,8 @@ class CareerCoachResponse(BaseModel):
 
 @app.post(
     "/ai/career/coach",
-    summary = "Career Coach"
+    summary = "Career Coach",
+    response_model = CareerCoachResponse
 )
 def career_coach(req: CareerCoachRequest):
     prompt = f"""
@@ -55,9 +60,8 @@ Return ONLY valid JSON. Do not include explanations, text, or markdown.
         model="gpt-4.1-mini",
         input=prompt
     )
-    return {
-        "result": json.loads(response.output_text)
-    }
+    return json.loads(response.output_text)
+
 
 
 
@@ -73,7 +77,8 @@ class CvAnalyzerResponse(BaseModel):
 
 @app.post(
     "/ai/cv/analyzer",
-    summary = "CV Analyzer"
+    summary = "CV Analyzer",
+    response_model = CvAnalyzerResponse
 )
 def analyze_cv(req: CvAnalyzerRequest):
     prompt = f"""
@@ -86,7 +91,7 @@ Return result strictly in JSON with:
 - email (text)
 - phone (number)
 - education (list)
-- previous companies (list)
+- previousCompanies (list)
 - experience (list)
 - existingSkills (list)
 - missingSkills (list)
@@ -101,12 +106,81 @@ CV:
         model="gpt-4.1-mini",
         input=prompt
     )
-
-    return {
-        "result": json.loads(response.output_text)
-    }
+    return json.loads(response.output_text)
 
 
 
+class JobAnalyzerRequest(BaseModel):
+    jobDescription: str
+
+class JobAnalyzerResponse(BaseModel):
+    Requirements: List[str]
+    SkillsRequired: List[str]
+    Major: List[str]
+
+@app.post(
+    "/ai/job/analyzer",
+    summary = "Job Analyzer",
+    response_model = JobAnalyzerResponse
+)
+
+def job_analyzer(req: JobAnalyzerRequest):
+    prompt = f"""
+You are an AI career coach.
+
+Analyze the following description: {req.jobDescription}
+
+Return result strictly in JSON with:
+- Requirements (list)
+- SkillsRequired (list)
+- Major (list)
+
+Return ONLY valid JSON. Do not include explanations, text, or markdown.
+
+    Description:
+    {req.jobDescription}
+    """
+    response = client.responses.create(
+        model="gpt-4.1-mini",
+        input=prompt
+    )
+    return json.loads(response.output_text)
+
+
+
+class JobMatchingRequest(BaseModel):
+    input: str
+
+class JobMatchingResponse(BaseModel):
+    Skills: List[str]
+    Major: List[str]
+
+@app.post(
+    "/ai/job/matching",
+    summary = "Job Matching",
+    response_model = JobMatchingResponse
+)
+
+def job_matching(req: JobMatchingRequest):
+    prompt = f"""
+You are an AI career coach.
+Analyze the following candidate information and identify:
+- Relevant technical and soft skills
+- Suitable majors or job domains
+
+Return result strictly in JSON with:
+- Skills (list)
+- Major (list)
+
+Return ONLY valid JSON. Do not include explanations, text, or markdown.
+
+Candidate information:
+{req.input}
+"""
+    response = client.responses.create(
+        model="gpt-4.1-mini",
+        input=prompt
+    )
+    return json.loads(response.output_text)
 
 
