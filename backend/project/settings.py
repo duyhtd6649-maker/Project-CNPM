@@ -104,21 +104,12 @@ WSGI_APPLICATION = 'configs.wsgi.application'
 
 DATABASES = {
     'default': {
-<<<<<<<< HEAD:backend/project/settings.py
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'db_cnpm',
-        'USER': 'root',
-        'PASSWORD': '',           
-        'HOST': 'localhost',      
-        'PORT': '3306',
-========
         'ENGINE': 'django.db.backends.mysql',       
         'NAME': os.getenv('DB_NAME', 'careermatedb'),
         'USER': os.getenv('DB_USER', 'root'),
         'PASSWORD': os.getenv('DB_PASSWORD', '1234'),
         'HOST': os.getenv('DB_HOST'),       
         'PORT': os.getenv('DB_PORT', '3306'),
->>>>>>>> a04c2f2e6128d22806f4e94725b54441395c84c6:backend/configs/settings.py
     }
 }
 
@@ -159,16 +150,10 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173", 
-]
-<<<<<<<< HEAD:backend/project/settings.py
 
 # CORS – cho frontend gọi API
 CORS_ALLOW_ALL_ORIGINS = True  
 
-AUTH_USER_MODEL = 'users.User'
-========
 AUTH_USER_MODEL = 'database.Users'
 
 ACCOUNT_LOGIN_METHODS = {'email'}
@@ -214,4 +199,3 @@ SWAGGER_SETTINGS = {
         "Bearer": {"type": "apikey", "name": "Authorization", "in": "header"}
     }
 }
->>>>>>>> a04c2f2e6128d22806f4e94725b54441395c84c6:backend/configs/settings.py
