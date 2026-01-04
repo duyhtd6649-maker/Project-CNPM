@@ -18,6 +18,7 @@ urlpatterns = [
     path('removeuser/',views.RemoveUser),
     path('user/<str:username>/',views.GetUserbyUsername),
     path('candidate/',views.GetCandidatesInfor),
+    path('cvanalyzer/',views.Analyze_Cv),
 
     # ===== AUTH =====
     path("accounts/", include("allauth.urls")),

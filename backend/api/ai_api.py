@@ -70,10 +70,13 @@ class CvAnalyzerRequest(BaseModel):
     targetJob: str
 
 class CvAnalyzerResponse(BaseModel):
-    overallScore: int
-    strengths: List[str]
-    missingSkills: List[str]
-    recommendation: List[str]
+    match_percentage: float      # Điểm phù hợp nội dung (0-100)
+    summary: str                 # Nhận xét tổng quan
+    matching_skills: List[str]   # Skill ứng viên có khớp với JD
+    missing_skills: List[str]    # Skill ứng viên thiếu
+    years_of_experience: float   # AI tự tính toán số năm exp
+    pros: List[str]              # Điểm mạnh
+    cons: List[str]              # Điểm yếu
 
 @app.post(
     "/ai/cv/analyzer",
@@ -82,25 +85,25 @@ class CvAnalyzerResponse(BaseModel):
 )
 def analyze_cv(req: CvAnalyzerRequest):
     prompt = f"""
-You are an AI career coach.
+You are an expert AI Recruiter and ATS system. 
+Your task is to compare the candidate's CV Content against the Job Description.
 
 Analyze the following CV for the job: {req.targetJob}
+CANDIDATE CV CONTENT: {req.cvText}
 
-Return result strictly in JSON with:
-- overallScore (0-100)
-- email (text)
-- phone (number)
-- education (list)
-- previousCompanies (list)
-- experience (list)
-- existingSkills (list)
-- missingSkills (list)
-- recommendation (list)
+Analyze and return a STRICT JSON object with the following fields:
+    - match_percentage (float): 0 to 100 based on keyword matching and experience relevance.
+    - summary (string): A short professional summary of the candidate suitability (max 50 words).
+    - matching_skills (list of strings): Skills found in CV that match the Job.
+    - missing_skills (list of strings): Important skills from Job that are NOT in CV.
+    - years_of_experience (float): Total years of relevant experience extracted from CV.
+    - pros (list of strings): 3 key strengths.
+    - cons (list of strings): 3 key weaknesses or risks.
 
-Return ONLY valid JSON. Do not include explanations, text, or markdown.
-
-CV:
-{req.cvText}
+    IMPORTANT: 
+    - Do NOT return Markdown formatting (like ```json). 
+    - Return ONLY the raw JSON string.
+    - Ignore contact info (email/phone), focus only on skills and experience.
 """
     response = client.responses.create(
         model="gpt-4.1-mini",

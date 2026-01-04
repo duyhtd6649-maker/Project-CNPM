@@ -106,21 +106,38 @@ def Analyze_Cv(request):
     target_job = serializer.validated_data['targetjob']
     scanned_text = cv_services.extract_text_from_cv(upload_file)
 
-    if not scanned_text:
+    if not scanned_text or not scanned_text['raw_text']:
         return Response({"detail": "PDF is blank or unreadable"}, status=status.HTTP_400_BAD_REQUEST)
     
-    payload = {"cvText":scanned_text,"targetJob":target_job}
+    cv_text_clean = scanned_text['raw_text']
+    page_count = scanned_text['page_count']
+    format_analysis = cv_services.analyze_format_local(cv_text_clean, page_count)
+
+    payload = {"cvText":cv_text_clean,"targetJob":target_job}
     try:
         response = requests.post('http://localhost:8001/ai/cv/analyzer',json=payload, timeout=30)
         response.raise_for_status()
-        data = response.json()
-        return Response(data.get("result"),status=status.HTTP_200_OK)
+        ai_data = response.json()
     except requests.exceptions.ConnectionError:
         return Response({"error":"Can't connect to AI server"}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
     except requests.exceptions.Timeout:
         return Response({"error":"Timeout"}, status=status.HTTP_504_GATEWAY_TIMEOUT)
     except requests.exceptions.RequestException as e:
         return Response({"error": f"Error from AI Server: {str(e)}"}, status=status.HTTP_502_BAD_GATEWAY)
+    final_response = {
+        "overview": {
+            "file_name": upload_file.name,
+            "page_count": page_count,
+            "word_count": format_analysis['word_count']
+        },
+        "format_analysis": {
+            "score": format_analysis['format_score'],
+            "issues": format_analysis['contact_issues']
+        },
+        "content_analysis": ai_data 
+    }
+
+    return Response(final_response, status=status.HTTP_200_OK)
     
 
 @swagger_auto_schema(

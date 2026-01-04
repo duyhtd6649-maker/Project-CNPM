@@ -28,8 +28,8 @@ class CandidateSerializer(serializers.ModelSerializer):
 
 class CustomRegisterSerializer(RegisterSerializer):
     ROLE_CHOICES = (
-        ('RECRUITER', 'Recruiter'),
-        ('CANDIDATE', 'Candidate'),
+        ('recruiter', 'Recruiter'),
+        ('candidate', 'Candidate'),
     )
     role = serializers.ChoiceField(choices=ROLE_CHOICES, required=True)
     username = serializers.CharField(required=True)
