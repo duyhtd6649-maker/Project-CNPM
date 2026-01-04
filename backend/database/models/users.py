@@ -4,8 +4,12 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 class Users(AbstractUser):
+    ROLE_CHOICES = (
+        ("recruiter", "Recruiter"),
+        ("candidate", "Candidate"),
+    )
     id = models.CharField(db_column='Id', primary_key=True, max_length=255, default=uuid.uuid4, editable=False)  # Field name made lowercase.
-    role = models.CharField(db_column='Role', max_length= 255, null= True)
+    role = models.CharField(db_column='Role', max_length= 255, choices=ROLE_CHOICES,  null= True)
     phone = models.CharField(db_column='Phone', max_length=255, blank=True, null=True)  # Field name made lowercase.
     email = models.EmailField(unique=True, null=False, blank=False)
     fullname = models.CharField(db_column='Fullname', max_length=255, blank=True, null=True)  # Field name made lowercase.
@@ -18,6 +22,7 @@ class Users(AbstractUser):
     isdeleted = models.BooleanField(db_column='IsDeleted',default=False)  # Field name made lowercase. This field type is a guess.
     note = models.CharField(db_column='Note', max_length=255, blank=True, null=True)  # Field name made lowercase.
     
+
     class Meta:
         db_table = 'Users'
         app_label = 'database'

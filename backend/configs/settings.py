@@ -206,3 +206,7 @@ SWAGGER_SETTINGS = {
         "Bearer": {"type": "apikey", "name": "Authorization", "in": "header"}
     }
 }
+
+ACCOUNT_FORMS = {
+    "signup": "database.models.forms.CustomSignupForm",
+}
