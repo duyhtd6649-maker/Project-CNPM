@@ -51,6 +51,12 @@ def Black_list_token(refresh_token_string):
     except Exception:
         return False
 
+def Is_Recruiter(user):
+    try:
+        recruiter = Recruiters.objects.get(user=user)
+        return recruiter
+    except Recruiters.DoesNotExist:
+        return None
 
 
     
