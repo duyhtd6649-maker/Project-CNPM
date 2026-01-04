@@ -60,13 +60,10 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
-    'rest_framework_simplejwt.token_blacklist',
 
-    'dj_rest_auth.registration',
     'dj_rest_auth',
-    'drf_yasg',
 
-    
+    'drf_yasg',
 ]
 
 SITE_ID = 1
@@ -80,7 +77,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'allauth.account.middleware.AccountMiddleware',
+    'allauth.account.middleware.AccountMiddleware',  
+    'django.middleware.csrf.CsrfViewMiddleware',
 ]
 
 ROOT_URLCONF = 'configs.urls'
@@ -111,7 +109,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',       
         'NAME': os.getenv('DB_NAME', 'careermatedb'),
         'USER': os.getenv('DB_USER', 'root'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'PASSWORD': os.getenv('DB_PASSWORD', '1234'),
         'HOST': os.getenv('DB_HOST'),       
         'PORT': os.getenv('DB_PORT', '3306'),
     }
@@ -155,54 +153,22 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 
+# CORS – cho frontend gọi API
 CORS_ALLOW_ALL_ORIGINS = True  
 
 AUTH_USER_MODEL = 'database.Users'
 
-ACCOUNT_LOGIN_METHODS = {'email'}
-ACCOUNT_SIGNUP_FIELDS = ['email*', 'username']
+ACCOUNT_LOGIN_METHODS = {'username', 'email'}
+ACCOUNT_SIGNUP_FIELDS = ['email', 'username', 'password1', 'password2']
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_UNIQUE_EMAIL = True
 
 AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend', #default backend 
-    'allauth.account.auth_backends.AuthenticationBackend', #for google
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
 )
 
-SOCIALACCOUNT_PROVIDERS = {
-    'google': {
-        'SCOPE': [
-            'profile',
-            'email'
-        ],
-        'AUTH_PARAMS': {
-            'access_type': 'online'
-        }
-    }
-}
-
-LOGIN_REDIRECT_URL = '/swagger/'
-LOGOUT_REDIRECT_URL = '/swagger/'
-LOGIN_URL = '/accounts/login/'
-LOGOUT_URL = '/accounts/logout/'
-
-SOCIALACCOUNT_LOGIN_ON_GET = True
-ACCOUNT_LOGOUT_ON_GET = True
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_USERNAME_REQUIRED = True
-ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
-ACCOUNT_EMAIL_VERIFICATION = 'none'
-
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_USE_TLS = True
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_PORT = 587
-
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
-
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSON_CLASSES' : [
@@ -218,27 +184,19 @@ REST_FRAMEWORK = {
 REST_AUTH = {
     "USE_JWT": True,
     "JWT_AUTH_HTTPONLY": False,
-    "JWT_AUTH_COOKIE": None,
-    "JWT_AUTH_REFRESH_COOKIE": None,
+    "JWT_AUTH_COOKIE": 'core-app-auth',
+    "JWT_AUTH_REFRESH_COOKIE": 'core-refresh-token',
     'REGISTER_SERIALIZER': 'api.serializers.CustomRegisterSerializer',
 
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=1),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1)
 }
 
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS':{
-        "Bearer": {"type": "apikey", "name": "Authorization", "in": "header"},
-        'LOGIN_URL': '/admin/login/',
-        'LOGOUT_URL': '/admin/logout/',
-        'USE_SESSION_AUTH': False,
+        "Bearer": {"type": "apikey", "name": "Authorization", "in": "header"}
     }
 }
-
-CSRF_TRUSTED_ORIGINS = [
-    'http://127.0.0.1:8000',
-    'http://localhost:8000',
-]
