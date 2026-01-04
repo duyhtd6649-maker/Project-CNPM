@@ -2,6 +2,9 @@ import pdfplumber
 import re
 import requests
 from django.conf import settings
+from django.db import transaction
+from database.models.CV import Cvs,Cvanalysisresult
+from database.models.users import Candidates
 
 def extract_text_from_cv(file):
     text = ""
@@ -69,3 +72,35 @@ def analyze_format_local(text, page_count):
         "has_contact_info": bool(has_email and has_phone)
     }
 
+def save_analysis_result(user, cv_file, ai_result, format_result, target_job):
+    try:
+        with transaction.atomic():
+            try:
+                candidate_profile = Candidates.objects.get(user=user)
+            except Candidates.DoesNotExist:
+                raise ValueError(f"User {user.username} chưa có hồ sơ Candidate (Profile).")
+            cv_file.seek(0)
+            cv_instance = Cvs.objects.create(
+                candidate=candidate_profile,
+                file_name=cv_file.name,
+                file_url=cv_file,
+                created_by=user.username
+            )
+            analysis_instance = Cvanalysisresult.objects.create(
+                cv=cv_instance,
+                target_job=target_job,
+                
+                content_score=ai_result.get('match_percentage', 0),
+                format_score=format_result['format_score'],
+                
+                extracted_email=format_result.get('extracted_email'),
+                extracted_phone=format_result.get('extracted_phone'),
+                
+                ai_response_json=ai_result,
+                format_analysis_json=format_result
+            )
+            
+            return analysis_instance
+
+    except Exception as e:
+        raise e 

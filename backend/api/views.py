@@ -3,11 +3,12 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import status
 from apps import users_services, cv_services
 from database.models.users import Users, Recruiters, Companies
 from database.models.jobs import Jobs 
-from .serializers import UserSerializer, CVScanSerializer, LogoutSerializer, CandidateSerializer, UserNameSerializer, JobSerializer
+from .serializers import UserSerializer, CVScanSerializer, LogoutSerializer, CandidateSerializer, UserNameSerializer, JobSerializer,RecruiterSerializer, CustomTokenObtainPairSerializer
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 import json
@@ -15,47 +16,20 @@ import requests
 import os
 from django.shortcuts import get_object_or_404
 
+# =============================================================================================================== #
+# ==================================================== USER ===================================================== #
+# =============================================================================================================== #
 @api_view(['GET'])
 def GetUserInfor(request):
     user = Users.objects.all()
     serializer = UserSerializer(user, many = True)
     return Response(serializer.data)
 
-@swagger_auto_schema(
-    method='put',
-    operation_description="ban",
-    request_body=UserNameSerializer,
-    responses={200: 'Kết quả phân tích JSON', 400: 'Lỗi dữ liệu'}
-)
-
-@api_view(['PUT'])
-@permission_classes([IsAuthenticated])
-def BanUser(request):
-    serializer = UserNameSerializer(data = request.data)
-    serializer.is_valid(raise_exception=True)
-    username = serializer.validated_data['username']
-    if users_services.Ban_User(username):
-        return Response({"detail":"Banned"},status=status.HTTP_202_ACCEPTED)
-    else:
-        return Response({"detail":"User not found"},status=status.HTTP_400_BAD_REQUEST)
-
-@swagger_auto_schema(
-    method='put',
-    operation_description="remove",
-    request_body=UserNameSerializer,
-    responses={200: 'Kết quả phân tích JSON', 400: 'Lỗi dữ liệu'}
-)
-
-@api_view(['PUT'])
-@permission_classes([IsAuthenticated])
-def RemoveUser(request):
-    serializer = UserNameSerializer(data = request.data)
-    serializer.is_valid(raise_exception=True)
-    username = serializer.validated_data['username']
-    if users_services.Remove_User(username):
-        return Response({"detail":"Removed"},status=status.HTTP_202_ACCEPTED)
-    else:
-        return Response({"detail":"User not found"},status=status.HTTP_400_BAD_REQUEST)
+@api_view(['GET'])
+def GetUserInfor(request):
+    user = Users.objects.all()
+    serializer = UserSerializer(user, many = True)
+    return Response(serializer.data)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -66,12 +40,26 @@ def GetUserbyUsername(request,username):
     serializer = UserSerializer(user)
     return Response(serializer.data,status=status.HTTP_200_OK)
 
-@api_view(['GET'])
-def GetCandidatesInfor(request):
-    candidate = users_services.Get_All_Candidates()
-    serializer = CandidateSerializer(candidate, many = True)
-    return Response(serializer.data)
+#Lay sua thong tin profile
+@swagger_auto_schema(method='get', responses={200: UserSerializer})
+@swagger_auto_schema(method='put', request_body=UserSerializer)
+@api_view(['GET','PUT'])
+@permission_classes([IsAuthenticated])
+def profile_api(request):
+    profile = get_object_or_404(Users, id=request.user.id)
+    if request.method == 'GET':
+        return Response(UserSerializer(profile).data)
 
+    serializer = UserSerializer(profile, data = request.data, partial = True)
+    
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors, 400)
+
+# =============================================================================================================== #
+# ================================================== CANDIDATE ================================================== #
+# =============================================================================================================== #
 
 @swagger_auto_schema(
     method='post',
@@ -124,7 +112,22 @@ def Analyze_Cv(request):
         return Response({"error":"Timeout"}, status=status.HTTP_504_GATEWAY_TIMEOUT)
     except requests.exceptions.RequestException as e:
         return Response({"error": f"Error from AI Server: {str(e)}"}, status=status.HTTP_502_BAD_GATEWAY)
+    try:
+        saved_result = cv_services.save_analysis_result(
+            user=request.user,
+            cv_file=upload_file,
+            ai_result=ai_data,
+            format_result=format_analysis,
+            target_job = target_job
+        )
+    except Exception as e:
+        return Response({"error": f"Failed to save analysis result to database: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
     final_response = {
+        "status": "success",
+        "result_id": saved_result.id,
+        "overall_score": saved_result.overall_score,
+
         "overview": {
             "file_name": upload_file.name,
             "page_count": page_count,
@@ -138,44 +141,10 @@ def Analyze_Cv(request):
     }
 
     return Response(final_response, status=status.HTTP_200_OK)
-    
 
-@swagger_auto_schema(
-    method='post',
-    operation_description="Logout",
-    request_body=LogoutSerializer,
-    responses={200: 'Kết quả phân tích JSON', 400: 'Lỗi dữ liệu'}
-)
-
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def logout(request):
-    serializer = LogoutSerializer(data = request.data)
-    serializer.is_valid(raise_exception=True)
-    refresh_token = serializer.validated_data['refresh']
-    if users_services.Black_list_token(refresh_token):
-        return Response({"detail":"Logout Success"},status=status.HTTP_200_OK)
-    else:
-        return Response({"detail":"Token not exsit or error"},status=status.HTTP_400_BAD_REQUEST)
-
-
-#Lay sua thong tin profile
-@swagger_auto_schema(method='get', responses={200: UserSerializer})
-@swagger_auto_schema(method='put', request_body=UserSerializer)
-@api_view(['GET','PUT'])
-@permission_classes([IsAuthenticated])
-def profile_api(request):
-    profile = get_object_or_404(Users, id=request.user.id)
-    if request.method == 'GET':
-        return Response(UserSerializer(profile).data)
-
-    serializer = UserSerializer(profile, data = request.data, partial = True)
-    
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data)
-    return Response(serializer.errors, 400)
-
+# =============================================================================================================== #
+# ================================================== RECRUITER ================================================== #
+# =============================================================================================================== #
 #Dang Job
 @swagger_auto_schema(
     method='post',
@@ -223,6 +192,115 @@ def job_api(request, id):
     job.delete()
     return Response({"message": "Deleted"}, status=status.HTTP_204_NO_CONTENT)
 
+#view job
+@api_view(['GET'])
+def view_job(request):
+    jobs = Jobs.objects.all()
+    serializer = JobSerializer(jobs, many=True)
+    return Response(serializer.data)
+
+# =============================================================================================================== #
+# ==================================================== ADMIN ==================================================== #
+# =============================================================================================================== #
+@swagger_auto_schema(
+    method='put',
+    operation_description="ban",
+    request_body=UserNameSerializer,
+    responses={200: 'Kết quả phân tích JSON', 400: 'Lỗi dữ liệu'}
+)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def BanUser(request):
+    user = request.user
+    if users_services.Is_Super_User(user):
+        serializer = UserNameSerializer(data = request.data)
+        serializer.is_valid(raise_exception=True)
+        username = serializer.validated_data['username']
+        if users_services.Ban_User(username):
+            return Response({"detail":"Banned"},status=status.HTTP_202_ACCEPTED)
+        else:
+            return Response({"detail":"User not found"},status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response({"detail":"User don't have permission"},status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+@swagger_auto_schema(
+    method='put',
+    operation_description="unban",
+    request_body=UserNameSerializer,
+    responses={200: 'Kết quả phân tích JSON', 400: 'Lỗi dữ liệu'}
+)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def UnBanUser(request):
+    user = request.user
+    if users_services.Is_Super_User(user):
+        serializer = UserNameSerializer(data = request.data)
+        serializer.is_valid(raise_exception=True)
+        username = serializer.validated_data['username']
+        if users_services.UnBan_User(username):
+            return Response({"detail":"UnBanned"},status=status.HTTP_202_ACCEPTED)
+        else:
+            return Response({"detail":"User not found"},status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response({"detail":"User don't have permission"},status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    
+@swagger_auto_schema(
+    method='put',
+    operation_description="remove",
+    request_body=UserNameSerializer,
+    responses={200: 'Kết quả phân tích JSON', 400: 'Lỗi dữ liệu'}
+)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def RemoveUser(request):
+    user = request.user
+    if users_services.Is_Super_User(user):
+        serializer = UserNameSerializer(data = request.data)
+        serializer.is_valid(raise_exception=True)
+        username = serializer.validated_data['username']
+        if users_services.Remove_User(username):
+            return Response({"detail":"Removed"},status=status.HTTP_202_ACCEPTED)
+        else:
+            return Response({"detail":"User not found"},status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response({"detail":"User don't have permission"},status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    
+@api_view(['GET'])
+def GetCandidatesInfor(request):
+    candidate = users_services.Get_All_Candidates()
+    serializer = CandidateSerializer(candidate, many = True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def GetRecruitersInfor(request):
+    recruiters = users_services.Get_All_Recruiters()
+    serializer = RecruiterSerializer(recruiters, many = True)
+    return Response(serializer.data)
+
+# =============================================================================================================== #
+# =============================================== LOGIN / SIGNUP ================================================ #
+# =============================================================================================================== #
+@swagger_auto_schema(
+    method='post',
+    operation_description="Logout",
+    request_body=LogoutSerializer,
+    responses={200: 'Kết quả phân tích JSON', 400: 'Lỗi dữ liệu'}
+)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def logout(request):
+    serializer = LogoutSerializer(data = request.data)
+    serializer.is_valid(raise_exception=True)
+    refresh_token = serializer.validated_data['refresh']
+    if users_services.Black_list_token(refresh_token):
+        return Response({"detail":"Logout Success"},status=status.HTTP_200_OK)
+    else:
+        return Response({"detail":"Token not exsit or error"},status=status.HTTP_400_BAD_REQUEST)
+
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def jwt_from_session(request):
@@ -233,9 +311,5 @@ def jwt_from_session(request):
         "role": request.user.role,
     })
     
-#view job
-@api_view(['GET'])
-def view_job(request):
-    jobs = Jobs.objects.all()
-    serializer = JobSerializer(jobs, many=True)
-    return Response(serializer.data)
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer

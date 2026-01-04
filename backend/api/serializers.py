@@ -5,19 +5,16 @@ from dj_rest_auth.registration.serializers import RegisterSerializer
 from database.models.users import Users,Candidates,Recruiters
 from database.models.jobs import Jobs
 
+# ===== USER =====
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = Users
-        fields = ['id','username','email','role']
+        fields = ['id','username','email','role','is_active']
 
 class UserNameSerializer(serializers.Serializer):
     username = serializers.CharField(required = True)
 
-class JobSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Jobs
-        fields = "__all__"
-
+# ===== CANDIDATE =====
 class CandidateSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source="user.username", read_only=True)
     email = serializers.EmailField(source="user.email", read_only=True)
@@ -26,6 +23,32 @@ class CandidateSerializer(serializers.ModelSerializer):
         model = Candidates
         fields = ['id', 'description', 'user', 'username', 'email']
 
+class CVScanSerializer(serializers.Serializer):
+    file = serializers.FileField(required=True)
+    targetjob = serializers.CharField(max_length=255)
+
+    def validate_file(self, value):
+        if not value.name.lower().endswith('.pdf'):
+            raise serializers.ValidationError("Chỉ chấp nhận file định dạng PDF.")
+        if value.size > 5 * 1024 * 1024:
+            raise serializers.ValidationError("File quá lớn. Vui lòng upload file dưới 5MB.")
+        return value
+
+# ===== RECRUITER =====
+class RecruiterSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source="user.username", read_only=True)
+    email = serializers.EmailField(source="user.email", read_only=True)
+
+    class Meta:
+        model = Recruiters
+        fields = ['id', 'company', 'user', 'username', 'email']
+
+class JobSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Jobs
+        fields = "__all__"
+
+# ===== LOGIN / SIGNUP =====
 class CustomRegisterSerializer(RegisterSerializer):
     ROLE_CHOICES = (
         ('recruiter', 'Recruiter'),
@@ -57,19 +80,15 @@ class CustomRegisterSerializer(RegisterSerializer):
             raise serializers.ValidationError({"password": "Passwords do not match."})
         return attrs
 
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        data['role'] = self.user.role 
+
+        return data
+    
 class LogoutSerializer(serializers.Serializer):
     refresh = serializers.CharField()
-
-class CVScanSerializer(serializers.Serializer):
-    file = serializers.FileField(required=True)
-    targetjob = serializers.CharField(max_length=255)
-
-    def validate_file(self, value):
-        if not value.name.lower().endswith('.pdf'):
-            raise serializers.ValidationError("Chỉ chấp nhận file định dạng PDF.")
-        if value.size > 5 * 1024 * 1024:
-            raise serializers.ValidationError("File quá lớn. Vui lòng upload file dưới 5MB.")
-        return value
 
 
 

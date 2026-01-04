@@ -17,6 +17,15 @@ def Ban_User(username):
     except Users.DoesNotExist:
         return False
     
+def UnBan_User(username):
+    try:
+        user = Users.objects.get(username = username)
+        user.is_active = True
+        user.save()
+        return True
+    except Users.DoesNotExist:
+        return False
+    
 def Remove_User(username):
     try:
         user = Users.objects.get(username = username)
@@ -40,6 +49,12 @@ def Get_All_Candidates():
         return Candidates.objects.all()
     except Candidates.DoesNotExist:
         return None
+    
+def Get_All_Recruiters():
+    try: 
+        return Recruiters.objects.all()
+    except Recruiters.DoesNotExist:
+        return None
 
 def Black_list_token(refresh_token_string):
     try:
@@ -58,6 +73,11 @@ def Is_Recruiter(user):
     except Recruiters.DoesNotExist:
         return None
 
+def Is_Super_User(user):
+    if user.is_superuser:
+        return True
+    else:
+        return False
 
     
 

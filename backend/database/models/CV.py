@@ -9,7 +9,7 @@ class Cvs(models.Model):
     id = models.CharField(db_column='Id', primary_key=True, max_length=255,default=uuid.uuid4,editable=False)  # Field name made lowercase.
     candidate = models.ForeignKey('Candidates', on_delete=models.CASCADE, db_column='CandidateId', blank=True, null=True,related_name='CV')  # Field name made lowercase.
     file_name = models.CharField(db_column='FileName', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    file_url = models.FileField(upload_to='cvs/%Y/%m/', null= True)
+    file_url = models.FileField(upload_to='cvs/%Y/%m/', null=True, db_column='FileUrl')
     created_date = models.DateTimeField(db_column='CreatedDate', auto_now_add=True, null=True)  # Field name made lowercase.
     created_by = models.CharField(db_column='CreatedBy', max_length=255, blank=True, null=True)  # Field name made lowercase.
     updated_date = models.DateTimeField(db_column='UpdatedDate', auto_now=True, null=True)  # Field name made lowercase.
@@ -22,17 +22,29 @@ class Cvs(models.Model):
         app_label = 'database'
 
 class Cvanalysisresult(models.Model):
-    id = models.CharField(db_column='Id', primary_key=True, max_length=255,default=uuid.uuid4,editable=False)  # Field name made lowercase.
-    cv = models.ForeignKey('Cvs', on_delete=models.CASCADE, db_column='CVId', blank=True, null=True,related_name='cv_result')  # Field name made lowercase.
-    score = models.FloatField(db_column='Score', blank=True, null=True)  # Field name made lowercase.
-    experience = models.JSONField(db_column='Experience', blank=True, null=True)  # Field name made lowercase.
-    skill = models.JSONField(db_column='Skill', blank=True, null=True)  # Field name made lowercase.
-    majors = models.JSONField(db_column='Majors', blank=True, null=True)  # Field name made lowercase.
-    created_date = models.DateTimeField(db_column='CreatedDate', auto_now_add=True, null=True)  # Field name made lowercase.
-    updated_date = models.DateTimeField(db_column='UpdatedDate', auto_now=True, null=True)  # Field name made lowercase.
-    isdeleted = models.BooleanField(db_column='IsDeleted', default=False)  # Field name made lowercase. This field type is a guess.
-    note = models.CharField(db_column='Note', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    id = models.CharField(db_column='Id', primary_key=True, max_length=255, default=uuid.uuid4, editable=False)
+    cv = models.ForeignKey('Cvs', on_delete=models.CASCADE, db_column='CVId', blank=True, null=True, related_name='analysis_results')
+    target_job = models.CharField(db_column='TargetJob', max_length=255, blank=True, null=True)
+    overall_score = models.FloatField(db_column='OverallScore', default=0.0, db_index=True)
+    content_score = models.FloatField(db_column='ContentScore', default=0.0)
+    format_score = models.FloatField(db_column='FormatScore', default=0.0)
+    ai_response_json = models.JSONField(db_column='AIResponseJson', blank=True, null=True)
+    format_analysis_json = models.JSONField(db_column='FormatAnalysisJson', blank=True, null=True)
+    extracted_email = models.CharField(db_column='ExtractedEmail', max_length=255, blank=True, null=True)
+    extracted_phone = models.CharField(db_column='ExtractedPhone', max_length=50, blank=True, null=True)
+    created_date = models.DateTimeField(db_column='CreatedDate', auto_now_add=True, null=True)
+    updated_date = models.DateTimeField(db_column='UpdatedDate', auto_now=True, null=True)
+    isdeleted = models.BooleanField(db_column='IsDeleted', default=False)
+    note = models.CharField(db_column='Note', max_length=255, blank=True, null=True)
 
     class Meta:
         db_table = 'cvanalysisresult'
         app_label = 'database'
+        ordering = ['-overall_score']
+
+    def save(self, *args, **kwargs):
+        c_score = self.content_score if self.content_score else 0
+        f_score = self.format_score if self.format_score else 0
+        
+        self.overall_score = round((c_score * 0.7) + (f_score * 0.3), 2)
+        super().save(*args, **kwargs)

@@ -210,3 +210,6 @@ SWAGGER_SETTINGS = {
 ACCOUNT_FORMS = {
     "signup": "database.models.forms.CustomSignupForm",
 }
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
