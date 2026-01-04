@@ -22,7 +22,6 @@ class JobSerializer(serializers.ModelSerializer):
     class Meta:
         model = Jobs
         fields = "__all__"
-        read_only_fields = ['recruiter']
 
 class CandidateSerializer(serializers.ModelSerializer):
     class Meta:
