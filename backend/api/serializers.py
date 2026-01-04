@@ -30,7 +30,22 @@ class CandidateSerializer(serializers.ModelSerializer):
         fields = ['id','description']
 
 class CustomRegisterSerializer(RegisterSerializer):
-    email = serializers.EmailField(required = True, validators = [UniqueValidator(queryset=Users.objects.all(),message="Email already exists!")])
+    username = serializers.CharField(required=True)
+    email = serializers.EmailField(required=True)
+    password1 = serializers.CharField(write_only=True)
+    password2 = serializers.CharField(write_only=True)
+
+    def get_cleaned_data(self):
+        return {
+            "username": self.validated_data.get("username", ""),
+            "email": self.validated_data.get("email", ""),
+            "password1": self.validated_data.get("password1", ""),
+        }
+
+    def validate(self, attrs):
+        if attrs.get("password1") != attrs.get("password2"):
+            raise serializers.ValidationError({"password": "Passwords do not match."})
+        return attrs
 
 class LogoutSerializer(serializers.Serializer):
     refresh = serializers.CharField()
