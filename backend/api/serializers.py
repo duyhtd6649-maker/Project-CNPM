@@ -13,11 +13,6 @@ class UserSerializer(serializers.ModelSerializer):
 class UserNameSerializer(serializers.Serializer):
     username = serializers.CharField(required = True)
 
-class UserProfileSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Users
-        fields = ['id','username','email','role']
-
 class JobSerializer(serializers.ModelSerializer):
     class Meta:
         model = Jobs

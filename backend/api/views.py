@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status
 from apps import users_services, cv_services
-from database.models.users import Users
+from database.models.users import Users, Recruiters, Companies
 from database.models.jobs import Jobs 
 from .serializers import UserSerializer, CVScanSerializer, LogoutSerializer, CandidateSerializer, UserNameSerializer, JobSerializer
 from drf_yasg import openapi
@@ -167,13 +167,20 @@ def profile_api(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_job(request):
+    from database.models.users import Recruiters
+
+    recruiter, _ = Recruiters.objects.get_or_create(
+        user=request.user
+    )
+
     serializer = JobSerializer(data=request.data)
     if serializer.is_valid():
-        serializer.save(recruiter=request.user)
+        serializer.save(recruiter=recruiter)
         return Response(serializer.data, status=201)
     return Response(serializer.errors, status=400)
     
 #Sua, xoa job
+
 @swagger_auto_schema(
     method='put',
     request_body=JobSerializer,
@@ -182,18 +189,25 @@ def create_job(request):
 @api_view(['PUT', 'DELETE'])
 @permission_classes([IsAuthenticated])
 def job_api(request, id):
-    job = get_object_or_404(Jobs, id=id, recruiter=request.user)
-
+    user = request.user
+    recruiter = users_services.Is_Recruiter(user)
+    if not recruiter:
+        return Response({"Detail": "not a recruiter"}, status= status.HTTP_400_BAD_REQUEST)
+    job = get_object_or_404(Jobs, id=id, recruiter=recruiter)
     if request.method == 'PUT':
         serializer = JobSerializer(job, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=400)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # DELETE
     job.delete()
-    return Response({"message": "Deleted"}, status=204)
+    return Response({"message": "Deleted"}, status=status.HTTP_204_NO_CONTENT)
 
-
-    
+#view job
+@api_view(['GET'])
+def view_job(request):
+    jobs = Jobs.objects.all()
+    serializer = JobSerializer(jobs, many=True)
+    return Response(serializer.data)
