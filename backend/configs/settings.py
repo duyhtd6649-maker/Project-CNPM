@@ -54,15 +54,19 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
 
 
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
 
+    'dj_rest_auth.registration',
     'dj_rest_auth',
-
     'drf_yasg',
+
+    
 ]
 
 SITE_ID = 1
@@ -76,7 +80,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'allauth.account.middleware.AccountMiddleware',    
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'configs.urls'
@@ -177,11 +181,46 @@ ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_UNIQUE_EMAIL = True
 
 AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
+    'django.contrib.auth.backends.ModelBackend', #default backend 
+    'allauth.account.auth_backends.AuthenticationBackend', #for google
 )
 
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+##################Login Goole##############################
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email'
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online'
+        }
+    }
+}
+
+LOGIN_REDIRECT_URL = '/swagger/'
+LOGOUT_REDIRECT_URL = '/swagger/'
+LOGIN_URL = '/accounts/login/'
+LOGOUT_URL = '/accounts/logout/'
+
+SOCIALACCOUNT_LOGIN_ON_GET = True
+ACCOUNT_LOGOUT_ON_GET = True
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+
+##################CAU HINH GUI MAIL########################
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_USE_TLS = True
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSON_CLASSES' : [
@@ -198,20 +237,30 @@ REST_FRAMEWORK = {
 REST_AUTH = {
     "USE_JWT": True,
     "JWT_AUTH_HTTPONLY": False,
-    "JWT_AUTH_COOKIE": 'core-app-auth',
-    "JWT_AUTH_REFRESH_COOKIE": 'core-refresh-token',
+    "JWT_AUTH_COOKIE": None,
+    "JWT_AUTH_REFRESH_COOKIE": None,
     'REGISTER_SERIALIZER': 'api.serializers.CustomRegisterSerializer',
 
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=1),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1)
 }
 
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS':{
-        "Bearer": {"type": "apikey", "name": "Authorization", "in": "header"}
+        "Bearer": {"type": "apikey", "name": "Authorization", "in": "header"},
+        'LOGIN_URL': '/admin/login/',
+        'LOGOUT_URL': '/admin/logout/',
     }
 }
+<<<<<<< HEAD
 >>>>>>>> a04c2f2e6128d22806f4e94725b54441395c84c6:backend/configs/settings.py
+=======
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://127.0.0.1:8000',
+    'http://localhost:8000',
+]
+>>>>>>> e9f05311b1c67ece65386ff3b59304aed9329a5c

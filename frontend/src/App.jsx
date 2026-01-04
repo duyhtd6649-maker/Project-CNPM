@@ -4,7 +4,6 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import TestApi from './pages/TestApi' 
-import GoogleCallback from './pages/GoogleCallback'
 // 1. Import Component mới
 import CVAnalyzer from './pages/CVAnalyzers' 
 
@@ -51,7 +50,6 @@ function App() {
             </p>
           </>
         } />
-        <Route path="/google-callback" element={<GoogleCallback />} />
 
       </Routes>
     </BrowserRouter>

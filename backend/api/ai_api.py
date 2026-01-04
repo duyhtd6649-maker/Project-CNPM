@@ -17,9 +17,13 @@ app = FastAPI(title="AI Service")
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
+
+
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+
 
 class CareerCoachRequest(BaseModel):
     question: str
@@ -57,6 +61,7 @@ Return ONLY valid JSON. Do not include explanations, text, or markdown.
         input=prompt
     )
     return json.loads(response.output_text)
+
 
 
 
@@ -104,6 +109,7 @@ CV:
     return json.loads(response.output_text)
 
 
+
 class JobAnalyzerRequest(BaseModel):
     jobDescription: str
 
@@ -139,6 +145,7 @@ Return ONLY valid JSON. Do not include explanations, text, or markdown.
         input=prompt
     )
     return json.loads(response.output_text)
+
 
 
 class JobMatchingRequest(BaseModel):

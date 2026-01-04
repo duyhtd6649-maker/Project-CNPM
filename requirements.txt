@@ -1,2 +1,0 @@
-axios==0.4.0
-djangorestframework_simplejwt==5.5.1
