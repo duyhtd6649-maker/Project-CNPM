@@ -2,8 +2,6 @@ from rest_framework.decorators import api_view, permission_classes,parser_classe
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 from rest_framework import status
 from apps import users_services, cv_services
 from database.models.users import Users
@@ -72,6 +70,7 @@ def GetCandidatesInfor(request):
     candidate = users_services.Get_All_Candidates()
     serializer = CandidateSerializer(candidate, many = True)
     return Response(serializer.data)
+
 
 @swagger_auto_schema(
     method='post',
@@ -195,5 +194,6 @@ def job_api(request, id):
     # DELETE
     job.delete()
     return Response({"message": "Deleted"}, status=204)
+
 
     

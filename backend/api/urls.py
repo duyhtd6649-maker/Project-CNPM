@@ -10,22 +10,18 @@ from rest_framework_simplejwt.views import (
 
 urlpatterns = [
     path('user/',views.GetUserInfor),
-    path('user/profile/', profile_api, name='user-profile'),
-    path('recruiter/jobs/', create_job, name='recruiter-create-job'),
-    path('recruiter/jobs/<int:id>/', job_api, name='recruiter-job-detail'),
+    path('user/profile/', profile_api),
+    path('recruiter/jobs/', create_job),
+    path('recruiter/jobs/<int:id>/', job_api),
     path('banuser/',views.BanUser),
     path('removeuser/',views.RemoveUser),
     path('user/<str:username>/',views.GetUserbyUsername),
     path('candidate/',views.GetCandidatesInfor),
+
+    # OAuth
     path('accounts/', include('allauth.urls')),
-    path('logout/',views.logout),
-    path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('auth', include('dj_rest_auth.urls')),
-    path('auth/registration/', include('dj_rest_auth.registration.urls')),
-    path('auth/password/reset', PasswordResetView.as_view(), name = 'password_reset'),
-    path(
-        'auth/password/reset/confirm/<str:uidb64>/<str:token>',
-        PasswordResetConfirmView.as_view(),
-        name = 'password_reset_confirm' 
-    )
+
+    # JWT
+    path('api/auth/jwt/login/', TokenObtainPairView.as_view()),
+    path('api/auth/jwt/refresh/', TokenRefreshView.as_view()),
 ]

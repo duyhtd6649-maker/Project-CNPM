@@ -158,6 +158,11 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 AUTH_USER_MODEL = 'database.Users'
 
+#luc dang ki, dang nhap, dang xuat thi tro ve....
+LOGIN_REDIRECT_URL = "/swagger/"
+LOGOUT_REDIRECT_URL = "/swagger/"
+SIGNUP_REDIRECT_URL = "/swagger/"
+
 ACCOUNT_LOGIN_METHODS = {'username', 'email'}
 ACCOUNT_SIGNUP_FIELDS = ['email', 'username', 'password1', 'password2']
 ACCOUNT_EMAIL_VERIFICATION = 'none'
@@ -200,4 +205,8 @@ SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS':{
         "Bearer": {"type": "apikey", "name": "Authorization", "in": "header"}
     }
+}
+
+ACCOUNT_FORMS = {
+    "signup": "database.models.forms.CustomSignupForm",
 }
