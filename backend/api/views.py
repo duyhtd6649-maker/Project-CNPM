@@ -6,13 +6,15 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 from rest_framework import status
 from apps import users_services, cv_services
-from database.models.users import Users 
-from .serializers import UserSerializer, CVScanSerializer, LogoutSerializer, CandidateSerializer, UserNameSerializer
+from database.models.users import Users
+from database.models.jobs import Jobs 
+from .serializers import UserSerializer, CVScanSerializer, LogoutSerializer, CandidateSerializer, UserNameSerializer, JobSerializer
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 import json
 import requests
 import os
+from django.shortcuts import get_object_or_404
 
 @api_view(['GET'])
 def GetUserInfor(request):
@@ -138,7 +140,60 @@ def logout(request):
         return Response({"detail":"Logout Success"},status=status.HTTP_200_OK)
     else:
         return Response({"detail":"Token not exsit or error"},status=status.HTTP_400_BAD_REQUEST)
-    
 
+
+#Lay sua thong tin profile
+@swagger_auto_schema(method='get', responses={200: UserSerializer})
+@swagger_auto_schema(method='put', request_body=UserSerializer)
+@api_view(['GET','PUT'])
+@permission_classes([IsAuthenticated])
+def profile_api(request):
+    profile = get_object_or_404(Users, id=request.user.id)
+    if request.method == 'GET':
+        return Response(UserSerializer(profile).data)
+
+    serializer = UserSerializer(profile, data = request.data, partial = True)
+    
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors, 400)
+
+#Dang Job
+@swagger_auto_schema(
+    method='post',
+    request_body=JobSerializer,
+    responses={201: JobSerializer}
+)
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_job(request):
+    serializer = JobSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save(recruiter=request.user)
+        return Response(serializer.data, status=201)
+    return Response(serializer.errors, status=400)
+    
+#Sua, xoa job
+@swagger_auto_schema(
+    method='put',
+    request_body=JobSerializer,
+    responses={200: JobSerializer}
+)
+@api_view(['PUT', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def job_api(request, id):
+    job = get_object_or_404(Jobs, id=id, recruiter=request.user)
+
+    if request.method == 'PUT':
+        serializer = JobSerializer(job, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)
+
+    # DELETE
+    job.delete()
+    return Response({"message": "Deleted"}, status=204)
 
     

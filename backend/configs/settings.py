@@ -237,6 +237,7 @@ SWAGGER_SETTINGS = {
         "Bearer": {"type": "apikey", "name": "Authorization", "in": "header"},
         'LOGIN_URL': '/admin/login/',
         'LOGOUT_URL': '/admin/logout/',
+        'USE_SESSION_AUTH': False,
     }
 }
 

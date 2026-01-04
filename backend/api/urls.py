@@ -1,4 +1,5 @@
 from . import views
+from .views import profile_api, create_job, job_api
 from django.urls import path, include
 from dj_rest_auth.views import PasswordResetView, PasswordResetConfirmView
 from rest_framework_simplejwt.views import TokenVerifyView
@@ -9,6 +10,9 @@ from rest_framework_simplejwt.views import (
 
 urlpatterns = [
     path('user/',views.GetUserInfor),
+    path('user/profile/', profile_api, name='user-profile'),
+    path('recruiter/jobs/', create_job, name='recruiter-create-job'),
+    path('recruiter/jobs/<int:id>/', job_api, name='recruiter-job-detail'),
     path('banuser/',views.BanUser),
     path('removeuser/',views.RemoveUser),
     path('user/<str:username>/',views.GetUserbyUsername),

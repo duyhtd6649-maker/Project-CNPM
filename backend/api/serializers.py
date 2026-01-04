@@ -1,8 +1,9 @@
 from rest_framework import serializers
-from database.models.users import Users,Candidates
 from rest_framework.validators import UniqueValidator
-from dj_rest_auth.registration.serializers import RegisterSerializer
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from dj_rest_auth.registration.serializers import RegisterSerializer
+from database.models.users import Users,Candidates
+from database.models.jobs import Jobs
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -11,6 +12,17 @@ class UserSerializer(serializers.ModelSerializer):
 
 class UserNameSerializer(serializers.Serializer):
     username = serializers.CharField(required = True)
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Users
+        fields = ['id','username','email','role']
+
+class JobSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Jobs
+        fields = "__all__"
+        read_only_fields = ['recruiter']
 
 class CandidateSerializer(serializers.ModelSerializer):
     class Meta:
@@ -33,4 +45,5 @@ class CVScanSerializer(serializers.Serializer):
         if value.size > 5 * 1024 * 1024:
             raise serializers.ValidationError("File quá lớn. Vui lòng upload file dưới 5MB.")
         return value
+
 
