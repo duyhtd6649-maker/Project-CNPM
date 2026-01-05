@@ -11,7 +11,6 @@ env/
 
 __pycache__/
 *.py[cod]
-db.sqlite3
 media/
 staticfiles/
 
@@ -24,4 +23,3 @@ dist/
 
 
 mysql_data/
-postgres_data/
