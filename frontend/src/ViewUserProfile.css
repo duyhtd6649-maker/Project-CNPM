@@ -145,3 +145,24 @@
   color: #7a78ff; margin-top: 15px; cursor: pointer;
   font-weight: 500; display: inline-block;
 }
+/* Style cho ô đang trong trạng thái Edit */
+input.editing, .editing-select {
+  border: 2px solid #7a78ff !important;
+  background-color: #fff !important;
+  color: #000 !important;
+  outline: none;
+}
+
+.btn-edit-main-fixed.save-mode {
+  background-color: #28a745; /* Đổi sang màu xanh lá khi ở chế độ Save */
+}
+
+.form-group input {
+  transition: all 0.3s ease;
+}
+
+/* Header logout căn chỉnh */
+.header-actions {
+  display: flex;
+  align-items: center;
+}
