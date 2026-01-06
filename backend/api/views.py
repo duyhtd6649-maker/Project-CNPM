@@ -165,7 +165,7 @@ def create_job(request):
         serializer.save(recruiter=recruiter)
         return Response(serializer.data, status=201)
     return Response(serializer.errors, status=400)
-    
+
 #Sua, xoa job
 
 @swagger_auto_schema(
