@@ -66,7 +66,7 @@
 }
 .nav-item.active { color: white; font-weight: bold; border-bottom: 2px solid white; padding-bottom: 4px; }
 
-/* --- TRANG NHỎ ACCOUNT (DROPDOWN) --- */
+/* --- ACCOUNT DROPDOWN --- */
 .account-btn-container { position: relative; }
 .account-icon-wrapper { display: flex; align-items: center; gap: 2px; }
 
@@ -80,7 +80,6 @@
   padding: 20px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.4);
   z-index: 2000;
-  cursor: default;
 }
 
 .mini-page-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
@@ -101,10 +100,9 @@
   display: flex; align-items: center; justify-content: center; gap: 8px;
   color: rgba(255,255,255,0.6); font-size: 12px; cursor: pointer;
 }
-.mini-footer:hover { color: white; }
 .rotate { transform: rotate(180deg); transition: transform 0.3s; }
 
-/* --- NOTIFICATION BOX (INBOX) --- */
+/* --- NOTIFICATIONS --- */
 .notification-overlay {
   position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
   background: rgba(0, 0, 0, 0.2); z-index: 3000;
@@ -113,35 +111,32 @@
 .notification-box {
   width: 400px; background: white; border-radius: 12px;
   overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-  animation: slideUp 0.3s ease-out;
 }
-@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
 .notify-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; }
 .header-title { display: flex; align-items: center; gap: 5px; font-weight: bold; font-size: 18px; }
-.settings-icon { color: #666; cursor: pointer; }
-
 .notify-tabs { display: flex; border-bottom: 1px solid #eee; padding: 0 10px; }
 .tab { padding: 10px 15px; font-size: 14px; font-weight: 600; color: #666; cursor: pointer; position: relative; }
 .tab.active { color: #000; }
-.tab.active::after { content: ""; position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: #00a2ff; }
+.tab.active::after { content: ""; position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: #3e3ca0; }
+
+.type-tag-small { font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-left: 8px; font-weight: bold; text-transform: uppercase; }
+.type-tag-small.admin { background: #eef2ff; color: #18196b; }
+.type-tag-small.recruiter { background: #f0fdf4; color: #166534; }
 
 .notify-content { max-height: 400px; overflow-y: auto; }
-.notify-item { display: flex; gap: 12px; padding: 15px 20px; transition: background 0.2s; cursor: pointer; }
-.notify-item:hover { background: #f9f9f9; }
-.notify-info { flex: 1; }
-.notify-user { font-weight: bold; font-size: 14px; margin-bottom: 2px; }
-.notify-msg { font-size: 13px; color: #888; line-height: 1.4; margin-bottom: 5px; }
-.notify-time { font-size: 11px; color: #bbb; }
+.notify-item { display: flex; gap: 12px; padding: 15px 20px; border-bottom: 1px solid #f9f9f9; }
+.notify-user { font-weight: bold; font-size: 14px; }
+.notify-msg { font-size: 13px; color: #666; margin-top: 4px; }
+.notify-time { font-size: 11px; color: #bbb; margin-top: 4px; }
 
-/* --- LAYOUT MAIN --- */
+/* --- MAIN LAYOUT --- */
 .hp-main {
   max-width: 1128px; margin: 20px auto;
   display: grid; grid-template-columns: 225px 1fr 290px; gap: 24px; padding: 0 15px;
 }
 .card {
   background: white; border: 1px solid var(--card-border); border-radius: 8px;
-  margin-bottom: 12px; overflow: hidden; box-shadow: 0 0 0 1px rgba(0,0,0,0.05);
+  margin-bottom: 12px; overflow: hidden;
 }
 .banner-purple { height: 54px; background: linear-gradient(180deg, #1b1b6e 0%, #7658f1 100%); }
 .avatar-circle {
@@ -151,143 +146,273 @@
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 .profile-info { text-align: center; padding: 0 12px 16px; }
-.user-name { font-weight: bold; font-size: 16px; color: #1a1a1a; }
-.sub-text { font-size: 12px; color: #666; margin-top: 4px; }
+.user-name { font-weight: bold; font-size: 16px; }
+.sub-text { font-size: 12px; color: #666; }
+
+/* --- PREMIUM CARD --- */
+.premium-shortcut-card {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 16px; cursor: pointer; border-left: 5px solid #ffbb00 !important;
+}
+.premium-shortcut-card:hover { background: #fffbeb; }
+.premium-title { margin: 0; font-size: 13px; font-weight: 800; text-transform: uppercase; }
+.premium-desc { font-size: 11px; color: #666; }
+.premium-key-icon { color: #ffbb00; }
 
 .action-card { padding: 12px 16px; cursor: pointer; }
-.action-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 600; color: #444; }
-.premium-border { border-left: 5px solid #ffbb00; }
+.action-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 600; }
 
 .menu-list-card { padding: 8px 0; }
 .menu-row { padding: 10px 16px; font-size: 13px; color: #666; display: flex; align-items: center; gap: 12px; cursor: pointer; }
 .menu-row:hover { background-color: #f3f2ef; }
 
-/* Cột giữa & Phải (Giữ nguyên phần cũ) */
+/* --- CENTER CONTENT --- */
 .col-center { height: calc(100vh - 90px); overflow-y: auto; scrollbar-width: none; }
-.col-center::-webkit-scrollbar { display: none; }
 .banner-box { text-align: center; padding: 20px; }
 .placeholder-img-sim { height: 140px; background: #f9f9f9; display: flex; align-items: center; justify-content: center; border-radius: 8px; }
 .btn-main-action { background: #3f3da0; color: white; border: none; padding: 10px 30px; border-radius: 20px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+
 .post-top { display: flex; padding: 12px; gap: 12px; }
 .brand-sq { width: 48px; height: 48px; background: #00a2ff; border-radius: 4px; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; }
-.post-mid p { padding: 0 16px 12px; font-size: 14px; color: #333; }
-.post-img-sim { height: 350px; background: #eee; display: flex; align-items: center; justify-content: center; color: #aaa; }
+.post-mid p { padding: 0 16px 12px; font-size: 14px; }
 .post-foot { display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #f0f2f5; color: #666; font-size: 13px; font-weight: 600; }
 .foot-item { display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 8px 12px; border-radius: 4px; }
-.foot-item:hover { background-color: #f3f2ef; }
 
+/* --- IFRAME NHÚNG ITVIEC (DÀNH CHO CỘT PHẢI) --- */
 .news-header-section { display: flex; justify-content: space-between; padding: 15px 15px 10px; }
-.news-title { font-weight: bold; font-size: 16px; }
+.news-title { font-weight: bold; font-size: 14px; }
 .news-tag { background: #f0f2f5; color: #3f3da0; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
+
+.iframe-viewport {
+  width: calc(100% - 30px);
+  height: 380px;
+  margin: 0 15px;
+  overflow: hidden;
+  position: relative;
+  border-radius: 6px;
+  border: 1px solid #eee;
+  background: white;
+}
+
+.clipped-iframe {
+  width: 1000px;
+  height: 2000px;
+  position: absolute;
+  top: -100px;
+  left: 15px;
+  zoom : 1.8;
+  border: none;
+  transform: scale(0.38); /* Thu nhỏ vừa cột sidebar */
+  transform-origin: top left;
+}
+
+.iframe-footer {
+  padding: 12px;
+  font-size: 12px;
+  color: #3e3ca0;
+  text-align: center;
+  cursor: pointer;
+  font-weight: 600;
+  border-top: 1px solid #f0f2f5;
+}
+
 .news-content-placeholder { height: 180px; background: #fafafa; border: 1px dashed #ccc; margin: 0 15px 15px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
 
-.chat-container-dock { position: sticky; bottom: 0; background: white; border: 1px solid #ddd; border-radius: 10px 10px 0 0; }
-.chat-header-dock { display: flex; justify-content: space-between; padding: 12px 15px; border-bottom: 1px solid #f0f2f5; }
-.chat-user-info { display: flex; align-items: center; gap: 8px; font-weight: bold; font-size: 14px; }
-.online-dot { width: 8px; height: 8px; background: #05a505; border-radius: 50%; }
-.chat-controls { display: flex; gap: 12px; color: #666; cursor: pointer; align-items: center; }
-.chat-body-placeholder { height: 60px; display: flex; align-items: center; justify-content: center; }
+/* --- NEWS FEED LAYOUT --- */
 
-/* --- BỔ SUNG VÀO FILE CSS HIỆN TẠI --- */
-
-/* Tag phân loại bên cạnh tên trong Notify */
-.type-tag-small {
-  font-size: 10px;
-  padding: 2px 6px;
-  border-radius: 4px;
-  margin-left: 8px;
-  font-weight: bold;
-  text-transform: uppercase;
+.col-center {
+  height: calc(100vh - 90px);
+  overflow-y: auto;
+  scrollbar-width: none; /* Firefox */
 }
+.col-center::-webkit-scrollbar { display: none; } /* Chrome/Safari */
 
-.type-tag-small.admin {
-  background-color: #eef2ff;
-  color: #18196b;
-  border: 1px solid #dce6f1;
+/* Ô tạo bài viết */
+.create-post-mimic {
+  padding: 15px;
+  margin-bottom: 16px;
 }
-
-.type-tag-small.recruiter {
-  background-color: #f0fdf4;
-  color: #166534;
-  border: 1px solid #bbf7d0;
-}
-
-/* Khi không có thông báo nào */
-.empty-state-notify {
-  padding: 40px;
-  text-align: center;
-  color: #aaa;
-  font-size: 14px;
-  font-style: italic;
-}
-
-/* Đảm bảo Notify Content có thanh cuộn mượt */
-.notify-content::-webkit-scrollbar {
-  width: 5px;
-}
-.notify-content::-webkit-scrollbar-thumb {
-  background: #dce6f1;
-  border-radius: 10px;
-}
-
-/* Hover hiệu ứng cho các tab */
-.tab:hover {
-  color: #000;
-}
-
-/* --- TRANG TRÍ Ô PREMIUM SHORTCUT (BỔ SUNG) --- */
-.premium-shortcut-card {
+.post-input-row {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
-  cursor: pointer;
-  background-color: white;
-  /* Viền vàng đặc trưng bên trái */
-  border-left: 5px solid #ffbb00 !important; 
-  transition: all 0.2s ease-in-out;
+  gap: 12px;
   margin-bottom: 12px;
-  border-radius: 8px; /* Bo góc khớp với các card khác */
-  border: 1px solid var(--card-border);
-  box-shadow: 0 0 0 1px rgba(0,0,0,0.05);
+}
+.fake-input {
+  background: #f0f2f5;
+  border-radius: 20px;
+  padding: 10px 18px;
+  flex: 1;
+  color: #65676b;
+  font-size: 14px;
+  cursor: pointer;
+}
+.fake-input:hover { background: #e4e6eb; }
+.post-actions-row {
+  display: flex;
+  border-top: 1px solid #eee;
+  padding-top: 10px;
+}
+.post-action-item {
+  flex: 1;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: #65676b;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.post-action-item:hover { background: #f2f2f2; }
+
+/* Các bài đăng nhúng Iframe */
+.news-feed-item {
+  margin-bottom: 16px;
+}
+.post-header {
+  display: flex;
+  padding: 12px 16px;
+  align-items: center;
+  gap: 12px;
+}
+.brand-logo-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+}
+.cnet-bg { background: #cc0000; }
+.tc-bg { background: #00a550; }
+
+.post-meta { flex: 1; }
+.post-author { font-weight: bold; font-size: 14px; color: #050505; }
+.post-date { font-size: 12px; color: #65676b; display: flex; align-items: center; gap: 4px; }
+.post-more { color: #65676b; cursor: pointer; }
+
+/* Container của Iframe - Điểm mấu chốt để "cắt" bài báo */
+.post-iframe-container {
+  width: 100%;
+  height: 480px; /* Độ cao khung hình hiển thị trên feed */
+  overflow: hidden;
+  position: relative;
+  background: white;
+  border-top: 1px solid #f0f2f5;
+  border-bottom: 1px solid #f0f2f5;
 }
 
-.premium-shortcut-card:hover {
-  background-color: #fffbeb; /* Màu nền vàng nhạt khi hover */
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+.feed-iframe {
+  width: 1000px; /* Chiều rộng giả lập máy tính */
+  height: 3000px; /* Chiều cao để tải đủ nội dung */
+  position: absolute;
+  border: none;
+  
+  /* Thu nhỏ trang web lại để vừa với cột giữa của bạn */
+  transform: scale(0.65); 
+  transform-origin: top left;
 }
 
-.premium-content {
+.post-footer-actions {
+  display: flex;
+  padding: 4px 12px;
+}
+.f-action {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px;
+  color: #65676b;
+  font-weight: 600;
+  font-size: 13px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.f-action:hover { background: #f2f2f2; }
+
+/* Job Mini List Cột Phải */
+.job-mini-item {
+  display: flex;
+  gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f9f9f9;
+}
+.job-square { width: 40px; height: 40px; background: #eef2ff; border-radius: 4px; }
+.job-name { font-size: 13px; font-weight: bold; }
+.job-corp { font-size: 11px; color: #666; }
+
+/* --- MINI CHAT BOX STYLE --- */
+.chat-mini-card {
   display: flex;
   flex-direction: column;
-  text-align: left;
+  height: 350px; /* Độ cao khung chat */
 }
 
-.premium-title {
-  margin: 0;
+.chat-body {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: #f9f9f9;
+}
+
+.chat-bubble {
+  max-width: 80%;
+  padding: 8px 12px;
+  border-radius: 18px;
   font-size: 13px;
-  font-weight: 800;
-  color: #1a1a1a;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  line-height: 1.4;
 }
 
-.premium-desc {
-  font-size: 11px;
-  color: #666;
-  margin-top: 3px;
-  line-height: 1.2;
+.chat-bubble.received {
+  align-self: flex-start;
+  background-color: #e4e6eb;
+  color: #050505;
 }
 
-.premium-key-icon {
-  color: #ffbb00;
-  filter: drop-shadow(0 0 1px rgba(255, 187, 0, 0.2));
-  flex-shrink: 0;
-  margin-left: 10px;
+.chat-bubble.sent {
+  align-self: flex-end;
+  background-color: #3e3ca0;
+  color: white;
 }
 
-/* Hiệu ứng xoay icon chìa khóa khi di chuột vào card */
-.premium-shortcut-card:hover .premium-key-icon {
-  transform: rotate(15deg) scale(1.1);
+.chat-footer-input {
+  padding: 10px;
+  border-top: 1px solid #eee;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chat-input-wrapper {
+  flex: 1;
+  background: #f0f2f5;
+  border-radius: 20px;
+  padding: 5px 12px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.chat-input-wrapper input {
+  border: none;
+  background: transparent;
+  width: 100%;
+  font-size: 13px;
+  outline: none;
+}
+
+.chat-send-btn {
+  background: none;
+  border: none;
+  color: #3e3ca0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
 }

@@ -96,7 +96,7 @@
 
 /* Nút Login */
 .admin-submit-btn {
-  width: 50%; /* Tỉ lệ giống ảnh mẫu */
+  width: 100%; /* Tỉ lệ giống ảnh mẫu */
   padding: 15px;
   background: #7678ff;
   color: white;
@@ -179,8 +179,8 @@
   position: absolute;
   top: 0;
   right: 0;
-  width: 100%;
-  height: 100%;
+  width: 200%;
+  height: 150%;
   background: linear-gradient(135deg, #7678ff 0%, #1a0b8c 100%);
   clip-path: polygon(100% 0, 100% 100%, 0% 100%); /* Cắt chéo đúng theo ảnh */
 }

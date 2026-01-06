@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
@@ -12,6 +12,14 @@ const AdminLogin = () => {
     password: ''
   });
 
+  // Tải font Archivo Black
+  useEffect(() => {
+    const link = document.createElement('link');
+    link.href = 'https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap';
+    link.rel = 'stylesheet';
+    document.head.appendChild(link);
+  }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setLoginData({ ...loginData, [name]: value });
@@ -19,28 +27,39 @@ const AdminLogin = () => {
 
   const handleAdminLogin = (e) => {
     e.preventDefault();
-    if (!loginData.username.trim() || !loginData.password.trim()) {
-      alert("Please enter Admin credentials!");
+
+    // Logic kiểm tra để trống giống Login ban đầu
+    if (!loginData.username.trim()) {
+      alert("Please enter your Admin Email!");
+      return;
+    }
+    if (!loginData.password.trim()) {
+      alert("Please enter your Password!");
       return;
     }
 
-    if (loginData.username === 'admin' && loginData.password === '123') {
-      alert("Welcome Admin!");
-      navigate('/admin');
+    // Kiểm tra tài khoản admin mẫu
+    const ADMIN_EMAIL = "admin@gmail.com";
+    const ADMIN_PASS = "123456";
+
+    if (loginData.username === ADMIN_EMAIL && loginData.password === ADMIN_PASS) {
+      alert(`Welcome back, Admin!`);
+      // Lưu trạng thái admin vào localStorage
+      localStorage.setItem('currentUser', JSON.stringify({ email: ADMIN_EMAIL, role: 'admin' }));
+      navigate('/admin'); 
     } else {
-      alert("Invalid Admin credentials!");
+      // Thông báo lỗi giống Login ban đầu
+      alert("Invalid Admin Email or Password!");
     }
   };
 
   return (
     <div className="admin-page-wrapper">
-      {/* Tải font Archivo Black trực tiếp */}
-      <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet" />
-      
       <div className="admin-login-wrapper">
+        
+        {/* PHẦN BÊN TRÁI: FORM ĐĂNG NHẬP */}
         <div className="admin-left-side">
-          {/* Chỉ cập nhật style font cho phần logo */}
-          <div className="admin-header-logo" style={{ fontFamily: "'Archivo Black', sans-serif" }}>
+          <div className="admin-header-logo" style={{ fontFamily: "'Archivo Black', sans-serif", fontWeight: '900' }}>
             <span className="logo-uth">UTH</span>
             <span className="logo-workplace">WORKPLACE</span>
           </div>
@@ -55,7 +74,7 @@ const AdminLogin = () => {
                 <input 
                   type="text" 
                   name="username" 
-                  placeholder="Username" 
+                  placeholder="Admin Email" 
                   value={loginData.username}
                   onChange={handleChange}
                 />
@@ -101,6 +120,7 @@ const AdminLogin = () => {
           </div>
         </div>
 
+        {/* PHẦN BÊN PHẢI: TRANG TRÍ */}
         <div className="admin-right-side">
           <div className="admin-diagonal-bg"></div>
         </div>
