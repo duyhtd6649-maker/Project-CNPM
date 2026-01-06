@@ -46,16 +46,17 @@ def GetUserbyUsername(request,username):
 @api_view(['GET','PUT'])
 @permission_classes([IsAuthenticated])
 def profile_api(request):
-    profile = get_object_or_404(Users, id=request.user.id)
+#    profile = get_object_or_404(Users, id=request.user.id)
+    user = request.user
+    serializer = UserSerializer(user)
     if request.method == 'GET':
-        return Response(UserSerializer(profile).data)
-
-    serializer = UserSerializer(profile, data = request.data, partial = True)
-    
-    if serializer.is_valid():
-        serializer.save()
         return Response(serializer.data)
-    return Response(serializer.errors, 400)
+    if request.method == 'PUT':
+        serializer = UserSerializer(user, data = request.data, partial = True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, 400)
 
 # =============================================================================================================== #
 # ================================================== CANDIDATE ================================================== #
