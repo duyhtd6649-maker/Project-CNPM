@@ -1,15 +1,22 @@
-/* Tổng thể wrapper chiếm toàn màn hình */
+.page-wrapper {
+  width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f2f5;
+}
+
 .login-wrapper {
   display: flex;
   height: 100vh;
   width: 100vw;
-  overflow: hidden;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* --- PHẦN BÊN TRÁI --- */
+/* LEFT */
 .login-left {
-  flex: 1; /* Chiếm 50% */
+  flex: 1;
   background-color: white;
   padding: 40px 60px;
   display: flex;
@@ -17,42 +24,52 @@
 }
 
 .login-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
+  position: relative;
 }
 
 .header-logo {
-  font-weight: 800;
-  font-size: 24px;
+  font-weight: 900;
+  font-size: 28px;
 }
 
-.logo-uth { color: #2d60af; margin-right: 5px; }
+.logo-uth { color: #2d60af; }
 .logo-workplace { color: #28a745; }
-.for-admin { font-size: 14px; color: #333; }
+
+.admin-login-link {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 8px 18px;
+  border: 1.5px solid #7678ff;
+  border-radius: 20px;
+  color: #7678ff;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.admin-login-link:hover {
+  background-color: #7678ff;
+  color: white;
+}
 
 .login-content {
-  margin: auto; /* Căn giữa form theo chiều dọc và ngang */
-  width: 100%;
+  margin: auto;
   max-width: 380px;
   text-align: center;
 }
 
 .login-content h1 {
   font-size: 32px;
-  font-weight: bold;
-  margin-bottom: 5px;
-  letter-spacing: 1px;
+  font-weight: 800;
 }
 
 .subtitle {
   color: #666;
-  margin-bottom: 40px;
+  margin-bottom: 30px;
   font-size: 14px;
 }
 
-/* Ô nhập liệu */
 .input-group {
   position: relative;
   margin-bottom: 20px;
@@ -64,9 +81,7 @@
   border: 1px solid #e0e0e0;
   border-radius: 15px;
   background-color: #fafafa;
-  outline: none;
   font-size: 14px;
-  box-sizing: border-box;
 }
 
 .input-icon {
@@ -79,7 +94,7 @@
 
 .forgot-password {
   text-align: left;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .forgot-password a {
@@ -88,7 +103,6 @@
   text-decoration: none;
 }
 
-/* Nút Login */
 .login-button {
   width: 100%;
   padding: 14px;
@@ -97,25 +111,28 @@
   border: none;
   border-radius: 15px;
   font-weight: bold;
-  cursor: pointer;
   font-size: 16px;
+  cursor: pointer;
+}
+
+.login-button:hover {
+  background: #5a5cd6;
 }
 
 .register-link {
   margin-top: 20px;
-  font-size: 13px;
+  font-size: 14px;
   color: #666;
 }
 
 .register-link a {
   color: #7169ff;
-  text-decoration: none;
   font-weight: bold;
+  text-decoration: none;
 }
 
-/* Đường kẻ ngang */
 .divider {
-  margin: 40px 0 25px;
+  margin: 30px 0;
   border-top: 1px solid #eee;
   position: relative;
 }
@@ -126,12 +143,11 @@
   left: 50%;
   transform: translateX(-50%);
   background: white;
-  padding: 0 15px;
-  color: #999;
+  padding: 0 10px;
   font-size: 12px;
+  color: #999;
 }
 
-/* Nút Social */
 .social-login {
   display: flex;
   justify-content: center;
@@ -139,30 +155,25 @@
 }
 
 .social-btn {
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   cursor: pointer;
-  color: white;
   font-size: 18px;
+  color: white;
 }
 
 .google { background-color: #ea4335; }
 .apple { background-color: #000; }
 .gmail { background-color: #4285f4; }
 
-/* --- PHẦN BÊN PHẢI (QUAN TRỌNG) --- */
+/* RIGHT */
 .login-right {
-  flex: 1; /* Chiếm 50% còn lại */
-  background: linear-gradient(180deg, #1a0b8c 0%, #4a3aff 40%, #8c82ff 100%);
+  flex: 1;
+  background: linear-gradient(180deg, #1a0b8c, #4a3aff, #8c82ff);
 }
 
-/* Mobile Responsive */
 @media (max-width: 768px) {
   .login-right { display: none; }
-  .login-left { padding: 40px 20px; }
 }
