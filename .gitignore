@@ -25,3 +25,5 @@ dist/
 
 mysql_data/
 postgres_data/
+
+.idea/
