@@ -1,59 +1,65 @@
-import { useState } from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import TestApi from './pages/TestApi' 
-// 1. Import Component mới
-import CVAnalyzer from './pages/CVAnalyzers' 
+import { Routes, Route, Navigate, Link } from 'react-router-dom'
+import Login from './Login'
+import Register from './Register'
+import ForgotPassword from './ForgotPassword'
+import HomepageCandidates from './HomepageCandidates' 
+import ViewUserProfile from './ViewUserProfile'
+import PremiumPage from './PremiumPage'
+import CreateCV from './CreateCV'
+import AdminDashboard from './AdminDashboard'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <BrowserRouter>
+    <>
+      {/* Thanh điều hướng nhanh - Chỉ dùng trong quá trình Dev để test giao diện */}
+      <nav style={navStyle}>
+        <Link to="/home">User Home</Link>
+        <Link to="/admin">Admin Dash</Link>
+        <Link to="/create-cv">Create CV</Link>
+      </nav>
+
       <Routes>
-        <Route path="/" element={
-          <>
-            <div>
-              <a href="https://vite.dev" target="_blank">
-                <img src={viteLogo} className="logo" alt="Vite logo" />
-              </a>
-              <a href="https://react.dev" target="_blank">
-                <img src={reactLogo} className="logo react" alt="React logo" />
-              </a>
-            </div>
-            <h1>Vite + React</h1>
-            <div className="card">
-              <button onClick={() => setCount((count) => count + 1)}>
-                count is {count}
-              </button>
-              <p>
-                Edit <code>src/App.jsx</code> and save to test HMR
-              </p>
-            </div>
+        {/* Điều hướng mặc định */}
+        <Route path="/" element={<Navigate to="/login" />} />
+        
+        {/* Tuyến đường công khai (Public Routes) */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        
+        {/* Tuyến đường cho Người dùng (Candidate Routes) */}
+        <Route path="/home" element={<HomepageCandidates />} />
+        <Route path="/profile" element={<ViewUserProfile />} />
+        <Route path="/premium" element={<PremiumPage />} />
+        <Route path="/create-cv" element={<CreateCV />} />
 
-            {/* Khu vực Test API cũ */}
-            <div style={{ marginTop: '40px', borderTop: '1px solid #666', paddingTop: '20px' }}>
-                <p style={{color: '#888'}}>--- Old Test API ---</p>
-                <TestApi />
-            </div>
+        {/* Tuyến đường cho Admin */}
+        <Route path="/admin" element={<AdminDashboard />} />
 
-            {/* 2. Thêm Component Test CV vào đây */}
-            <div style={{ marginTop: '40px', borderTop: '1px solid #666', paddingTop: '20px' }}>
-                <p style={{color: '#888'}}>--- CV Analyzer ---</p>
-                <CVAnalyzer />
-            </div>
-            
-            <p className="read-the-docs">
-              Click on the Vite and React logos to learn more
-            </p>
-          </>
-        } />
-
+        {/* Xử lý trang 404 - Nếu nhập sai URL sẽ về Login hoặc Home */}
+        <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
-    </BrowserRouter>
+    </>
   )
 }
+
+// Giữ nguyên Style của bạn nhưng tối ưu hiển thị
+const navStyle = {
+  position: 'fixed',
+  bottom: '20px', // Chuyển xuống dưới để không đè lên Header chính của trang
+  left: '50%',
+  transform: 'translateX(-50%)',
+  zIndex: 1000,
+  display: 'flex',
+  gap: '15px',
+  background: 'rgba(24, 25, 107, 0.9)', // Đổi màu tím tối cho chuyên nghiệp
+  padding: '12px 20px',
+  borderRadius: '50px',
+  boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
+  fontSize: '13px',
+  fontWeight: '600'
+};
+
+// Lưu ý: Trong các Link bên trên, bạn cần thêm CSS để đổi màu chữ thành trắng (white)
 
 export default App

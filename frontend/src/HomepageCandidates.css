@@ -1,0 +1,293 @@
+:root {
+  --uth-blue: #00d1b2;
+  --header-grad: linear-gradient(90deg, #18196b 0%, #3e3ca0 100%);
+  --bg-color: #f3f2ef;
+  --card-border: #dce6f1;
+}
+
+.hp-container {
+  background-color: var(--bg-color);
+  min-height: 100vh;
+  font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* --- HEADER --- */
+.hp-header {
+  background: var(--header-grad);
+  height: 70px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 40px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.header-left-section {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  max-width: 650px;
+}
+
+.logo-vertical { line-height: 1.1; margin-right: 25px; cursor: pointer; }
+.logo-line { color: var(--uth-blue); font-weight: 900; font-size: 1.1rem; letter-spacing: 0.5px; }
+
+.search-wrapper {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  padding: 8px 15px;
+  flex-grow: 1;
+  max-width: 450px;
+}
+
+.search-icon-svg { color: rgba(255, 255, 255, 0.7); display: flex; align-items: center; }
+.search-wrapper input {
+  background: transparent; border: none; color: white; width: 100%;
+  outline: none; margin-left: 10px; font-size: 13px;
+}
+.search-wrapper input::placeholder { color: rgba(255,255,255,0.7); }
+
+.header-nav { display: flex; gap: 25px; align-items: center; }
+
+.nav-item {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 11px;
+  cursor: pointer;
+  white-space: nowrap;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s;
+}
+.nav-item.active { color: white; font-weight: bold; border-bottom: 2px solid white; padding-bottom: 4px; }
+
+/* --- TRANG NHỎ ACCOUNT (DROPDOWN) --- */
+.account-btn-container { position: relative; }
+.account-icon-wrapper { display: flex; align-items: center; gap: 2px; }
+
+.mini-account-page {
+  position: absolute;
+  top: 60px;
+  right: -20px;
+  width: 300px;
+  background: linear-gradient(145deg, #18196b 0%, #4a48b0 100%);
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  z-index: 2000;
+  cursor: default;
+}
+
+.mini-page-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+
+.mini-item {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  color: white; padding: 15px; border-radius: 12px; transition: all 0.3s ease; cursor: pointer;
+}
+.mini-item:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(-2px); }
+
+.icon-box {
+  width: 50px; height: 50px; border: 1.5px solid rgba(255,255,255,0.4);
+  border-radius: 12px; display: flex; align-items: center; justify-content: center;
+  margin-bottom: 10px;
+}
+.mini-footer {
+  margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1);
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  color: rgba(255,255,255,0.6); font-size: 12px; cursor: pointer;
+}
+.mini-footer:hover { color: white; }
+.rotate { transform: rotate(180deg); transition: transform 0.3s; }
+
+/* --- NOTIFICATION BOX (INBOX) --- */
+.notification-overlay {
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(0, 0, 0, 0.2); z-index: 3000;
+  display: flex; justify-content: center; align-items: center;
+}
+.notification-box {
+  width: 400px; background: white; border-radius: 12px;
+  overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+  animation: slideUp 0.3s ease-out;
+}
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+.notify-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; }
+.header-title { display: flex; align-items: center; gap: 5px; font-weight: bold; font-size: 18px; }
+.settings-icon { color: #666; cursor: pointer; }
+
+.notify-tabs { display: flex; border-bottom: 1px solid #eee; padding: 0 10px; }
+.tab { padding: 10px 15px; font-size: 14px; font-weight: 600; color: #666; cursor: pointer; position: relative; }
+.tab.active { color: #000; }
+.tab.active::after { content: ""; position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: #00a2ff; }
+
+.notify-content { max-height: 400px; overflow-y: auto; }
+.notify-item { display: flex; gap: 12px; padding: 15px 20px; transition: background 0.2s; cursor: pointer; }
+.notify-item:hover { background: #f9f9f9; }
+.notify-info { flex: 1; }
+.notify-user { font-weight: bold; font-size: 14px; margin-bottom: 2px; }
+.notify-msg { font-size: 13px; color: #888; line-height: 1.4; margin-bottom: 5px; }
+.notify-time { font-size: 11px; color: #bbb; }
+
+/* --- LAYOUT MAIN --- */
+.hp-main {
+  max-width: 1128px; margin: 20px auto;
+  display: grid; grid-template-columns: 225px 1fr 290px; gap: 24px; padding: 0 15px;
+}
+.card {
+  background: white; border: 1px solid var(--card-border); border-radius: 8px;
+  margin-bottom: 12px; overflow: hidden; box-shadow: 0 0 0 1px rgba(0,0,0,0.05);
+}
+.banner-purple { height: 54px; background: linear-gradient(180deg, #1b1b6e 0%, #7658f1 100%); }
+.avatar-circle {
+  width: 68px; height: 68px; background: white; border-radius: 50%;
+  margin: -34px auto 12px; border: 2px solid white;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.profile-info { text-align: center; padding: 0 12px 16px; }
+.user-name { font-weight: bold; font-size: 16px; color: #1a1a1a; }
+.sub-text { font-size: 12px; color: #666; margin-top: 4px; }
+
+.action-card { padding: 12px 16px; cursor: pointer; }
+.action-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 600; color: #444; }
+.premium-border { border-left: 5px solid #ffbb00; }
+
+.menu-list-card { padding: 8px 0; }
+.menu-row { padding: 10px 16px; font-size: 13px; color: #666; display: flex; align-items: center; gap: 12px; cursor: pointer; }
+.menu-row:hover { background-color: #f3f2ef; }
+
+/* Cột giữa & Phải (Giữ nguyên phần cũ) */
+.col-center { height: calc(100vh - 90px); overflow-y: auto; scrollbar-width: none; }
+.col-center::-webkit-scrollbar { display: none; }
+.banner-box { text-align: center; padding: 20px; }
+.placeholder-img-sim { height: 140px; background: #f9f9f9; display: flex; align-items: center; justify-content: center; border-radius: 8px; }
+.btn-main-action { background: #3f3da0; color: white; border: none; padding: 10px 30px; border-radius: 20px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+.post-top { display: flex; padding: 12px; gap: 12px; }
+.brand-sq { width: 48px; height: 48px; background: #00a2ff; border-radius: 4px; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+.post-mid p { padding: 0 16px 12px; font-size: 14px; color: #333; }
+.post-img-sim { height: 350px; background: #eee; display: flex; align-items: center; justify-content: center; color: #aaa; }
+.post-foot { display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #f0f2f5; color: #666; font-size: 13px; font-weight: 600; }
+.foot-item { display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 8px 12px; border-radius: 4px; }
+.foot-item:hover { background-color: #f3f2ef; }
+
+.news-header-section { display: flex; justify-content: space-between; padding: 15px 15px 10px; }
+.news-title { font-weight: bold; font-size: 16px; }
+.news-tag { background: #f0f2f5; color: #3f3da0; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
+.news-content-placeholder { height: 180px; background: #fafafa; border: 1px dashed #ccc; margin: 0 15px 15px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+
+.chat-container-dock { position: sticky; bottom: 0; background: white; border: 1px solid #ddd; border-radius: 10px 10px 0 0; }
+.chat-header-dock { display: flex; justify-content: space-between; padding: 12px 15px; border-bottom: 1px solid #f0f2f5; }
+.chat-user-info { display: flex; align-items: center; gap: 8px; font-weight: bold; font-size: 14px; }
+.online-dot { width: 8px; height: 8px; background: #05a505; border-radius: 50%; }
+.chat-controls { display: flex; gap: 12px; color: #666; cursor: pointer; align-items: center; }
+.chat-body-placeholder { height: 60px; display: flex; align-items: center; justify-content: center; }
+
+/* --- BỔ SUNG VÀO FILE CSS HIỆN TẠI --- */
+
+/* Tag phân loại bên cạnh tên trong Notify */
+.type-tag-small {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 8px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.type-tag-small.admin {
+  background-color: #eef2ff;
+  color: #18196b;
+  border: 1px solid #dce6f1;
+}
+
+.type-tag-small.recruiter {
+  background-color: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+/* Khi không có thông báo nào */
+.empty-state-notify {
+  padding: 40px;
+  text-align: center;
+  color: #aaa;
+  font-size: 14px;
+  font-style: italic;
+}
+
+/* Đảm bảo Notify Content có thanh cuộn mượt */
+.notify-content::-webkit-scrollbar {
+  width: 5px;
+}
+.notify-content::-webkit-scrollbar-thumb {
+  background: #dce6f1;
+  border-radius: 10px;
+}
+
+/* Hover hiệu ứng cho các tab */
+.tab:hover {
+  color: #000;
+}
+
+/* --- TRANG TRÍ Ô PREMIUM SHORTCUT (BỔ SUNG) --- */
+.premium-shortcut-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  cursor: pointer;
+  background-color: white;
+  /* Viền vàng đặc trưng bên trái */
+  border-left: 5px solid #ffbb00 !important; 
+  transition: all 0.2s ease-in-out;
+  margin-bottom: 12px;
+  border-radius: 8px; /* Bo góc khớp với các card khác */
+  border: 1px solid var(--card-border);
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.05);
+}
+
+.premium-shortcut-card:hover {
+  background-color: #fffbeb; /* Màu nền vàng nhạt khi hover */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.premium-content {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.premium-title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 800;
+  color: #1a1a1a;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.premium-desc {
+  font-size: 11px;
+  color: #666;
+  margin-top: 3px;
+  line-height: 1.2;
+}
+
+.premium-key-icon {
+  color: #ffbb00;
+  filter: drop-shadow(0 0 1px rgba(255, 187, 0, 0.2));
+  flex-shrink: 0;
+  margin-left: 10px;
+}
+
+/* Hiệu ứng xoay icon chìa khóa khi di chuột vào card */
+.premium-shortcut-card:hover .premium-key-icon {
+  transform: rotate(15deg) scale(1.1);
+}

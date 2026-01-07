@@ -1,0 +1,329 @@
+/* --- PHẦN 1: GIỮ NGUYÊN TOÀN BỘ CSS GỐC CỦA TRANG CREATE CV --- */
+.cv-builder-content {
+  background-color: #f3f2ef;
+  padding: 40px 20px;
+  min-height: calc(100vh - 70px);
+  display: flex;
+  justify-content: center;
+}
+
+.cv-paper {
+  background: white;
+  width: 1000px;
+  display: flex;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  border-radius: 4px;
+}
+
+.cv-left-aside {
+  width: 320px;
+  border-right: 1px solid #eee;
+  padding: 40px 25px;
+  background-color: #fff;
+}
+
+.cv-avatar-section {
+  text-align: center;
+  margin-bottom: 35px;
+}
+
+.cv-avatar-wrapper {
+  width: 150px;
+  height: 150px;
+  border: 3px dashed #d1d5db;
+  border-radius: 50%;
+  margin: 0 auto 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+
+.cv-avatar-wrapper:hover {
+  border-color: #6366f1;
+  background-color: #f5f3ff;
+}
+
+.cv-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cv-avatar-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  color: #6366f1;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.cv-hint-text {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.cv-section { margin-bottom: 25px; }
+
+.cv-section-title {
+  font-size: 15px;
+  color: #1f2937;
+  border-bottom: 2px solid #f3f4f6;
+  padding-bottom: 6px;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cv-side-input {
+  width: 100%;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 13px;
+  resize: none;
+  height: 80px;
+}
+
+.cv-side-input.large { height: 150px; }
+
+.cv-right-main {
+  flex: 1;
+  padding: 40px 50px;
+}
+
+.cv-form-group { margin-bottom: 20px; }
+
+.cv-form-group label {
+  display: block;
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: #374151;
+}
+
+.cv-form-group input, 
+.cv-form-group textarea {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: border 0.2s;
+}
+
+.cv-form-group input:focus, 
+.cv-form-group textarea:focus {
+  border-color: #6366f1;
+  background-color: #fff;
+}
+
+.cv-main-textarea {
+  width: 100%;
+  height: 300px;
+  padding: 15px;
+  border: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+  border-radius: 8px;
+  resize: vertical;
+}
+
+/* --- PHẦN 2: ĐIỀU CHỈNH CỤM NÚT SAVE & REVIEW --- */
+.cv-actions {
+  margin-top: 40px;
+  text-align: right;
+  border-top: 1px solid #eee;
+  padding-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.btn-save-cv, .btn-review-cv {
+  background-color: #18196b;
+  color: white;
+  border: none;
+  padding: 10px 35px;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-save-cv:hover, .btn-review-cv:hover {
+  opacity: 0.9;
+}
+
+/* --- LỚP PHỦ MỜ TOÀN MÀN HÌNH --- */
+.cv-preview-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7); /* Làm tối nền để nổi bật modal */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+/* --- KHUNG CHỨA MODAL --- */
+.cv-preview-modal {
+  position: relative;
+  width: 900px; /* Độ rộng cố định giống tờ A4 */
+  max-height: 95vh;
+  background: white; /* Đảm bảo luôn có nền trắng */
+  border-radius: 8px;
+  overflow-y: auto;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+/* --- BỐ CỤC CHÍNH BÊN TRONG (GIỐNG ẢNH DEMO) --- */
+.preview-paper-layout {
+  display: flex;
+  min-height: 1000px; /* Chiều cao tối thiểu để giữ form dáng */
+  background: white;
+}
+
+/* --- CỘT TRÁI (TÍM NHẠT) --- */
+.preview-left-col {
+  width: 35%; /* Tương đương 315px */
+  background-color: #f8f7ff; /* Màu tím cực nhạt từ ảnh mẫu */
+  padding: 40px 30px;
+  border-right: 1px solid #eee;
+}
+
+/* --- CỘT PHẢI (TRẮNG) --- */
+.preview-right-col {
+  width: 65%;
+  background-color: white;
+  padding: 60px 50px;
+}
+
+/* --- CHI TIẾT CỘT TRÁI --- */
+/* --- ĐIỀU CHỈNH AVATAR CĂN GIỮA TUYỆT ĐỐI --- */
+.preview-avatar-circle {
+  width: 160px;          /* Kích thước vòng tròn */
+  height: 160px;
+  border-radius: 50%;
+  overflow: hidden;      /* Cắt các phần ảnh thừa ra ngoài vòng tròn */
+  margin: 0 auto 30px;   /* Căn giữa khung tròn so với cột trái */
+  border: 5px solid #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  background: #e5e7eb;   /* Màu nền nhẹ khi chưa có ảnh */
+  
+  /* Hai dòng này giúp căn giữa ảnh/icon bên trong */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.preview-avatar-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;     /* Đảm bảo ảnh lấp đầy vòng tròn mà không bị méo */
+  display: block;
+}
+
+/* Trường hợp dùng Icon mặc định khi chưa upload ảnh */
+.preview-avatar-circle svg {
+  display: block;
+  margin: auto;
+}
+
+/* --- ĐẢM BẢO CỘT TRÁI CĂN GIỮA NỘI DUNG --- */
+.preview-left-col {
+  width: 320px;
+  background-color: #f8f7ff;
+  padding: 40px 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch; /* Để các tiêu đề gạch ngang chiếm hết chiều rộng */
+}
+
+.preview-side-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a1a;
+  text-transform: uppercase;
+  margin-top: 30px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 5px;
+}
+
+/* --- CHI TIẾT CỘT PHẢI --- */
+.preview-name {
+  font-size: 36px;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.preview-field {
+  font-size: 18px;
+  color: #666;
+  margin-top: 5px;
+  margin-bottom: 50px;
+  font-weight: 500;
+}
+
+.preview-main-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-top: 40px;
+  margin-bottom: 15px;
+  position: relative;
+}
+
+/* Gạch chân nhỏ dưới tiêu đề chính giống ảnh */
+.preview-main-title::after {
+  content: "";
+  display: block;
+  width: 50px;
+  height: 2px;
+  background: #18196b;
+  margin-top: 8px;
+}
+
+/* --- TEXT FORMATTING --- */
+.pre-wrap {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #444;
+}
+
+/* --- NÚT ĐÓNG --- */
+.close-preview-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: #18196b;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  z-index: 10002;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
