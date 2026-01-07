@@ -1,4 +1,4 @@
-from database.models.users import Users, Candidates, Recruiters, Companies
+from database.models.users import Users, Candidates, Companies
 from database.models.jobs import Jobs
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
@@ -53,8 +53,8 @@ def Get_All_Candidates():
     
 def Get_All_Recruiters():
     try: 
-        return Recruiters.objects.all()
-    except Recruiters.DoesNotExist:
+        return Users.objects.get(role = "recruiter")
+    except Users.DoesNotExist:
         return None
 
 def Black_list_token(refresh_token_string):
@@ -69,10 +69,10 @@ def Black_list_token(refresh_token_string):
 
 def Is_Recruiter(user):
     try:
-        recruiter = Recruiters.objects.get(user=user)
-        return recruiter
-    except Recruiters.DoesNotExist:
-        return None
+        Users.objects.get(role = user.role)
+        return True
+    except Users.DoesNotExist:
+        return False
 
 def Is_Super_User(user):
     if user.is_superuser:
@@ -81,19 +81,20 @@ def Is_Super_User(user):
         return False
 
 def Same_Company(user, job_id):
-    company_of_recruiter = user.recruiter_profile.company
-
-    if Jobs.objects.filter(
-        id=job_id,
-        companiesid=company_of_recruiter
-    ).exists():
-        return True
-    else:
+    if Is_Recruiter(user):
+        company_of_recruiter = user.company
+        if Jobs.objects.filter(
+            id=job_id,
+            companiesid=company_of_recruiter
+        ).exists():
+            return True
+        else:
+            return False
+    else: 
         return False
 
 def User_Have_Company(user, company_id):
-    company_of_recruiter = user.recruiter_profile.company
-    
+    company_of_recruiter = user.company
     if Companies.objects.filter(
         id = company_id,
         companiesid = company_of_recruiter

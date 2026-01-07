@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from dj_rest_auth.registration.serializers import RegisterSerializer
-from database.models.users import Users,Candidates,Recruiters, Companies
+from database.models.users import Users,Candidates, Companies
 from database.models.jobs import Jobs
 
 # ===== USER =====
@@ -40,13 +40,13 @@ class RecruiterSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source="user.email", read_only=True)
 
     class Meta:
-        model = Recruiters
+        model = Users
         fields = ['id', 'company', 'user', 'username', 'email']
 
 class JobSerializer(serializers.ModelSerializer):
     class Meta:
         model = Jobs
-        fields = "__all__"
+        fields = ['title', 'description', 'location', 'skill', 'salary_min', 'salary_max']
 
 class CompanySerializer(serializers.ModelSerializer):  # Serializer cho Company
     class Meta:
@@ -70,8 +70,6 @@ class CustomRegisterSerializer(RegisterSerializer):
         user.save()
         if role == 'candidate':
             Candidates.objects.create(user=user)
-        elif role == 'recruiter':
-            Recruiters.objects.create(user=user)
 
     def get_cleaned_data(self):
         return {

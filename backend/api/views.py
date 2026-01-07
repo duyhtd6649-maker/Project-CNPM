@@ -6,7 +6,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import status
 from apps import users_services, cv_services
-from database.models.users import Users, Recruiters, Companies
+from database.models.users import Users, Companies
 from database.models.jobs import Jobs 
 from .serializers import UserSerializer, CVScanSerializer, LogoutSerializer, CandidateSerializer, UserNameSerializer, JobSerializer,RecruiterSerializer, CustomTokenObtainPairSerializer, CompanySerializer
 from drf_yasg import openapi
