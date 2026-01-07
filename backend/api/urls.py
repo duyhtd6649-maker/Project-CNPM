@@ -1,5 +1,5 @@
 from . import views
-from .views import profile_api, create_job, job_api, view_job,CustomTokenObtainPairView
+from .views import profile_api, create_job, job_api, view_job, company_create, view_companies, delete_companies, CustomTokenObtainPairView
 from django.urls import path, include
 from dj_rest_auth.views import PasswordResetView, PasswordResetConfirmView
 from rest_framework_simplejwt.views import TokenVerifyView
@@ -13,12 +13,15 @@ urlpatterns = [
     path('user/',views.GetUserInfor),
     path('user/profile/', profile_api),
     path('views/viewjobs/', view_job),
+    path('views/viewcompanies/', view_companies),
     path('user/<str:username>/',views.GetUserbyUsername),
     # ===== CANDIDATE =====
     path('candidate/cvanalyzer/',views.Analyze_Cv),
     # ===== RECRUITER =====
     path('recruiter/jobs/', create_job),
     path('recruiter/jobs/<uuid:id>/', job_api),
+    path('recruiter/company/<uuid:id>/', delete_companies),
+    path('recruiter/conpany_create', company_create),
     # ===== ADMIN =====
     path('admin/banuser/',views.BanUser),
     path('admin/unbanuser/',views.UnBanUser),
@@ -33,4 +36,5 @@ urlpatterns = [
     path("api/auth/jwt/refresh/", TokenRefreshView.as_view()),
     path("api/auth/jwt/from-session/", views.jwt_from_session),
     path("api/auth/logout/", views.logout),
+    
 ]

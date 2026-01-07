@@ -1,4 +1,5 @@
-from database.models.users import Users, Candidates, Recruiters
+from database.models.users import Users, Candidates, Recruiters, Companies
+from database.models.jobs import Jobs
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 
@@ -78,6 +79,32 @@ def Is_Super_User(user):
         return True
     else:
         return False
+
+def Same_Company(user, job_id):
+    company_of_recruiter = user.recruiter_profile.company
+
+    if Jobs.objects.filter(
+        id=job_id,
+        companiesid=company_of_recruiter
+    ).exists():
+        return True
+    else:
+        return False
+
+def User_Have_Company(user, company_id):
+    company_of_recruiter = user.recruiter_profile.company
+    
+    if Companies.objects.filter(
+        id = company_id,
+        companiesid = company_of_recruiter
+    ).exists():
+        return True
+    else:
+        return False
+
+
+
+
 
     
 

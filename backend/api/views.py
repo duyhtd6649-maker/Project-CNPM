@@ -8,7 +8,7 @@ from rest_framework import status
 from apps import users_services, cv_services
 from database.models.users import Users, Recruiters, Companies
 from database.models.jobs import Jobs 
-from .serializers import UserSerializer, CVScanSerializer, LogoutSerializer, CandidateSerializer, UserNameSerializer, JobSerializer,RecruiterSerializer, CustomTokenObtainPairSerializer
+from .serializers import UserSerializer, CVScanSerializer, LogoutSerializer, CandidateSerializer, UserNameSerializer, JobSerializer,RecruiterSerializer, CustomTokenObtainPairSerializer, CompanySerializer
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 import json
@@ -154,20 +154,75 @@ def Analyze_Cv(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_job(request):
-    from database.models.users import Recruiters
+    user = request.user
 
-    recruiter, _ = Recruiters.objects.get_or_create(
-        user=request.user
-    )
+    if users_services.Is_Recruiter(user):
+        if users_services.User_Have_Company(user):
+            from database.models.users import Recruiters
 
-    serializer = JobSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save(recruiter=recruiter)
-        return Response(serializer.data, status=201)
-    return Response(serializer.errors, status=400)
-    
+            recruiter, _ = Recruiters.objects.get_or_create(
+                user=request.user
+            )
+
+            serializer = JobSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save(recruiter=recruiter)
+                return Response(serializer.data, status=201)
+            return Response(serializer.errors, status=400)
+    else:
+        return Response({"detail": "User don't have permisson"})
+
+#Tao company
+@swagger_auto_schema(
+    method='post',
+    request_body=JobSerializer,
+    responses={200: JobSerializer}
+)
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def company_create(request, id):
+    user = request.user
+    recruiter = users_services.Is_Recruiter(user)   
+    superuser = users_services.Is_Super_User(user)
+    if not recruiter and not superuser:
+        return Response({"detail": "not a recruiter"}, status=403)
+    if recruiter.company is not None:
+        return Response({"detail": "You already belong to a company"}, status=400)
+    if request.method == 'POST':
+        serializer = CompanySerializer(data = request.data)
+        if serializer.is_valid():
+            company = serializer.save()
+            recruiter.company = company
+            recruiter.save()
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+
+
+#view company
+@api_view(['GET'])
+def view_companies(request):
+    companies = Companies.objects.all()
+    serializer = CompanySerializer(companies, many=True)
+    return Response(serializer.data)
+
+#delete company
+@swagger_auto_schema(
+    method='delete',
+    responses={204: 'Company deleted successfully'}
+)
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_companies(request, id):
+    user = request.user
+    recruiter = users_services.Is_Recruiter(user)
+    if not recruiter:
+        return Response({"detail": "is not a recruiter"}, status=403)
+    else:
+        company = get_object_or_404(Companies, id=id, recruiter=recruiter)
+        company.delete()
+        return Response({"detail": "Company deleted"}, status=status.HTTP_204_NO_CONTENT)
+
 #Sua, xoa job
-
 @swagger_auto_schema(
     method='put',
     request_body=JobSerializer,
@@ -178,19 +233,25 @@ def create_job(request):
 def job_api(request, id):
     user = request.user
     recruiter = users_services.Is_Recruiter(user)
-    if not recruiter:
-        return Response({"Detail": "not a recruiter"}, status= status.HTTP_400_BAD_REQUEST)
-    job = get_object_or_404(Jobs, id=id, recruiter=recruiter)
-    if request.method == 'PUT':
-        serializer = JobSerializer(job, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    superuser = users_services.Is_Super_User(user)
+    SameCompany = users_services.Same_Company(user, id)
 
-    # DELETE
-    job.delete()
-    return Response({"message": "Deleted"}, status=status.HTTP_204_NO_CONTENT)
+    if not (recruiter and SameCompany) and not superuser :
+        return Response({"detail": "You don't work for this company."}, status=status.HTTP_403_FORBIDDEN)
+    else:
+        job = get_object_or_404(Jobs, id=id)
+        
+        if request.method == 'PUT':
+
+            serializer = JobSerializer(job, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # DELETE
+        job.delete()
+        return Response({"message": "Deleted"}, status=status.HTTP_204_NO_CONTENT)
 
 #view job
 @api_view(['GET'])

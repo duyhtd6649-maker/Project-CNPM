@@ -2,14 +2,14 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from dj_rest_auth.registration.serializers import RegisterSerializer
-from database.models.users import Users,Candidates,Recruiters
+from database.models.users import Users,Candidates,Recruiters, Companies
 from database.models.jobs import Jobs
 
 # ===== USER =====
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = Users
-        fields = ['id','username','email','role','is_active']
+        fields = ['id','username','email', 'company','role','is_active']
 
 class UserNameSerializer(serializers.Serializer):
     username = serializers.CharField(required = True)
@@ -22,7 +22,7 @@ class CandidateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Candidates
         fields = ['id', 'description', 'user', 'username', 'email']
-
+        
 class CVScanSerializer(serializers.Serializer):
     file = serializers.FileField(required=True)
     targetjob = serializers.CharField(max_length=255)
@@ -47,6 +47,11 @@ class JobSerializer(serializers.ModelSerializer):
     class Meta:
         model = Jobs
         fields = "__all__"
+
+class CompanySerializer(serializers.ModelSerializer):  # Serializer cho Company
+    class Meta:
+        model = Companies                        
+        fields = ["id", "name", "description", "website", "logo_url", "address", "tax_code", "note"]
 
 # ===== LOGIN / SIGNUP =====
 class CustomRegisterSerializer(RegisterSerializer):
@@ -89,6 +94,8 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     
 class LogoutSerializer(serializers.Serializer):
     refresh = serializers.CharField()
+
+
 
 
 

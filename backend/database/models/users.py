@@ -13,6 +13,7 @@ class Users(AbstractUser):
     phone = models.CharField(db_column='Phone', max_length=255, blank=True, null=True)  # Field name made lowercase.
     email = models.EmailField(unique=True, null=False, blank=False)
     fullname = models.CharField(db_column='Fullname', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    company = models.CharField(db_column='Company', max_length = 255, blank = True, null = True)
     avatar_url = models.CharField(db_column='AvatarUrl', max_length=500, blank=True, null=True)  # Field name made lowercase.
     auth_provider = models.CharField(db_column='AuthProvider', max_length=100, blank=True, null=True)  # Field name made lowercase.
     created_date = models.DateTimeField(db_column='CreatedDate', auto_now_add=True, null=True)  # Field name made lowercase.
