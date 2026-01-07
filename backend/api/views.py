@@ -21,13 +21,7 @@ from django.shortcuts import get_object_or_404
 # =============================================================================================================== #
 @api_view(['GET'])
 def GetUserInfor(request):
-    user = Users.objects.all()
-    serializer = UserSerializer(user, many = True)
-    return Response(serializer.data)
-
-@api_view(['GET'])
-def GetUserInfor(request):
-    user = Users.objects.all()
+    user = users_services.Get_User_Info()
     serializer = UserSerializer(user, many = True)
     return Response(serializer.data)
 

@@ -3,6 +3,9 @@ from database.models.jobs import Jobs
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 
+def Get_User_Info():
+    return Users.objects.all()
+
 def Get_User_by_username(username):
     try:
         return Users.objects.get(username=username)

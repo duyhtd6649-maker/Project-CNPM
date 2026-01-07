@@ -2,7 +2,7 @@ import uuid
 from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from .users import Companies, Candidates
+from .users import Companies, Candidates, Recruiters
 from .CV import Cvs
 
 class Categories(models.Model):
@@ -22,7 +22,8 @@ class Categories(models.Model):
 class Jobs(models.Model):
     id = models.CharField(db_column='Id', primary_key=True, max_length=255,default=uuid.uuid4,editable=False)  # Field name made lowercase.
     category = models.ForeignKey('Categories', on_delete=models.SET_NULL, db_column='CategoryId',null=True,blank=True,related_name='jobs')  # Field name made lowercase.
-    companiesid = models.ForeignKey('Companies', on_delete=models.SET_NULL, db_column='CompanyId',null=True,blank=True,related_name='jobs')  # Field name made lowercase.
+    company = models.ForeignKey('Companies', on_delete=models.SET_NULL, db_column='CompanyId',null=True,blank=True,related_name='jobs')  # Field name made lowercase.    
+    recruiter = models.ForeignKey('Recruiters', on_delete=models.SET_NULL, db_column='RecruiterId',null=True,blank=True,related_name='jobs')  # Field name made lowercase.
     title = models.CharField(db_column='Title', max_length=255)  # Field name made lowercase.
     description = models.TextField(db_column='Description', blank=True, null=True)  # Field name made lowercase.
     location = models.CharField(db_column='location',max_length=255,blank= True,null= False)
@@ -42,8 +43,8 @@ class Jobs(models.Model):
 
 class Applications(models.Model):
     id = models.CharField(db_column='Id', primary_key=True, max_length=255,default=uuid.uuid4,editable=False)  # Field name made lowercase.
-    jobid = models.ForeignKey('Jobs', on_delete=models.CASCADE, db_column='JobId', blank=True, null=True,related_name='applications')  # Field name made lowercase.
-    candidateid = models.ForeignKey('Candidates', on_delete=models.CASCADE, db_column='CandidateId', blank=True, null=True,related_name='applications')  # Field name made lowercase.
+    job = models.ForeignKey('Jobs', on_delete=models.CASCADE, db_column='JobId', blank=True, null=True,related_name='applications')  # Field name made lowercase.
+    candidate = models.ForeignKey('Candidates', on_delete=models.CASCADE, db_column='CandidateId', blank=True, null=True,related_name='applications')  # Field name made lowercase.
     cvsid = models.ForeignKey('Cvs', on_delete=models.SET_NULL, db_column='CvId', blank=True, null=True,related_name='applications')  # Field name made lowercase.
     status = models.CharField(db_column='Status', max_length=20, blank=True, null=True)  # Field name made lowercase.
     created_date = models.DateTimeField(db_column='CreatedDate', auto_now_add=True, null=True)  # Field name made lowercase.
