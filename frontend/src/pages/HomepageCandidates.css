@@ -1,0 +1,418 @@
+:root {
+  --uth-blue: #00d1b2;
+  --header-grad: linear-gradient(90deg, #18196b 0%, #3e3ca0 100%);
+  --bg-color: #f3f2ef;
+  --card-border: #dce6f1;
+}
+
+.hp-container {
+  background-color: var(--bg-color);
+  min-height: 100vh;
+  font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* --- HEADER --- */
+.hp-header {
+  background: var(--header-grad);
+  height: 70px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 40px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.header-left-section {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  max-width: 650px;
+}
+
+.logo-vertical { line-height: 1.1; margin-right: 25px; cursor: pointer; }
+.logo-line { color: var(--uth-blue); font-weight: 900; font-size: 1.1rem; letter-spacing: 0.5px; }
+
+.search-wrapper {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  padding: 8px 15px;
+  flex-grow: 1;
+  max-width: 450px;
+}
+
+.search-icon-svg { color: rgba(255, 255, 255, 0.7); display: flex; align-items: center; }
+.search-wrapper input {
+  background: transparent; border: none; color: white; width: 100%;
+  outline: none; margin-left: 10px; font-size: 13px;
+}
+.search-wrapper input::placeholder { color: rgba(255,255,255,0.7); }
+
+.header-nav { display: flex; gap: 25px; align-items: center; }
+
+.nav-item {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 11px;
+  cursor: pointer;
+  white-space: nowrap;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s;
+}
+.nav-item.active { color: white; font-weight: bold; border-bottom: 2px solid white; padding-bottom: 4px; }
+
+/* --- ACCOUNT DROPDOWN --- */
+.account-btn-container { position: relative; }
+.account-icon-wrapper { display: flex; align-items: center; gap: 2px; }
+
+.mini-account-page {
+  position: absolute;
+  top: 60px;
+  right: -20px;
+  width: 300px;
+  background: linear-gradient(145deg, #18196b 0%, #4a48b0 100%);
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  z-index: 2000;
+}
+
+.mini-page-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+
+.mini-item {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  color: white; padding: 15px; border-radius: 12px; transition: all 0.3s ease; cursor: pointer;
+}
+.mini-item:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(-2px); }
+
+.icon-box {
+  width: 50px; height: 50px; border: 1.5px solid rgba(255,255,255,0.4);
+  border-radius: 12px; display: flex; align-items: center; justify-content: center;
+  margin-bottom: 10px;
+}
+.mini-footer {
+  margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1);
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  color: rgba(255,255,255,0.6); font-size: 12px; cursor: pointer;
+}
+.rotate { transform: rotate(180deg); transition: transform 0.3s; }
+
+/* --- NOTIFICATIONS --- */
+.notification-overlay {
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(0, 0, 0, 0.2); z-index: 3000;
+  display: flex; justify-content: center; align-items: center;
+}
+.notification-box {
+  width: 400px; background: white; border-radius: 12px;
+  overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+.notify-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; }
+.header-title { display: flex; align-items: center; gap: 5px; font-weight: bold; font-size: 18px; }
+.notify-tabs { display: flex; border-bottom: 1px solid #eee; padding: 0 10px; }
+.tab { padding: 10px 15px; font-size: 14px; font-weight: 600; color: #666; cursor: pointer; position: relative; }
+.tab.active { color: #000; }
+.tab.active::after { content: ""; position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: #3e3ca0; }
+
+.type-tag-small { font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-left: 8px; font-weight: bold; text-transform: uppercase; }
+.type-tag-small.admin { background: #eef2ff; color: #18196b; }
+.type-tag-small.recruiter { background: #f0fdf4; color: #166534; }
+
+.notify-content { max-height: 400px; overflow-y: auto; }
+.notify-item { display: flex; gap: 12px; padding: 15px 20px; border-bottom: 1px solid #f9f9f9; }
+.notify-user { font-weight: bold; font-size: 14px; }
+.notify-msg { font-size: 13px; color: #666; margin-top: 4px; }
+.notify-time { font-size: 11px; color: #bbb; margin-top: 4px; }
+
+/* --- MAIN LAYOUT --- */
+.hp-main {
+  max-width: 1128px; margin: 20px auto;
+  display: grid; grid-template-columns: 225px 1fr 290px; gap: 24px; padding: 0 15px;
+}
+.card {
+  background: white; border: 1px solid var(--card-border); border-radius: 8px;
+  margin-bottom: 12px; overflow: hidden;
+}
+.banner-purple { height: 54px; background: linear-gradient(180deg, #1b1b6e 0%, #7658f1 100%); }
+.avatar-circle {
+  width: 68px; height: 68px; background: white; border-radius: 50%;
+  margin: -34px auto 12px; border: 2px solid white;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.profile-info { text-align: center; padding: 0 12px 16px; }
+.user-name { font-weight: bold; font-size: 16px; }
+.sub-text { font-size: 12px; color: #666; }
+
+/* --- PREMIUM CARD --- */
+.premium-shortcut-card {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 16px; cursor: pointer; border-left: 5px solid #ffbb00 !important;
+}
+.premium-shortcut-card:hover { background: #fffbeb; }
+.premium-title { margin: 0; font-size: 13px; font-weight: 800; text-transform: uppercase; }
+.premium-desc { font-size: 11px; color: #666; }
+.premium-key-icon { color: #ffbb00; }
+
+.action-card { padding: 12px 16px; cursor: pointer; }
+.action-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 600; }
+
+.menu-list-card { padding: 8px 0; }
+.menu-row { padding: 10px 16px; font-size: 13px; color: #666; display: flex; align-items: center; gap: 12px; cursor: pointer; }
+.menu-row:hover { background-color: #f3f2ef; }
+
+/* --- CENTER CONTENT --- */
+.col-center { height: calc(100vh - 90px); overflow-y: auto; scrollbar-width: none; }
+.banner-box { text-align: center; padding: 20px; }
+.placeholder-img-sim { height: 140px; background: #f9f9f9; display: flex; align-items: center; justify-content: center; border-radius: 8px; }
+.btn-main-action { background: #3f3da0; color: white; border: none; padding: 10px 30px; border-radius: 20px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+
+.post-top { display: flex; padding: 12px; gap: 12px; }
+.brand-sq { width: 48px; height: 48px; background: #00a2ff; border-radius: 4px; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+.post-mid p { padding: 0 16px 12px; font-size: 14px; }
+.post-foot { display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #f0f2f5; color: #666; font-size: 13px; font-weight: 600; }
+.foot-item { display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 8px 12px; border-radius: 4px; }
+
+/* --- IFRAME NHÚNG ITVIEC (DÀNH CHO CỘT PHẢI) --- */
+.news-header-section { display: flex; justify-content: space-between; padding: 15px 15px 10px; }
+.news-title { font-weight: bold; font-size: 14px; }
+.news-tag { background: #f0f2f5; color: #3f3da0; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
+
+.iframe-viewport {
+  width: calc(100% - 30px);
+  height: 380px;
+  margin: 0 15px;
+  overflow: hidden;
+  position: relative;
+  border-radius: 6px;
+  border: 1px solid #eee;
+  background: white;
+}
+
+.clipped-iframe {
+  width: 1000px;
+  height: 2000px;
+  position: absolute;
+  top: -100px;
+  left: 15px;
+  zoom : 1.8;
+  border: none;
+  transform: scale(0.38); /* Thu nhỏ vừa cột sidebar */
+  transform-origin: top left;
+}
+
+.iframe-footer {
+  padding: 12px;
+  font-size: 12px;
+  color: #3e3ca0;
+  text-align: center;
+  cursor: pointer;
+  font-weight: 600;
+  border-top: 1px solid #f0f2f5;
+}
+
+.news-content-placeholder { height: 180px; background: #fafafa; border: 1px dashed #ccc; margin: 0 15px 15px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+
+/* --- NEWS FEED LAYOUT --- */
+
+.col-center {
+  height: calc(100vh - 90px);
+  overflow-y: auto;
+  scrollbar-width: none; /* Firefox */
+}
+.col-center::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+
+/* Ô tạo bài viết */
+.create-post-mimic {
+  padding: 15px;
+  margin-bottom: 16px;
+}
+.post-input-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.fake-input {
+  background: #f0f2f5;
+  border-radius: 20px;
+  padding: 10px 18px;
+  flex: 1;
+  color: #65676b;
+  font-size: 14px;
+  cursor: pointer;
+}
+.fake-input:hover { background: #e4e6eb; }
+.post-actions-row {
+  display: flex;
+  border-top: 1px solid #eee;
+  padding-top: 10px;
+}
+.post-action-item {
+  flex: 1;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: #65676b;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.post-action-item:hover { background: #f2f2f2; }
+
+/* Các bài đăng nhúng Iframe */
+.news-feed-item {
+  margin-bottom: 16px;
+}
+.post-header {
+  display: flex;
+  padding: 12px 16px;
+  align-items: center;
+  gap: 12px;
+}
+.brand-logo-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+}
+.cnet-bg { background: #cc0000; }
+.tc-bg { background: #00a550; }
+
+.post-meta { flex: 1; }
+.post-author { font-weight: bold; font-size: 14px; color: #050505; }
+.post-date { font-size: 12px; color: #65676b; display: flex; align-items: center; gap: 4px; }
+.post-more { color: #65676b; cursor: pointer; }
+
+/* Container của Iframe - Điểm mấu chốt để "cắt" bài báo */
+.post-iframe-container {
+  width: 100%;
+  height: 480px; /* Độ cao khung hình hiển thị trên feed */
+  overflow: hidden;
+  position: relative;
+  background: white;
+  border-top: 1px solid #f0f2f5;
+  border-bottom: 1px solid #f0f2f5;
+}
+
+.feed-iframe {
+  width: 1000px; /* Chiều rộng giả lập máy tính */
+  height: 3000px; /* Chiều cao để tải đủ nội dung */
+  position: absolute;
+  border: none;
+  
+  /* Thu nhỏ trang web lại để vừa với cột giữa của bạn */
+  transform: scale(0.65); 
+  transform-origin: top left;
+}
+
+.post-footer-actions {
+  display: flex;
+  padding: 4px 12px;
+}
+.f-action {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px;
+  color: #65676b;
+  font-weight: 600;
+  font-size: 13px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.f-action:hover { background: #f2f2f2; }
+
+/* Job Mini List Cột Phải */
+.job-mini-item {
+  display: flex;
+  gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f9f9f9;
+}
+.job-square { width: 40px; height: 40px; background: #eef2ff; border-radius: 4px; }
+.job-name { font-size: 13px; font-weight: bold; }
+.job-corp { font-size: 11px; color: #666; }
+
+/* --- MINI CHAT BOX STYLE --- */
+.chat-mini-card {
+  display: flex;
+  flex-direction: column;
+  height: 350px; /* Độ cao khung chat */
+}
+
+.chat-body {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: #f9f9f9;
+}
+
+.chat-bubble {
+  max-width: 80%;
+  padding: 8px 12px;
+  border-radius: 18px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.chat-bubble.received {
+  align-self: flex-start;
+  background-color: #e4e6eb;
+  color: #050505;
+}
+
+.chat-bubble.sent {
+  align-self: flex-end;
+  background-color: #3e3ca0;
+  color: white;
+}
+
+.chat-footer-input {
+  padding: 10px;
+  border-top: 1px solid #eee;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chat-input-wrapper {
+  flex: 1;
+  background: #f0f2f5;
+  border-radius: 20px;
+  padding: 5px 12px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.chat-input-wrapper input {
+  border: none;
+  background: transparent;
+  width: 100%;
+  font-size: 13px;
+  outline: none;
+}
+
+.chat-send-btn {
+  background: none;
+  border: none;
+  color: #3e3ca0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}

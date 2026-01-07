@@ -1,0 +1,203 @@
+.page-wrapper {
+  width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background-color: #f0f2f5;
+}
+
+.login-wrapper {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+/* --- PHẦN BÊN TRÁI --- */
+.login-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 40px 80px;
+  background-color: white;
+  position: relative; /* Để căn nút Admin Login */
+}
+
+/* Nút Admin Login góc phải */
+.admin-login-link {
+  position: absolute;
+  top: 25px;
+  right: 25px;
+  padding: 8px 18px;
+  border: 1.5px solid #7678ff;
+  border-radius: 20px;
+  color: #7678ff;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.admin-login-link:hover {
+  background-color: #7678ff;
+  color: white;
+}
+
+.header-logo {
+  font-weight: bold;
+  font-size: 28px;
+  margin-bottom: 60px;
+  font-weight: 900;
+}
+
+.logo-uth { color: #2d60af; margin-right: 5px; }
+.logo-workplace { color: #28a745; }
+
+.login-content {
+  max-width: 400px;
+  margin: 0 auto;
+  width: 100%;
+  text-align: center;
+}
+
+h1 { 
+  display: block;
+  color: #000000;
+  font-size: 32px;
+  margin-top: 20px; 
+  font-weight: 800;
+}
+
+.subtitle { color: #666; margin-bottom: 30px; font-size: 14px; }
+
+/* Input Styling */
+.input-group {
+  position: relative;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 15px 15px 15px 45px;
+  border: 1px solid #ddd;
+  border-radius: 15px;
+  background-color: #fcfcfc;
+  outline: none;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+.input-group i {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+  font-style: normal;
+}
+
+.forgot-password {
+  text-align: left;
+  margin-bottom: 30px;
+}
+
+.forgot-password a {
+  color: #837dff;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+/* Nút Login */
+.login-button {
+  width: 100%;
+  padding: 15px;
+  background: #7678ff;
+  color: white;
+  border: none;
+  border-radius: 15px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(118, 120, 255, 0.4);
+  transition: 0.3s;
+}
+
+.login-button:hover {
+  background: #5a5cd6;
+}
+
+.register-link {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #666;
+}
+
+.register-link a {
+  color: #7678ff;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+/* Divider */
+.divider {
+  margin: 40px 0 20px;
+  border-top: 1px solid #eee;
+  position: relative;
+}
+
+.divider span {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  padding: 0 15px;
+  color: #aaa;
+  font-size: 14px;
+}
+
+/* Social Login */
+.social-login {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.social-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 20px;
+  transition: transform 0.2s;
+}
+
+.social-btn:hover { transform: translateY(-3px); }
+
+.google { background-color: #f14336; }
+.oauth { background-color: #333333; }
+.gmail { background: linear-gradient(45deg, #4285f4, #34a853, #fbbc05, #ea4335); }
+
+/* --- PHẦN BÊN PHẢI --- */
+.login-right {
+  flex: 1;
+  background: linear-gradient(180deg, #1a0b8c 0%, #837dff 100%);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .login-right { display: none; }
+  .login-left { padding: 40px 20px; }
+  .admin-login-link { top: 15px; right: 15px; }
+}

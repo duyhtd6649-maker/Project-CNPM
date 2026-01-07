@@ -2,12 +2,12 @@
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 15px; /* Khoảng cách giữa chuông và nút Logout */
+  gap: 15px;
 }
 
 .logout-btn {
   background-color: #ffffff;
-  color: #ff4d4f; /* Màu đỏ cho text/border để nhận diện đăng xuất */
+  color: #ff4d4f;
   border: 1px solid #ff4d4f;
   padding: 10px 20px;
   border-radius: 10px;
@@ -23,8 +23,7 @@
   box-shadow: 0 4px 10px rgba(255, 77, 79, 0.2);
 }
 
-/* --- GIỮ NGUYÊN CODE CŨ CỦA BẠN DƯỚI ĐÂY --- */
-
+/* --- TRANG PROFILE CHÍNH --- */
 .view-profile-full-page {
   background-color: #ffffff;
   min-height: 100vh;
@@ -77,8 +76,15 @@
   display: flex;
   align-items: center;
   padding: 0 100px;
-  margin-top: -70px;
+  margin-top: -10px;
   position: relative;
+}
+
+/* Căn chỉnh Avatar Container để chứa cây bút */
+.avatar-container-fixed {
+  position: relative;
+  width: 140px;
+  height: 140px;
 }
 
 .avatar-circle {
@@ -88,11 +94,40 @@
   display: flex; justify-content: center; align-items: center;
   box-shadow: 0 5px 15px rgba(0,0,0,0.1);
   font-size: 70px; color: #4b49ac;
+  overflow: hidden;
 }
+
+.user-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Icon cây bút đè lên viền */
+.edit-pen-overlay {
+  position: absolute;
+  bottom: 130px;
+  right: -5px;
+  background: #ffffff;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  border: 1px solid #ddd;
+  font-size: 18px;
+  z-index: 5;
+  transition: 0.2s;
+}
+
+.edit-pen-overlay:hover { transform: scale(1.1); background: #f8f8f8; }
 
 .user-titles-fixed {
   margin-left: 30px;
-  margin-top: 80px;
+  margin-top: -10px;
   flex: 1;
 }
 
@@ -109,7 +144,7 @@
 .details-grid-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 30px 120px;
+  gap: 60px 120px;
   padding: 40px 100px 60px 100px;
   background-color: #ffffff;
 }
@@ -118,15 +153,16 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  margin-bottom: 20px;
 }
 
 .form-group label {
   font-weight: bold;
   color: #333;
-  font-size: 15px;
+  font-size: 23px;
 }
 
-.form-group input, .select-box-sim, .empty-achieve-box {
+.form-group input, .select-box-sim, .gender-select-custom {
   width: 100%;
   height: 48px;
   padding: 0 15px;
@@ -139,30 +175,23 @@
   align-items: center;
   justify-content: space-between;
   box-sizing: border-box;
+  transition: all 0.3s ease;
 }
 
-.help-text {
-  color: #7a78ff; margin-top: 15px; cursor: pointer;
-  font-weight: 500; display: inline-block;
+/* Đồ họa cho ô Gender Select khi Edit */
+.gender-select-custom {
+  border: 2px solid #7a78ff !important;
+  background-color: #fff !important;
+  color: #000 !important;
+  outline: none;
+  cursor: pointer;
 }
-/* Style cho ô đang trong trạng thái Edit */
-input.editing, .editing-select {
+
+input.active-input {
   border: 2px solid #7a78ff !important;
   background-color: #fff !important;
   color: #000 !important;
   outline: none;
 }
 
-.btn-edit-main-fixed.save-mode {
-  background-color: #28a745; /* Đổi sang màu xanh lá khi ở chế độ Save */
-}
-
-.form-group input {
-  transition: all 0.3s ease;
-}
-
-/* Header logout căn chỉnh */
-.header-actions {
-  display: flex;
-  align-items: center;
-}
+.save-btn { background-color: #28a745 !important; }
