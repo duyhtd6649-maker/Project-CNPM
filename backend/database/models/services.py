@@ -23,32 +23,9 @@ class Auditlogs(models.Model):
         db_table = 'systemlogs'
         app_label = 'database'
 
-class Conversation(models.Model):
-    id = models.CharField(db_column='Id', primary_key=True, max_length=255,default=uuid.uuid4,editable=False)  # Field name made lowercase.
-    name = models.CharField(db_column='Name', max_length=255, blank=True, null=False)  # Field name made lowercase.
-
-    class Meta:
-        db_table = 'conversation'
-        app_label = 'database'
-
-class Message(models.Model):
-    id = models.CharField(db_column='Id', primary_key=True, max_length=255,default=uuid.uuid4,editable=False)  # Field name made lowercase.
-    conversation = models.ForeignKey('Conversation', on_delete=models.CASCADE, db_column='ConversationId', blank=True,related_name='messages')  # Field name made lowercase.
-    sender = models.ForeignKey('Users', on_delete=models.CASCADE, db_column='SenderId', blank=True,related_name='message_sended')  # Field name made lowercase.
-    receiver = models.ForeignKey('Users', on_delete=models.CASCADE, db_column='ReceiverId', blank=True,related_name='message_received')  # Field name made lowercase.
-    content = models.TextField(db_column='Content', blank=True, null=True)  # Field name made lowercase.
-    created_date = models.DateTimeField(db_column='CreatedDate', auto_now_add=True, null=True)  # Field name made lowercase.
-    isdeleted = models.BooleanField(db_column='IsDeleted', default=False)  # Field name made lowercase. This field type is a guess.
-    note = models.CharField(db_column='Note', max_length=255, blank=True, null=True)  # Field name made lowercase.
- 
-    class Meta:
-        db_table = 'message'
-        app_label = 'database'
-
 class Notifications(models.Model):
     id = models.CharField(db_column='Id', primary_key=True, max_length=255,default=uuid.uuid4,editable=False)  # Field name made lowercase.
-    sender = models.ForeignKey('Admins', on_delete=models.SET_NULL, db_column='SenderId', blank=True,null= True,related_name='notifications_sended')  # Field name made lowercase.
-    receiver = models.ManyToManyField('Users', through='NotificationReceivers',related_name='notifications_received')  # Field name made lowercase.
+    receiver = models.ForeignKey('Users',on_delete=models.CASCADE,db_column='Receiver',related_name='notifications_received',null= True)  # Field name made lowercase.
     title = models.CharField(db_column='Title', max_length=255, blank=True, null=True)  # Field name made lowercase.
     message = models.TextField(db_column='Message')  # Field name made lowercase.
     type =  models.CharField(db_column='Type', max_length=50, blank=True, null=True)  # Field name made lowercase.
@@ -64,17 +41,6 @@ class Notifications(models.Model):
         db_table = 'notifications'
         app_label = 'database'
 
-class NotificationReceivers(models.Model):
-    id = models.CharField(db_column='Id', primary_key=True, max_length=255,default=uuid.uuid4,editable=False)  # Field name made lowercase.
-    notification = models.ForeignKey(Notifications, on_delete=models.CASCADE, db_column='NotificationId')
-    user = models.ForeignKey('Users', on_delete=models.CASCADE, db_column='ReceiverId')
-    is_read = models.BooleanField(db_column='IsRead', default=False)
-    isdeleted = models.BooleanField(db_column='IsDeleted', default=False)  # Field name made lowercase. This field type is a guess.
-    read_date = models.DateTimeField(db_column='ReadDate',blank=True, null=True)  # Field name made lowercase.
-
-    class Meta:
-        db_table = 'notificationsreceivers'
-        app_label = 'database'
 
 class Packages(models.Model):
     id = models.CharField(db_column='Id', primary_key=True, max_length=255,default=uuid.uuid4,editable=False)  # Field name made lowercase.

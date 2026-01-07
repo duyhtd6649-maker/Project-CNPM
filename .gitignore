@@ -8,6 +8,10 @@ Thumbs.db
 venv/
 env/
 
+media/
+*.pdf
+*.png
+*.jpg
 
 __pycache__/
 *.py[cod]

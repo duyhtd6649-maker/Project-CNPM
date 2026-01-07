@@ -7,7 +7,7 @@ from .users import Candidates
 
 class Cvs(models.Model):
     id = models.CharField(db_column='Id', primary_key=True, max_length=255,default=uuid.uuid4,editable=False)  # Field name made lowercase.
-    candidate = models.ForeignKey('Candidates', on_delete=models.CASCADE, db_column='CandidateId', blank=True, null=True,related_name='CV')  # Field name made lowercase.
+    candidate = models.ForeignKey('Candidates', on_delete=models.CASCADE, db_column='CandidateId', blank=True,related_name='CV', null=True)  # Field name made lowercase.
     file_name = models.CharField(db_column='FileName', max_length=255, blank=True, null=True)  # Field name made lowercase.
     file_url = models.FileField(upload_to='cvs/%Y/%m/', null=True, db_column='FileUrl')
     created_date = models.DateTimeField(db_column='CreatedDate', auto_now_add=True, null=True)  # Field name made lowercase.
