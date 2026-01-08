@@ -5,12 +5,12 @@ import {
   ShieldCheck, ClipboardList, MessageSquare, Gift, 
   Menu, X, Settings, Bell, ChevronDown, ArrowLeft
 } from 'lucide-react';
-import '../components/ManageInternalAccount.css';
+import '../components/ManageCandidateAccount.css';
 
-const ManageInternalAccount = () => {
+const ManageCandidateAccount = () => {
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('internal');
+  const [activeTab, setActiveTab] = useState('candidate');
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
@@ -36,7 +36,6 @@ const ManageInternalAccount = () => {
           <div className="nav-item-custom"><Gift size={20} /> <span>User Package Management</span></div>
         </nav>
       </aside>
-
       <aside className="manage-left-sidebar">
         <div className="sidebar-blue-header">
           <button className="header-menu-btn-white" onClick={toggleSidebar}><Menu size={20} /></button>
@@ -98,7 +97,6 @@ const ManageInternalAccount = () => {
           <div className="sub-nav-item logout-sub">Logout</div>
         </div>
       </aside>
-
       <div className="manage-right-content">
         <header className="manage-top-header">
           <div className="header-right-actions">
@@ -112,12 +110,12 @@ const ManageInternalAccount = () => {
 
         <main className="manage-view-area">
           <div className="view-header">
-            <h2>Internal Account Management</h2>
-            <button className="btn-add-new">Add New Account</button>
+            <h2>Candidate Account Management</h2>
+            <button className="btn-add-new">Add New Candidate</button>
           </div>
           <div className="view-content-card">
             <Settings size={64} color="#e2e8f0" />
-            <p>Select an account type to view details</p>
+            <p>Candidate account list and information will be displayed here</p>
           </div>
         </main>
       </div>
@@ -125,4 +123,4 @@ const ManageInternalAccount = () => {
   );
 };
 
-export default ManageInternalAccount;
+export default ManageCandidateAccount;
