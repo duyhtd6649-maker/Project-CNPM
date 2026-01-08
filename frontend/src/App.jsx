@@ -12,8 +12,10 @@ import CreateCV from './features/candidate/pages/CreateCV'
 // Admin pages
 import AdminLogin from './features/admin/pages/AdminLogin'
 import AdminDashboard from './features/admin/pages/AdminDashboard'
+// BỔ SUNG DÒNG NÀY:
+import ManageInternalAccount from './features/admin/pages/ManageInternalAccount' 
 
-// Import font (nên để ở index.css, nhưng giữ nguyên theo code hiện tại)
+// Import font
 const fontImport = document.createElement('style')
 fontImport.innerHTML = `
 @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap');
@@ -29,6 +31,8 @@ function App() {
         <Link to="/login" style={linkStyle}>Login</Link>
         <Link to="/admin-login" style={linkStyle}>Admin Login</Link>
         <Link to="/admin" style={linkStyle}>Admin Dash</Link>
+        {/* BỔ SUNG LINK DEV ĐỂ TEST NHANH */}
+        <Link to="/manage-internal-account" style={linkStyle}>Manage Acc</Link>
         <Link to="/create-cv" style={linkStyle}>Create CV</Link>
       </nav>
 
@@ -48,6 +52,8 @@ function App() {
         {/* Admin */}
         <Route path="/admin-login" element={<AdminLogin />} />
         <Route path="/admin" element={<AdminDashboard />} />
+        {/* QUAN TRỌNG: KHAI BÁO ROUTE TẠI ĐÂY */}
+        <Route path="/manage-internal-account" element={<ManageInternalAccount />} />
 
         {/* 404 */}
         <Route path="*" element={<Navigate to="/login" />} />
@@ -56,7 +62,7 @@ function App() {
   )
 }
 
-// DEV nav styles
+// DEV nav styles (Giữ nguyên)
 const navStyle = {
   position: 'fixed',
   bottom: '20px',

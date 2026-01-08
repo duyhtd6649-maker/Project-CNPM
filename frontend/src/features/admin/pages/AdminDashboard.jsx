@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Hook để chuyển trang
 import { 
   Search, Bell, ChevronDown, Users, FileText, 
   DollarSign, TrendingUp, LayoutDashboard, 
@@ -10,7 +11,6 @@ import {
   Tooltip, ResponsiveContainer, AreaChart, Area 
 } from 'recharts';
 import "../components/AdminDashboard.css";
-
 
 const cvData = [
   { name: '5k', value: 25 }, { name: '10k', value: 35 }, { name: '15k', value: 55 },
@@ -29,8 +29,15 @@ const spendingData = [
 ];
 
 const AdminDashboard = () => {
+  const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+
+  // Hàm điều hướng
+  const goToManageAccount = () => {
+    navigate('/manage-internal-account'); // Chỉnh đường dẫn cho khớp với App.js của bạn
+  };
 
   return (
     <div className="admin-container">
@@ -38,7 +45,7 @@ const AdminDashboard = () => {
 
       <aside className={`admin-sidebar ${isSidebarOpen ? 'open' : ''}`}>
         <div className="sidebar-header-uth">
-          <div className="uth-branding">
+          <div className="uth-branding" onClick={() => navigate('/admin')} style={{cursor:'pointer'}}>
             <span className="uth-blue-text">UTH</span>
             <span className="workplace-green-text"> WORKPLACE</span>
           </div>
@@ -46,8 +53,15 @@ const AdminDashboard = () => {
         </div>
         
         <nav className="sidebar-nav-custom">
-          <div className="nav-item-custom active"><LayoutDashboard size={20} /> <span>Dashboard</span></div>
-          <div className="nav-item-custom"><UserCog size={20} /> <span>Manage Account</span></div>
+          <div className="nav-item-custom active" onClick={() => navigate('/admin')}>
+            <LayoutDashboard size={20} /> <span>Dashboard</span>
+          </div>
+          
+          {/* SỰ KIỆN CLICK CHUYỂN TRANG TẠI ĐÂY */}
+          <div className="nav-item-custom" onClick={goToManageAccount}>
+            <UserCog size={20} /> <span>Manage Account</span>
+          </div>
+
           <div className="nav-item-custom"><Activity size={20} /> <span>Monitor Logs & Analytics</span></div>
           <div className="nav-item-custom"><Library size={20} /> <span>Cabinets of Knowledge</span></div>
           <div className="nav-item-custom"><ShieldCheck size={20} /> <span>System Status Monitor</span></div>
@@ -68,7 +82,9 @@ const AdminDashboard = () => {
           </div>
           <div className="header-right">
             <div className="notification"><Bell size={22} /><span className="badge">6</span></div>
-            <div className="user-account-box">
+            
+            {/* CLICK AVATAR CŨNG CÓ THỂ CHUYỂN TRANG */}
+            <div className="user-account-box" onClick={goToManageAccount} style={{cursor:'pointer'}}>
               <div className="avatar-placeholder"></div>
               <ChevronDown size={16} color="#94a3b8" />
             </div>
@@ -126,7 +142,7 @@ const AdminDashboard = () => {
           </ResponsiveContainer>
         </div>
 
-        {/* BOTTOM CHARTS - BIGGER SIZE */}
+        {/* BOTTOM CHARTS */}
         <div className="bottom-grid">
           <div className="bottom-card">
             <h3 style={{fontWeight:800, marginBottom:'20px'}}>Users</h3>

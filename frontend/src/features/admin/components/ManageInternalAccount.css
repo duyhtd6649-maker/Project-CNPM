@@ -1,0 +1,121 @@
+:root {
+  --primary-blue: #4880FF;
+  --primary-green: #10B981;
+  --sidebar-dark-blue: #2b109e;
+  --bg-body: #F5F6FA;
+}
+
+.manage-page-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background: var(--bg-body);
+}
+
+/* --- SIDEBAR XANH LAM CỐ ĐỊNH (BAO HẾT KHUNG TRÁI) --- */
+.manage-left-sidebar {
+  width: 280px;
+  background: linear-gradient(90deg, #5B8DFA 0%, #32C192 100%);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  color: white;
+}
+
+.sidebar-blue-header {
+  padding: 30px 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.header-menu-btn-white {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: white;
+  display: flex;
+  align-items: center;
+}
+
+.uth-branding-white {
+  font-weight: 900;
+  font-size: 20px;
+}
+.uth-branding-white .uth-text { color: #ffffff; }
+
+.sub-nav-list {
+  flex: 1;
+  padding: 10px 0;
+}
+
+.sub-nav-item {
+  padding: 14px 25px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 15px;
+  transition: 0.2s;
+  color: white; /* Màu mặc định các phần khác */
+}
+
+/* CHỈNH RIÊNG MÀU ĐEN CHO INTERNAL ACCOUNT */
+.nav-internal-black {
+  color: #000000 !important;
+}
+
+/* KHI ACTIVE: NỀN TRẮNG, CHỮ XANH ĐẬM (ĐỂ NỔI BẬT) */
+.sub-nav-item.active {
+  background: #ffffff;
+  color: #2b109e !important; 
+  border-radius: 8px;
+  margin: 0 15px;
+}
+
+.sub-nav-item:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.sub-sidebar-footer {
+  padding-bottom: 30px;
+}
+.divider-sub {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 15px 20px;
+}
+.sub-nav-item-small {
+  padding: 8px 25px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+}
+
+/* --- NỘI DUNG PHẢI --- */
+.manage-right-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+.manage-top-header { height: 80px; padding: 0 40px; display: flex; justify-content: flex-end; align-items: center; }
+.header-right-actions { display: flex; align-items: center; gap: 25px; }
+
+.manage-view-area { padding: 0 40px 40px 40px; flex: 1; }
+.view-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+.view-header h2 { font-weight: 800; color: #202224; }
+
+.view-content-card {
+  background: white; border-radius: 20px; height: calc(100% - 80px);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03); color: #94a3b8;
+}
+
+.btn-add-new { background: #2b109e; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 700; cursor: pointer; }
+
+/* BOX SIDEBAR TRƯỢT */
+.admin-sidebar {
+  width: 280px; background: white; height: 100vh;
+  position: fixed; left: 0; top: 0; z-index: 1000;
+  transform: translateX(-100%); transition: transform 0.3s ease;
+}
+.admin-sidebar.open { transform: translateX(0); }
+.sidebar-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.4); z-index: 999; }
