@@ -7,9 +7,10 @@ from database.models.jobs import Jobs
 
 # ===== USER =====
 class UserSerializer(serializers.ModelSerializer):
+    company = serializers.CharField(source="company.name", read_only=True)
     class Meta:
         model = Users
-        fields = ['id','username','email', 'company','role','is_active']
+        fields = ['id','username','email', 'company', 'role','is_active']
 
 class UserNameSerializer(serializers.Serializer):
     username = serializers.CharField(required = True)
@@ -36,17 +37,16 @@ class CVScanSerializer(serializers.Serializer):
 
 # ===== RECRUITER =====
 class RecruiterSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(source="user.username", read_only=True)
-    email = serializers.EmailField(source="user.email", read_only=True)
+    company = serializers.CharField(source="recruiter.company.name", read_only=True)
 
     class Meta:
         model = Users
-        fields = ['id', 'company', 'user', 'username', 'email']
+        fields = ['id', 'username', 'email', 'role', 'company']
 
 class JobSerializer(serializers.ModelSerializer):
     class Meta:
         model = Jobs
-        fields = ['title', 'description', 'location', 'skill', 'salary_min', 'salary_max']
+        fields = ['id', 'title', 'description', 'location', 'skill', 'salary_min', 'salary_max']
 
 class CompanySerializer(serializers.ModelSerializer):  # Serializer cho Company
     class Meta:

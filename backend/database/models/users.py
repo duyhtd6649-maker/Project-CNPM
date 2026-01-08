@@ -31,6 +31,13 @@ class Users(AbstractUser):
     def __str__(self):
         return f"User: {self.username}"
 
+class Recruiters(models.Model):
+    id = models.CharField(db_column='Id', primary_key=True, max_length=255,default=uuid.uuid4,editable=False)  # Field name made lowercase.
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, db_column='UserId',related_name='recruiter')  # Field name made lowercase.
+
+    class Meta:
+        db_table = 'Recruiters'
+        app_label = 'database'
     
 class Candidates(models.Model):
     id = models.CharField(db_column='Id', primary_key=True, max_length=255,default=uuid.uuid4,editable=False)  # Field name made lowercase.
@@ -48,7 +55,6 @@ class Candidates(models.Model):
         app_label = 'database'
     def __str__(self):
         return f"Candidate: {self.user.username}"
-
 class Companies(models.Model):
     id = models.CharField(db_column='Id', primary_key=True, max_length=255,default=uuid.uuid4,editable=False)  # Field name made lowercase.
     name = models.CharField(db_column='Name', max_length=255, unique=True,null=False,blank=False)  # Field name made lowercase.
