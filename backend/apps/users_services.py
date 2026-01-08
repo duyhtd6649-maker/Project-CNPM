@@ -8,6 +8,9 @@ from api.serializers import UserSerializer, RecruiterSerializer, JobSerializer, 
 from . import users_services
 
 
+def Get_User_Info():
+    return Users.objects.all()
+
 def Get_User_by_username(username):
     try:
         return Users.objects.get(username=username)

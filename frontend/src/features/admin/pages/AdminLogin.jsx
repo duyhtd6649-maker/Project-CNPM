@@ -3,7 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
 import { faEnvelope, faShieldAlt, faUser, faLock } from '@fortawesome/free-solid-svg-icons';
-import './AdminLogin.css';
+import "../components/AdminLogin.css";
+
 
 const AdminLogin = () => {
   const navigate = useNavigate();
