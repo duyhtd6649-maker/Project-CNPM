@@ -9,7 +9,8 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, 
   Tooltip, ResponsiveContainer, AreaChart, Area 
 } from 'recharts';
-import './AdminDashboard.css';
+import "../components/AdminDashboard.css";
+
 
 const cvData = [
   { name: '5k', value: 25 }, { name: '10k', value: 35 }, { name: '15k', value: 55 },

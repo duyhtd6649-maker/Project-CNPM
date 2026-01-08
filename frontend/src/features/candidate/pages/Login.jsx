@@ -5,7 +5,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
 import { faEnvelope, faShieldAlt, faUserShield } from '@fortawesome/free-solid-svg-icons'; 
 
-import './Login.css';
+import "../components/Login.css";
+
 
 const Login = () => {
   const location = useLocation();

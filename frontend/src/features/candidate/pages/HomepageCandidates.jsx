@@ -6,7 +6,8 @@ import {
   ThumbsUp, MessageCircle, ChevronDown, CreditCard, Bell, LogOut, Settings, Share2, MoreHorizontal,
   Send, Smile, Paperclip
 } from 'lucide-react';
-import './HomepageCandidates.css';
+import "../components/HomepageCandidates.css";
+
 
 const HomepageCandidates = () => {
   const navigate = useNavigate();

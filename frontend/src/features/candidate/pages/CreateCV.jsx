@@ -4,8 +4,9 @@ import {
   Search, Home, Users, Briefcase, Bot, FileText, 
   UserCircle, ChevronDown, CreditCard, Bell, LogOut, Camera, X, Eye
 } from 'lucide-react';
-import './HomepageCandidates.css'; 
-import './CreateCV.css';
+import "../components/HomepageCandidates.css";
+import "../components/CreateCV.css";
+
 
 const CreateCV = () => {
   const navigate = useNavigate();

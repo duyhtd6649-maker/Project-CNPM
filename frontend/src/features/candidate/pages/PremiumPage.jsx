@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
-import './PremiumPage.css';
+import "../components/PremiumPage.css";
+
 
 const PremiumPage = () => {
   const navigate = useNavigate();
