@@ -3,19 +3,19 @@ import { useNavigate } from 'react-router-dom';
 import { 
   Search, Home, Users, Briefcase, Bot, FileText, 
   UserCircle, UserPlus, Key, Bookmark, Newspaper, 
-  ThumbsUp, MessageCircle, ChevronDown, CreditCard, Bell, LogOut, Settings
+  ThumbsUp, MessageCircle, ChevronDown, CreditCard, Bell, LogOut, Settings, Share2, MoreHorizontal,
+  Send, Smile, Paperclip
 } from 'lucide-react';
-import './HomepageCandidates.css';
+import "../components/HomepageCandidates.css";
+
 
 const HomepageCandidates = () => {
   const navigate = useNavigate();
   
-  // States quản lý UI
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [isNotifyOpen, setIsNotifyOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('All');
 
-  // Dữ liệu mẫu thông báo
   const notifications = [
     { id: 1, type: 'Admin', user: 'System Admin', msg: 'Your account security settings have been updated successfully.', time: '12/26/2026 4:04 PM' },
     { id: 2, type: 'Recruiter', user: 'Techcombank HR', msg: 'We have received your application for Senior Frontend Developer position.', time: '12/27/2026 9:15 AM' },
@@ -47,11 +47,7 @@ const HomepageCandidates = () => {
           <div className="nav-item"><Users size={18} /> <span>Company</span></div>
           <div className="nav-item"><Briefcase size={18} /> <span>Job</span></div>
           <div className="nav-item"><Bot size={18} /> <span>AI</span></div>
-          
-          {/* ĐỒNG BỘ 1: Click trên Nav Bar sang Create CV */}
-          <div className="nav-item" onClick={() => navigate('/create-cv')}>
-            <FileText size={18} /> <span>Create CV</span>
-          </div>
+          <div className="nav-item" onClick={() => navigate('/create-cv')}><FileText size={18} /> <span>Create CV</span></div>
           
           <div className="nav-item account-btn-container" onClick={() => setIsAccountOpen(!isAccountOpen)}>
             <div className="account-icon-wrapper">
@@ -87,7 +83,7 @@ const HomepageCandidates = () => {
         </nav>
       </header>
 
-      {/* BOX NOTIFICATION */}
+      {/* NOTIFICATION BOX */}
       {isNotifyOpen && (
         <div className="notification-overlay" onClick={() => setIsNotifyOpen(false)}>
           <div className="notification-box" onClick={(e) => e.stopPropagation()}>
@@ -106,14 +102,14 @@ const HomepageCandidates = () => {
                   <div key={item.id} className="notify-item">
                     <div className="notify-avatar"><UserCircle size={32} color={item.type === 'Admin' ? '#4b49ac' : '#666'} /></div>
                     <div className="notify-info">
-                      <div className="notify-user">{item.user} <span className={`type-tag ${item.type.toLowerCase()}`}>{item.type}</span></div>
+                      <div className="notify-user">{item.user} <span className={`type-tag-small ${item.type.toLowerCase()}`}>{item.type}</span></div>
                       <div className="notify-msg">{item.msg}</div>
                       <div className="notify-time">{item.time}</div>
                     </div>
                   </div>
                 ))
               ) : (
-                <div className="empty-notify">No notifications in {activeTab}</div>
+                <div className="empty-state-notify">No notifications in {activeTab}</div>
               )}
             </div>
           </div>
@@ -122,6 +118,7 @@ const HomepageCandidates = () => {
 
       {/* MAIN CONTENT */}
       <div className="hp-main">
+        {/* LEFT COL */}
         <aside className="col-left">
           <div className="card profile-card" onClick={() => navigate('/profile')} style={{cursor: 'pointer'}}>
             <div className="banner-purple"></div>
@@ -144,7 +141,6 @@ const HomepageCandidates = () => {
             <div className="action-row"><span>Connect with businesses</span><UserPlus size={18} /></div>
           </div>
           
-          {/* ĐỒNG BỘ 2: Ô quản lý CV bên cột trái theo ảnh mẫu */}
           <div className="card action-card" onClick={() => navigate('/create-cv')} style={{cursor: 'pointer'}}>
             <div className="action-row"><span>CV Management</span><FileText size={18} /></div>
           </div>
@@ -155,14 +151,29 @@ const HomepageCandidates = () => {
           </div>
         </aside>
 
+        {/* CENTER COL */}
         <main className="col-center">
+          {/* Ô tạo bài viết bổ sung */}
+          <div className="card create-post-mimic">
+            <div className="post-input-row">
+              <UserCircle size={40} color="#ddd" />
+              <div className="fake-input">Bạn đang nghĩ gì?</div>
+            </div>
+            <div className="post-actions-row">
+              <div className="post-action-item">🖼️ Ảnh</div>
+              <div className="post-action-item">🎥 Video</div>
+              <div className="post-action-item">💼 Việc làm</div>
+            </div>
+          </div>
+
+          {/* Create CV Banner (PHẦN CŨ - ĐÃ GIỮ LẠI) */}
           <div className="card banner-box">
             <div className="placeholder-img-sim"><FileText size={80} color="#eee" /></div>
             <p>Let's create a CV for yourself right now</p>
-            {/* ĐỒNG BỘ 3: Nút Create CV chính giữa màn hình */}
             <button className="btn-main-action" onClick={() => navigate('/create-cv')}>Create CV</button>
           </div>
           
+          {/* Post Sample (PHẦN CŨ - ĐÃ GIỮ LẠI) */}
           <div className="card post-sample">
              <div className="post-top">
                 <div className="brand-sq">NCS</div>
@@ -174,12 +185,77 @@ const HomepageCandidates = () => {
                 <div className="foot-item"><MessageCircle size={18} /> Comment</div>
              </div>
           </div>
+
+          {/* Bài đăng nhúng Iframe bổ sung */}
+          <div className="card news-feed-item">
+            <div className="post-header">
+              <div className="brand-logo-circle cnet-bg">C</div>
+              <div className="post-meta">
+                <div className="post-author">CNET News</div>
+                <div className="post-date">Vừa đăng • World Tech</div>
+              </div>
+              <MoreHorizontal size={20} className="post-more" />
+            </div>
+            <div className="post-iframe-container">
+              <iframe 
+                src="https://www.cnet.com/tech/" 
+                title="Cnet Feed"
+                className="feed-iframe"
+                style={{ top: '-400px' }} 
+                scrolling="no"
+              ></iframe>
+            </div>
+            <div className="post-footer-actions">
+              <div className="f-action"><ThumbsUp size={16} /> Thích</div>
+              <div className="f-action"><MessageCircle size={16} /> Bình luận</div>
+              <div className="f-action"><Share2 size={16} /> Chia sẻ</div>
+            </div>
+          </div>
         </main>
 
+        {/* RIGHT COL */}
         <aside className="col-right">
           <div className="card news-card">
-            <div className="news-header-section"><span className="news-title">News</span></div>
-            <div className="news-content-placeholder">Latest updates...</div>
+            <div className="news-header-section">
+              <span className="news-title">CNet Blog (Live)</span>
+              <span className="news-tag">NHÚNG</span>
+            </div>
+            
+            <div className="iframe-viewport">
+              <iframe 
+                src="https://www.cnet.com/news/" 
+                title="CNet Blog"
+                className="clipped-iframe"
+                scrolling="no"
+              ></iframe>
+            </div>
+
+            <div className="iframe-footer" onClick={() => window.open('https://www.cnet.com/news/', '_blank')}>
+                Xem tất cả bài báo ↗
+            </div>
+          </div>
+
+          {/* KHUNG CHAT (THAY THẾ TRENDING) */}
+          <div className="card chat-mini-card">
+            <div className="news-header-section">
+              <span className="news-title">Messenger</span>
+              <Settings size={14} className="settings-icon" style={{cursor:'pointer'}} />
+            </div>
+            
+            <div className="chat-body">
+              <div className="chat-bubble received">Chào bạn! Chúc bạn ngày mới tốt lành.</div>
+              <div className="chat-bubble sent">Cảm ơn nhé!</div>
+              <div className="chat-bubble received">Bạn đã cập nhật CV chưa?</div>
+            </div>
+
+            <div className="chat-footer-input">
+              <div className="chat-input-wrapper">
+                <input type="text" placeholder="Aa" />
+                <Smile size={16} color="#666" />
+                <Paperclip size={16} color="#666" />
+              </div>
+              <button className="chat-send-btn"><Send size={16} /></button>
+            </div>
           </div>
         </aside>
       </div>

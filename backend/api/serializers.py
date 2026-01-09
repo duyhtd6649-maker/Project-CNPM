@@ -2,14 +2,15 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from dj_rest_auth.registration.serializers import RegisterSerializer
-from database.models.users import Users,Candidates,Recruiters, Companies
+from database.models.users import Users,Candidates, Companies
 from database.models.jobs import Jobs
 
 # ===== USER =====
 class UserSerializer(serializers.ModelSerializer):
+    company = serializers.CharField(source="company.name", read_only=True)
     class Meta:
         model = Users
-        fields = ['id','username','email', 'company','role','is_active']
+        fields = ['id','username','email', 'company', 'role','is_active']
 
 class UserNameSerializer(serializers.Serializer):
     username = serializers.CharField(required = True)
@@ -36,17 +37,16 @@ class CVScanSerializer(serializers.Serializer):
 
 # ===== RECRUITER =====
 class RecruiterSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(source="user.username", read_only=True)
-    email = serializers.EmailField(source="user.email", read_only=True)
+    company = serializers.CharField(source="recruiter.company.name", read_only=True)
 
     class Meta:
-        model = Recruiters
-        fields = ['id', 'company', 'user', 'username', 'email']
+        model = Users
+        fields = ['id', 'username', 'email', 'role', 'company']
 
 class JobSerializer(serializers.ModelSerializer):
     class Meta:
         model = Jobs
-        fields = "__all__"
+        fields = ['id', 'title', 'description', 'location', 'skill', 'salary_min', 'salary_max']
 
 class CompanySerializer(serializers.ModelSerializer):  # Serializer cho Company
     class Meta:
@@ -70,8 +70,6 @@ class CustomRegisterSerializer(RegisterSerializer):
         user.save()
         if role == 'candidate':
             Candidates.objects.create(user=user)
-        elif role == 'recruiter':
-            Recruiters.objects.create(user=user)
 
     def get_cleaned_data(self):
         return {

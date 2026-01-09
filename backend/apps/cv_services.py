@@ -104,3 +104,4 @@ def save_analysis_result(user, cv_file, ai_result, format_result, target_job):
 
     except Exception as e:
         raise e 
+    

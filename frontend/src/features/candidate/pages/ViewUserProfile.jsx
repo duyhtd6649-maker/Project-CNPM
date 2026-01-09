@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './ViewUserProfile.css';
+import "../components/ViewUserProfile.css";
+
 
 const ViewUserProfile = () => {
   const navigate = useNavigate();
+  const fileInputRef = useRef(null);
   const [isEditing, setIsEditing] = useState(false);
   const [userData, setUserData] = useState(null);
 
-  // Load dữ liệu khi vào trang
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('currentUser'));
     if (!user) {
@@ -22,16 +23,23 @@ const ViewUserProfile = () => {
     setUserData({ ...userData, [name]: value });
   };
 
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setUserData({ ...userData, avatar: reader.result });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleEditToggle = () => {
     if (isEditing) {
-      // 1. Cập nhật phiên hiện tại
       localStorage.setItem('currentUser', JSON.stringify(userData));
-      
-      // 2. Đồng bộ với danh sách tổng
       const usersList = JSON.parse(localStorage.getItem('usersList') || '[]');
       const updatedList = usersList.map(u => u.email === userData.email ? userData : u);
       localStorage.setItem('usersList', JSON.stringify(updatedList));
-      
       alert("Thông tin cá nhân đã được cập nhật!");
     }
     setIsEditing(!isEditing);
@@ -62,7 +70,32 @@ const ViewUserProfile = () => {
       <main className="profile-content-wrapper">
         <div className="full-width-banner"></div>
         <div className="profile-intro-row">
-          <div className="avatar-circle">👤</div>
+          {/* Avatar Container với Icon Cây bút */}
+          <div className="avatar-container-fixed">
+            <div className="avatar-circle">
+              {userData.avatar ? (
+                <img src={userData.avatar} alt="Avatar" className="user-avatar-img" />
+              ) : (
+                "👤"
+              )}
+            </div>
+            {isEditing && (
+              <div 
+                className="edit-pen-overlay" 
+                onClick={() => fileInputRef.current.click()}
+              >
+                ✏️
+              </div>
+            )}
+            <input 
+              type="file" 
+              ref={fileInputRef} 
+              onChange={handleAvatarChange} 
+              hidden 
+              accept="image/*" 
+            />
+          </div>
+
           <div className="user-titles-fixed">
             <h2>{userData.name}</h2>
             <p>{userData.email}</p>
@@ -99,7 +132,13 @@ const ViewUserProfile = () => {
             <div className="form-group">
               <label>Gender</label>
               {isEditing ? (
-                <select name="gender" value={userData.gender} onChange={handleChange} className="active-input select-edit">
+                /* Đồng bộ đồ họa ô Gender Select */
+                <select 
+                  name="gender" 
+                  value={userData.gender} 
+                  onChange={handleChange} 
+                  className="active-input gender-select-custom"
+                >
                   <option value="Male">Male</option>
                   <option value="Female">Female</option>
                 </select>
