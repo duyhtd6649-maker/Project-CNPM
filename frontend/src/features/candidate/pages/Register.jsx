@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import "../components/Register.css";
+import '../components/Register.css';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -18,31 +18,41 @@ const Register = () => {
 
   const handleRegister = (e) => {
     e.preventDefault();
-
+    // Validate empty
     for (let key in formData) {
-      if (formData[key].trim() === "") {
+      if (typeof formData[key] === 'string' && formData[key].trim() === "") {
         alert("Vui lòng điền đầy đủ thông tin!");
         return;
       }
     }
-
     if (formData.password !== formData.repeatPassword) {
       alert("Mật khẩu nhập lại không khớp!");
       return;
     }
 
-    const existingUsers = JSON.parse(localStorage.getItem('usersList') || '[]');
-    if (existingUsers.some(user => user.email === formData.email)) {
+    const savedUsers = JSON.parse(localStorage.getItem('usersList') || '[]');
+    const emailExists = savedUsers.some(u => u.email === formData.email);
+    if (emailExists) {
       alert("Email này đã được đăng ký!");
       return;
     }
 
-    const newUser = { ...formData, username: formData.name };
-    existingUsers.push(newUser);
-    localStorage.setItem('usersList', JSON.stringify(existingUsers));
+    const newUser = {
+      username: formData.name,
+      email: formData.email,
+      password: formData.password,
+      phone: formData.phone,
+      gender: formData.gender,
+      role: formData.role,
+      country: formData.country,
+      dob: formData.dob,
+      jobs: formData.jobs
+    };
 
+    savedUsers.push(newUser);
+    localStorage.setItem('usersList', JSON.stringify(savedUsers));
     alert("Đăng ký thành công!");
-    navigate('/login');
+    navigate('/login', { state: { successMessage: "Đăng ký thành công! Mời bạn đăng nhập." } });
   };
 
   return (

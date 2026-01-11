@@ -1,0 +1,13 @@
+:root {
+  --primary-color: #7678ff;
+  --primary-hover: #5a5cd6;
+  --secondary-color: #837dff;
+  --bg-color: #f0f2f5;
+  --text-dark: #000000;
+  --text-grey: #666;
+  --border-color: #ddd;
+  --white: #ffffff;
+  --gradient-register: linear-gradient(135deg, #2b1fd4 0%, #7e87ff 100%);
+  --gradient-login-right: linear-gradient(180deg, #1a0b8c 0%, #837dff 100%);
+  --shadow-btn: 0 4px 15px rgba(118, 120, 255, 0.4);
+}

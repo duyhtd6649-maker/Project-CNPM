@@ -7,6 +7,7 @@
   align-items: center;
   padding: 40px 20px;
   font-family: Arial, sans-serif;
+  box-sizing: border-box;
 }
 
 .register-card {
@@ -15,7 +16,7 @@
   text-align: center;
 }
 
-h1 {
+.register-card h1 {
   color: #000;
   font-size: 2.2rem;
   font-weight: 800;
@@ -42,9 +43,10 @@ h1 {
   font-size: 1rem;
 }
 
+/* Đồng bộ Input và Select */
 .form-group input,
 .form-select {
-  padding: 12px 20px;
+  padding: 0 20px; /* Căn giữa nội dung theo chiều dọc */
   border-radius: 15px;
   border: none;
   background-color: #ffffff;
@@ -53,15 +55,20 @@ h1 {
   width: 100%;
   box-sizing: border-box;
   height: 50px;
+  line-height: 50px;
+  color: #333;
 }
 
+/* Chỉnh riêng cho Select để giống Input */
 .form-select {
   appearance: none;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
   background-repeat: no-repeat;
   background-position: right 15px center;
-  background-size: 1em;
-  cursor: pointer;
+  background-size: 16px;
 }
 
 .btn-register {
@@ -75,17 +82,25 @@ h1 {
   font-weight: bold;
   cursor: pointer;
   box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  transition: background 0.3s ease;
 }
 
 .btn-register:hover {
   background-color: #6164ff;
 }
 
+.back-to-login {
+  margin-top: 20px;
+}
+
 .login-link {
   color: #fff;
-  display: block;
-  margin-top: 20px;
   text-decoration: none;
+  font-size: 1rem;
+}
+
+.login-link:hover {
+  text-decoration: underline;
 }
 
 @media (max-width: 768px) {
