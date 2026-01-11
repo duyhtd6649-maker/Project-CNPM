@@ -1,16 +1,19 @@
 import { createBrowserRouter, Outlet, Navigate, Link } from 'react-router-dom';
 
-import Login from '../features/candidate/pages/Login.jsx';
-import Register from '../features/candidate/pages/Register.jsx';
+import AuthLayout from '../layouts/AuthLayout';
 
+import Login from '../features/candidate/pages/Login';
+import Register from '../features/candidate/pages/Register';
 import ForgotPassword from '../features/candidate/pages/ForgotPassword';
+
 import HomepageCandidates from '../features/candidate/pages/HomepageCandidates';
 import ViewUserProfile from '../features/candidate/pages/ViewUserProfile';
 import PremiumPage from '../features/candidate/pages/PremiumPage';
 import CreateCV from '../features/candidate/pages/CreateCV';
+
 import AdminLogin from '../features/admin/pages/AdminLogin';
 import AdminDashboard from '../features/admin/pages/AdminDashboard';
-import ManageInternalAccount from '../features/admin/pages/ManageInternalAccount'; 
+import ManageInternalAccount from '../features/admin/pages/ManageInternalAccount';
 import ManageCandidateAccount from '../features/admin/pages/ManageCandidateAccount';
 
 const navStyle = {
@@ -26,12 +29,10 @@ const navStyle = {
   borderRadius: '50px',
   boxShadow: '0 8px 20px rgba(0,0,0,0.4)',
   fontSize: '11px',
-  fontWeight: '600',
-  backdropFilter: 'blur(5px)',
-  border: '1px solid rgba(255,255,255,0.1)'
+  fontWeight: '600'
 };
 
-const linkStyle = { color: '#ffffff', textDecoration: 'none', textTransform: 'uppercase' };
+const linkStyle = { color: '#fff', textDecoration: 'none' };
 
 const RootLayout = () => (
   <>
@@ -47,22 +48,31 @@ const RootLayout = () => (
 
 export const router = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
     element: <RootLayout />,
     children: [
       { index: true, element: <Navigate to="/login" /> },
-      { path: "login", element: <Login /> },
-      { path: "register", element: <Register /> },
-      { path: "forgot-password", element: <ForgotPassword /> },
-      { path: "home", element: <HomepageCandidates /> },
-      { path: "profile", element: <ViewUserProfile /> },
-      { path: "premium", element: <PremiumPage /> },
-      { path: "create-cv", element: <CreateCV /> },
-      { path: "admin-login", element: <AdminLogin /> },
-      { path: "admin", element: <AdminDashboard /> },
-      { path: "manage-internal", element: <ManageInternalAccount /> },
-      { path: "manage-candidate", element: <ManageCandidateAccount /> },
-      { path: "*", element: <Navigate to="/login" /> }
+
+      {
+        element: <AuthLayout />,
+        children: [
+          { path: 'login', element: <Login /> },
+          { path: 'register', element: <Register /> },
+          { path: 'forgot-password', element: <ForgotPassword /> }
+        ]
+      },
+
+      { path: 'home', element: <HomepageCandidates /> },
+      { path: 'profile', element: <ViewUserProfile /> },
+      { path: 'premium', element: <PremiumPage /> },
+      { path: 'create-cv', element: <CreateCV /> },
+
+      { path: 'admin-login', element: <AdminLogin /> },
+      { path: 'admin', element: <AdminDashboard /> },
+      { path: 'manage-internal', element: <ManageInternalAccount /> },
+      { path: 'manage-candidate', element: <ManageCandidateAccount /> },
+
+      { path: '*', element: <Navigate to="/login" /> }
     ]
   }
 ]);
