@@ -92,6 +92,21 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     
 class LogoutSerializer(serializers.Serializer):
     refresh = serializers.CharField()
+    
+class CareerCoachRequestSerializer(serializers.Serializer):
+    question = serializers.CharField()
+
+
+class CareerCoachResponseSerializer(serializers.Serializer):
+    expectedCareer = serializers.ListField(child=serializers.CharField())
+    overview = serializers.ListField(child=serializers.CharField())
+    skills = serializers.ListField(child=serializers.CharField())
+    learningPaths = serializers.ListField(child=serializers.CharField())
+
+
+class CvAnalyzerRequestSerializer(serializers.Serializer):
+    cvText = serializers.CharField()
+    targetJob = serializers.CharField()
 
 
 

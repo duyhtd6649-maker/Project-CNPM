@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.views import TokenObtainPairView, APIView
 from rest_framework import status
 from apps import users_services, cv_services
 from database.models.users import Users, Companies
@@ -19,16 +19,9 @@ from django.shortcuts import get_object_or_404
 # =============================================================================================================== #
 # ==================================================== USER ===================================================== #
 # =============================================================================================================== #
-<<<<<<< HEAD
-
-@api_view(['GET'])
-def GetUserInfor(request):
-    user = Users.objects.all()
-=======
 @api_view(['GET'])
 def GetUserInfor(request):
     user = users_services.Get_User_Info()
->>>>>>> b38a74c500503a2811cdf2f3250bec1439d1cfe7
     serializer = UserSerializer(user, many = True)
     return Response(serializer.data)
 
@@ -336,3 +329,40 @@ def jwt_from_session(request):
     
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
+    
+#Phan duoi tro xuong la cua AI
+from .serializers import (
+    CareerCoachRequestSerializer,
+    CareerCoachResponseSerializer,
+    CvAnalyzerRequestSerializer
+)
+
+from apps.ai_services import (
+    career_coach_service,
+    cv_analyzer_service
+)
+
+
+class CareerCoachAPIView(APIView):
+    def post(self, request):
+        serializer = CareerCoachRequestSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        result = career_coach_service(
+            serializer.validated_data["question"]
+        )
+
+        return Response(result, status=status.HTTP_200_OK)
+
+
+class CvAnalyzerAPIView(APIView):
+    def post(self, request):
+        serializer = CvAnalyzerRequestSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        result = cv_analyzer_service(
+            serializer.validated_data["cvText"],
+            serializer.validated_data["targetJob"]
+        )
+
+        return Response(result, status=status.HTTP_200_OK)
