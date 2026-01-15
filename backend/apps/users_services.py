@@ -1,10 +1,9 @@
 from database.models.users import Users, Candidates, Companies, Recruiters
 from database.models.jobs import Jobs
-from django.shortcuts import get_object_or_404
-from rest_framework.exceptions import ValidationError
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
-from api.serializers import UserSerializer, RecruiterSerializer, JobSerializer, CompanySerializer
+from api.serializers.user_serializers import UserSerializer, RecruiterSerializer, CompanySerializer
+from api.serializers.job_serializers import JobSerializer
 from . import users_services
 
 

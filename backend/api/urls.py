@@ -1,5 +1,5 @@
-from . import views
-from .views import profile_api, create_job, delete_job, job_api, view_job, company_create, view_companies, delete_companies, CustomTokenObtainPairView, CareerCoachAPIView, CvAnalyzerAPIView
+from .views import views
+from .views.views import profile_api, create_job, delete_job, job_api, view_job, company_create, view_companies, delete_companies, CustomTokenObtainPairView, CareerCoachAPIView, CvAnalyzerAPIView
 from django.urls import path, include
 from dj_rest_auth.views import PasswordResetView, PasswordResetConfirmView
 from rest_framework_simplejwt.views import TokenVerifyView
