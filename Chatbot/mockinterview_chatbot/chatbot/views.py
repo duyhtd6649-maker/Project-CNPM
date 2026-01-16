@@ -20,7 +20,7 @@ def mock_interview_chat(request):
         convo = Conversation.objects.create(
             job=data["job"],
             level=data["level"],
-            max_turns=data.get("max_turns", 5)
+            max_turns = min(data.get("max_turns", 5), 10)
         )
 
     turn_index = convo.messages.filter(role=Message.Role.USER).count() + 1
