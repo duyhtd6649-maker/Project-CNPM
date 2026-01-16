@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from dj_rest_auth.registration.serializers import RegisterSerializer
-from database.models.users import Candidates
+from apps.users_services import UserService
 
 class CustomRegisterSerializer(RegisterSerializer):
     ROLE_CHOICES = (
@@ -15,10 +15,8 @@ class CustomRegisterSerializer(RegisterSerializer):
     password2 = serializers.CharField(write_only=True)
     def custom_signup(self, request, user):
         role = self.validated_data.get('role')
-        user.role = role 
-        user.save()
-        if role == 'candidate':
-            Candidates.objects.create(user=user)
+        UserService.user_signup_role(user=user, role=role)
+            
 
     def get_cleaned_data(self):
         return {

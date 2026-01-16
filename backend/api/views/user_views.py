@@ -1,42 +1,57 @@
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes,parser_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
-from apps import users_services
+from apps.users_services import UserService, RecruiterService, AdminService, CompanyService
 from database.models.users import Companies
-from serializers.user_serializers import UserSerializer, CandidateSerializer, UserNameSerializer,RecruiterSerializer, CompanySerializer
+from ..serializers.user_serializers import UserSerializer, UserProfileSerializer, CandidateSerializer, UserNameSerializer,RecruiterSerializer, CompanySerializer
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+from rest_framework.exceptions import *
 
-
-
-# =============================================================================================================== #
-# ==================================================== USER ===================================================== #
-# =============================================================================================================== #
 @api_view(['GET'])
 def GetUserInfor(request):
-    user = users_services.Get_User_Info()
+    user = UserService.Get_All_User()
     serializer = UserSerializer(user, many = True)
     return Response(serializer.data)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def GetUserbyUsername(request,username):
-    user = users_services.Get_User_by_username(username)
+    user = UserService.Get_user_profile_by_username(username)
     if user == None:
         return Response({"detail":"User not found"},status=status.HTTP_404_NOT_FOUND)
     serializer = UserSerializer(user)
     return Response(serializer.data,status=status.HTTP_200_OK)
 
 #Lay sua thong tin profile
-@swagger_auto_schema(method='get', responses={200: UserSerializer})
-@swagger_auto_schema(method='put', request_body=UserSerializer)
-@api_view(['GET','PUT'])
+@swagger_auto_schema(
+    method='put',
+    request_body=UserProfileSerializer,
+    responses={200: UserProfileSerializer}
+)
+@api_view(['GET', 'PUT'])
 @permission_classes([IsAuthenticated])
-def profile_api(request):
+@parser_classes([MultiPartParser, FormParser, JSONParser])
+def profile_api(request, id):
     if request.method == 'GET':
-        return Response(users_services.UserServices.get_profile(request.user))
+        try:
+            user_instance = UserService.Get_user_profile_by_id(id)
+            serializer = UserProfileSerializer(user_instance)
+        except Exception as e:
+            return Response({"error":f"{str(e)}"},status=status.HTTP_404_NOT_FOUND)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+    
     if request.method == 'PUT':
-        return Response(users_services.UserServices.update_profile(request.user, request.data))
+        serializer = UserProfileSerializer(data=request.data, partial = True)
+        if serializer.is_valid():
+            try:
+                user_instance = UserService.update_profile(user_id=id,validated_data=serializer.validated_data)
+                serializer = UserProfileSerializer(user_instance)
+                return Response(serializer.data,status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response({"error":f"{str(e)}"},status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 #Tao company
 @swagger_auto_schema(
@@ -46,14 +61,22 @@ def profile_api(request):
 )
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
+@parser_classes([MultiPartParser, FormParser, JSONParser])
 def company_create(request):
-    status_code, data = users_services.RecruiterService.create_company(request.user, request.data)
-    return Response(data, status = status_code)
+    serializer = CompanySerializer(data = request.data)
+    if serializer.is_valid():
+        try:
+            company_instance = CompanyService.create_company(user=request.user, validated_data= serializer.validated_data)
+            serializer = CompanySerializer(company_instance)
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response({"error":f"{str(e)}"},status=status.HTTP_403_FORBIDDEN)
+    return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
 #view company
 @api_view(['GET'])
 def view_companies(request):
-    companies = Companies.objects.all()
+    companies = CompanyService.Get_all_company()
     serializer = CompanySerializer(companies, many=True)
     return Response(serializer.data)
 
@@ -65,12 +88,12 @@ def view_companies(request):
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
 def delete_companies(request, id):
-    status_code, data = users_services.RecruiterService.delete_company(request.user, id)
-    return Response(data, status= status_code)
+    try:
+        company = CompanyService.delete_company(request.user,id)
+        return Response({"detail":"Done"},status=status.HTTP_202_ACCEPTED)
+    except Exception as e:
+        return Response({"error":f"{str(e)}"},status=status.HTTP_403_FORBIDDEN)
 
-# =============================================================================================================== #
-# ==================================================== ADMIN ==================================================== #
-# =============================================================================================================== #
 @swagger_auto_schema(
     method='put',
     operation_description="ban",
@@ -81,17 +104,18 @@ def delete_companies(request, id):
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def BanUser(request):
-    user = request.user
-    if users_services.Is_Super_User(user):
-        serializer = UserNameSerializer(data = request.data)
-        serializer.is_valid(raise_exception=True)
-        username = serializer.validated_data['username']
-        if users_services.Ban_User(username):
-            return Response({"detail":"Banned"},status=status.HTTP_202_ACCEPTED)
-        else:
-            return Response({"detail":"User not found"},status=status.HTTP_400_BAD_REQUEST)
-    else:
-        return Response({"detail":"User don't have permission"},status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    serializer = UserNameSerializer(data = request.data)
+    serializer.is_valid(raise_exception=True)
+    username = serializer.validated_data['username']
+    try:
+        AdminService.Ban_User(request_user= request.user, username= username)
+        return Response({"detail":"banned"},status=status.HTTP_200_OK)
+    except NotFound:
+        return Response({"error":"User not found"},status=status.HTTP_404_NOT_FOUND)
+    except PermissionDenied:
+        return Response({"error":"User don't have permission"},status=status.HTTP_403_FORBIDDEN)
+    except Exception as e:
+        return Response({"error":f"{str(e)}"},status=status.HTTP_400_BAD_REQUEST)
 
 @swagger_auto_schema(
     method='put',
@@ -103,17 +127,18 @@ def BanUser(request):
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def UnBanUser(request):
-    user = request.user
-    if users_services.Is_Super_User(user):
-        serializer = UserNameSerializer(data = request.data)
-        serializer.is_valid(raise_exception=True)
-        username = serializer.validated_data['username']
-        if users_services.UnBan_User(username):
-            return Response({"detail":"UnBanned"},status=status.HTTP_202_ACCEPTED)
-        else:
-            return Response({"detail":"User not found"},status=status.HTTP_400_BAD_REQUEST)
-    else:
-        return Response({"detail":"User don't have permission"},status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    serializer = UserNameSerializer(data = request.data)
+    serializer.is_valid(raise_exception=True)
+    username = serializer.validated_data['username']
+    try:
+        AdminService.UnBan_User(request_user= request.user, username= username)
+        return Response({"detail":"banned"},status=status.HTTP_200_OK)
+    except NotFound:
+        return Response({"error":"User not found"},status=status.HTTP_404_NOT_FOUND)
+    except PermissionDenied:
+        return Response({"error":"User don't have permission"},status=status.HTTP_403_FORBIDDEN)
+    except Exception as e:
+        return Response({"error":f"{str(e)}"},status=status.HTTP_400_BAD_REQUEST)
     
 @swagger_auto_schema(
     method='put',
@@ -125,26 +150,27 @@ def UnBanUser(request):
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def RemoveUser(request):
-    user = request.user
-    if users_services.Is_Super_User(user):
-        serializer = UserNameSerializer(data = request.data)
-        serializer.is_valid(raise_exception=True)
-        username = serializer.validated_data['username']
-        if users_services.Remove_User(username):
-            return Response({"detail":"Removed"},status=status.HTTP_202_ACCEPTED)
-        else:
-            return Response({"detail":"User not found"},status=status.HTTP_400_BAD_REQUEST)
-    else:
-        return Response({"detail":"User don't have permission"},status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    serializer = UserNameSerializer(data = request.data)
+    serializer.is_valid(raise_exception=True)
+    username = serializer.validated_data['username']
+    try:
+        AdminService.Remove_User(request_user= request.user, username= username)
+        return Response({"detail":"banned"},status=status.HTTP_200_OK)
+    except NotFound:
+        return Response({"error":"User not found"},status=status.HTTP_404_NOT_FOUND)
+    except PermissionDenied:
+        return Response({"error":"User don't have permission"},status=status.HTTP_403_FORBIDDEN)
+    except Exception as e:
+        return Response({"error":f"{str(e)}"},status=status.HTTP_400_BAD_REQUEST)
     
 @api_view(['GET'])
 def GetCandidatesInfor(request):
-    candidate = users_services.Get_All_Candidates()
+    candidate = UserService.Get_All_Candidates()
     serializer = CandidateSerializer(candidate, many = True)
     return Response(serializer.data)
 
 @api_view(['GET'])
 def GetRecruitersInfor(request):
-    recruiters = users_services.Get_All_Recruiters()
+    recruiters = RecruiterService.Get_All_Recruiters()
     serializer = RecruiterSerializer(recruiters, many = True)
     return Response(serializer.data)

@@ -1,7 +1,7 @@
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework_simplejwt.views import APIView
-from serializers.ai_serializers import CareerCoachRequestSerializer,CareerCoachResponseSerializer, CvAnalyzerRequestSerializer
+from rest_framework.views import APIView
+from ..serializers.ai_serializers import CareerCoachRequestSerializer,CareerCoachResponseSerializer, CvAnalyzerRequestSerializer
 from apps.ai_services import career_coach_service, cv_analyzer_service
 
 

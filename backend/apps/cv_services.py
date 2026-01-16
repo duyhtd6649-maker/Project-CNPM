@@ -4,7 +4,8 @@ import requests
 from django.conf import settings
 from django.db import transaction
 from database.models.CV import Cvs,Cvanalysisresult
-from database.models.users import Candidates
+from database.models.users import Candidates, Users
+from .ai_services import cv_analyzer_service
 
 def extract_text_from_cv(file):
     text = ""
@@ -28,9 +29,7 @@ def extract_text_from_cv(file):
 def clean_text(text):
     if not text:
         return ""
-    # Thay thế nhiều dấu xuống dòng, tab thành 1 dấu cách
     text = re.sub(r'[\n\t\r]+', ' ', text)
-    # Thay thế nhiều khoảng trắng thành 1 khoảng trắng
     text = re.sub(r'\s+', ' ', text).strip()
     return text
 
@@ -40,7 +39,6 @@ def analyze_format_local(text, page_count):
     
     word_count = len(text.split())
 
-    # 1. Kiểm tra độ dài (ATS thường thích 200 - 2000 từ)
     if word_count < 150:
         score -= 20
         issues.append("CV quá ngắn (<150 từ). Hãy bổ sung thêm chi tiết.")
@@ -48,9 +46,7 @@ def analyze_format_local(text, page_count):
         score -= 10
         issues.append("CV quá dài (>2000 từ). Hãy tóm tắt lại.")
 
-    # Regex tìm email
     email_pattern = r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
-    # Regex tìm số điện thoại (VN format cơ bản)
     phone_pattern = r'(0|\+84)[0-9\s.-]{9,13}'
     
     has_email = re.search(email_pattern, text)
@@ -105,3 +101,52 @@ def save_analysis_result(user, cv_file, ai_result, format_result, target_job):
     except Exception as e:
         raise e 
     
+def analyze_cv(validated_data, user):
+    upload_file = validated_data['file']
+    target_job = validated_data['targetjob']
+    scanned_text = extract_text_from_cv(upload_file)
+
+    if not scanned_text or not scanned_text['raw_text']:
+        raise Exception
+    
+    cv_text_clean = scanned_text['raw_text']
+    page_count = scanned_text['page_count']
+    format_analysis = analyze_format_local(cv_text_clean, page_count)
+
+    try:
+        ai_data = cv_analyzer_service(cv_text=cv_text_clean,target_job=target_job)
+    except requests.exceptions.ConnectionError:
+        raise ConnectionError({"error":"Can't connect to AI server"})
+    except requests.exceptions.Timeout:
+        raise TimeoutError({"error":"Timeout"})
+    except requests.exceptions.RequestException as e:
+        raise Exception({"error": f"Error from AI Server: {str(e)}"})
+    try:
+        saved_result = save_analysis_result(
+            user=user,
+            cv_file=upload_file,
+            ai_result=ai_data,
+            format_result=format_analysis,
+            target_job = target_job
+        )
+    except Exception as e:
+        raise Exception({"error": f"Failed to save analysis result to database: {str(e)}"})
+    
+    final_response = {
+        "status": "success",
+        "result_id": saved_result.id,
+        "overall_score": saved_result.overall_score,
+
+        "overview": {
+            "file_name": upload_file.name,
+            "page_count": page_count,
+            "word_count": format_analysis['word_count']
+        },
+        "format_analysis": {
+            "score": format_analysis['format_score'],
+            "issues": format_analysis['contact_issues']
+        },
+        "content_analysis": ai_data 
+    }
+
+    return final_response

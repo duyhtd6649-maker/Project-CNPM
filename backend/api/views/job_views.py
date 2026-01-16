@@ -1,10 +1,13 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
+from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from apps import users_services
+from apps.job_services import JobService
 from database.models.jobs import Jobs 
-from serializers.job_serializers import JobSerializer
+from ..serializers.job_serializers import JobSerializer
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework.exceptions import *
+
 
 #Dang Job
 @swagger_auto_schema(
@@ -15,8 +18,16 @@ from drf_yasg.utils import swagger_auto_schema
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_job(request):
-    status_code, data = users_services.RecruiterService.create_job(request.user, request.data)
-    return Response(data, status = status_code)
+    serializer = JobSerializer(data= request.data)
+    if serializer.is_valid():
+        try:
+            new_job = JobService.create_job(user=request.user, validated_data= serializer.validated_data)
+            serializer = JobSerializer(new_job)
+            return Response(serializer.data, status= status.HTTP_201_CREATED)
+        except PermissionDenied:
+            return Response({"error":"User don't have permission"},status= status.HTTP_403_FORBIDDEN)
+        except Exception as e:
+            return Response({"error":f"{str(e)}"},status=status.HTTP_400_BAD_REQUEST)
 
 #Sua, xoa job
 @swagger_auto_schema(
@@ -24,16 +35,19 @@ def create_job(request):
     request_body=JobSerializer,
     responses={200: JobSerializer}
 )
-@api_view(['PUT', 'DELETE'])
+@api_view(['PUT'])
 @permission_classes([IsAuthenticated])
-def job_api(request, id):
-    status_code, data = users_services.RecruiterService.fix_and_delete_job(
-        user = request.user,
-        data = request.data,
-        job_id = id,
-        status = status_code,
-        method = request.method
-    )
+def update_job(request, id):
+    serializer = JobSerializer(data = request.data)
+    if serializer.is_valid():
+        try:
+            modifield_job = JobService.update_job(user=request.user,validated_data=serializer.validated_data,job_id=id)
+            serializer = JobSerializer(modifield_job)
+            return Response(serializer.data, status= status.HTTP_201_CREATED)
+        except PermissionDenied:
+            return Response({"error":"User don't have permission"},status= status.HTTP_403_FORBIDDEN)
+        except Exception as e:
+            return Response({"error":f"{str(e)}"},status=status.HTTP_400_BAD_REQUEST)
 
 @swagger_auto_schema(
     method='delete',
@@ -42,15 +56,20 @@ def job_api(request, id):
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
 def delete_job(request, id):
-    status_code, data = users_services.RecruiterService.delete_job(
-        user=request.user,
-        job_id=id
-    )
-    return Response(data, status=status_code)
+    serializer = JobSerializer(data = request.data)
+    if serializer.is_valid():
+        try:
+            modifield_job = JobService.delete_job(user=request.user,validated_data=serializer.validated_data,job_id=id)
+            serializer = JobSerializer(modifield_job)
+            return Response(serializer.data, status= status.HTTP_201_CREATED)
+        except PermissionDenied:
+            return Response({"error":"User don't have permission"},status= status.HTTP_403_FORBIDDEN)
+        except Exception as e:
+            return Response({"error":f"{str(e)}"},status=status.HTTP_400_BAD_REQUEST)
 
 #view job
 @api_view(['GET'])
 def view_job(request):
-    jobs = Jobs.objects.all()
+    jobs = JobService.Get_all_job()
     serializer = JobSerializer(jobs, many=True)
     return Response(serializer.data)

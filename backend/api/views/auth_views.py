@@ -5,7 +5,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import status
 from apps import users_services
-from serializers.auth_serializers import LogoutSerializer, CustomTokenObtainPairSerializer
+from ..serializers.auth_serializers import LogoutSerializer, CustomTokenObtainPairSerializer
 from drf_yasg.utils import swagger_auto_schema
 
 
