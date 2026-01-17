@@ -1,4 +1,4 @@
-/* --- PHẦN BỔ SUNG: Header Actions & Logout Button --- */
+/* --- HEADER ACTIONS & LOGOUT BUTTON --- */
 .header-actions {
   display: flex;
   align-items: center;
@@ -23,7 +23,7 @@
   box-shadow: 0 4px 10px rgba(255, 77, 79, 0.2);
 }
 
-/* --- TRANG PROFILE CHÍNH --- */
+/* --- TRANG PROFILE CHÍNH (LAYOUT) --- */
 .view-profile-full-page {
   background-color: #ffffff;
   min-height: 100vh;
@@ -60,11 +60,17 @@
   transform: translateX(-5px);
 }
 
-.welcome-section p { margin: 5px 0 0 45px; color: #888; }
+.welcome-section p { 
+  margin: 5px 0 0 45px; 
+  color: #888; 
+}
 
 .notif-badge {
-  background: white; border: 1px solid #eee;
-  padding: 10px; border-radius: 10px; cursor: pointer;
+  background: white; 
+  border: 1px solid #eee;
+  padding: 10px; 
+  border-radius: 10px; 
+  cursor: pointer;
 }
 
 .full-width-banner {
@@ -80,7 +86,7 @@
   position: relative;
 }
 
-/* Căn chỉnh Avatar Container để chứa cây bút */
+/* AVATAR (Đã bỏ icon cây bút vì chỉ xem) */
 .avatar-container-fixed {
   position: relative;
   width: 140px;
@@ -88,12 +94,17 @@
 }
 
 .avatar-circle {
-  width: 140px; height: 140px;
-  background: white; border-radius: 50%;
+  width: 140px; 
+  height: 140px;
+  background: white; 
+  border-radius: 50%;
   border: 5px solid white;
-  display: flex; justify-content: center; align-items: center;
+  display: flex; 
+  justify-content: center; 
+  align-items: center;
   box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-  font-size: 70px; color: #4b49ac;
+  font-size: 70px; 
+  color: #4b49ac;
   overflow: hidden;
 }
 
@@ -103,44 +114,44 @@
   object-fit: cover;
 }
 
-/* Icon cây bút đè lên viền */
-.edit-pen-overlay {
-  position: absolute;
-  bottom: 130px;
-  right: -5px;
-  background: #ffffff;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-  border: 1px solid #ddd;
-  font-size: 18px;
-  z-index: 5;
-  transition: 0.2s;
-}
-
-.edit-pen-overlay:hover { transform: scale(1.1); background: #f8f8f8; }
-
 .user-titles-fixed {
   margin-left: 30px;
   margin-top: -10px;
   flex: 1;
 }
 
-.user-titles-fixed h2 { margin: 0; font-size: 32px; font-weight: bold; color: #1a1a1a; }
-.user-titles-fixed p { margin: 5px 0 0; color: #999; font-size: 18px; }
-
-.btn-edit-main-fixed {
-  background: #7a78ff; color: white; border: none;
-  padding: 12px 40px; border-radius: 10px;
-  font-weight: bold; cursor: pointer; font-size: 16px;
-  margin-top: 80px;
+.user-titles-fixed h2 { 
+  margin: 0; 
+  font-size: 32px; 
+  font-weight: bold; 
+  color: #1a1a1a; 
 }
 
+.user-titles-fixed p { 
+  margin: 5px 0 0; 
+  color: #999; 
+  font-size: 18px; 
+}
+
+/* Button chuyển trang Edit */
+.btn-edit-main-fixed {
+  background: #7a78ff; 
+  color: white; 
+  border: none;
+  padding: 12px 40px; 
+  border-radius: 10px;
+  font-weight: bold; 
+  cursor: pointer; 
+  font-size: 16px;
+  margin-top: 80px;
+  transition: background 0.3s;
+}
+
+.btn-edit-main-fixed:hover {
+  background: #6664d1;
+}
+
+/* --- FORM DISPLAY (READ ONLY) --- */
 .details-grid-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -162,36 +173,25 @@
   font-size: 23px;
 }
 
-.form-group input, .select-box-sim, .gender-select-custom {
+/* Style chung cho input và box hiển thị text */
+.form-group input, 
+.select-box-sim {
   width: 100%;
   height: 48px;
   padding: 0 15px;
   border: 1px solid #e8e8e8;
   border-radius: 10px;
-  background-color: #fafafa;
+  background-color: #fafafa; /* Màu nền xám nhẹ để thể hiện Read-only */
   font-size: 15px;
-  color: #666;
+  color: #555; /* Màu chữ đậm hơn chút cho dễ đọc */
   display: flex;
   align-items: center;
-  justify-content: space-between;
   box-sizing: border-box;
-  transition: all 0.3s ease;
+  outline: none; /* Bỏ viền xanh khi click vì không sửa được */
 }
 
-/* Đồ họa cho ô Gender Select khi Edit */
-.gender-select-custom {
-  border: 2px solid #7a78ff !important;
-  background-color: #fff !important;
-  color: #000 !important;
-  outline: none;
-  cursor: pointer;
+/* Chỉnh style riêng cho input readOnly để người dùng biết không sửa được */
+.form-group input:read-only {
+  cursor: default;
+  background-color: #fafafa;
 }
-
-input.active-input {
-  border: 2px solid #7a78ff !important;
-  background-color: #fff !important;
-  color: #000 !important;
-  outline: none;
-}
-
-.save-btn { background-color: #28a745 !important; }

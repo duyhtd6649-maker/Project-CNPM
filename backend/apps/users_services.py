@@ -1,228 +1,212 @@
 from database.models.users import Users, Candidates, Companies, Recruiters
 from database.models.jobs import Jobs
-from django.shortcuts import get_object_or_404
-from rest_framework.exceptions import ValidationError
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
-from api.serializers import UserSerializer, RecruiterSerializer, JobSerializer, CompanySerializer
-from . import users_services
+from api.serializers.user_serializers import UserSerializer, RecruiterSerializer, CompanySerializer
+from api.serializers.job_serializers import JobSerializer
+from rest_framework.exceptions import *
 
 
-def Get_User_Info():
-    return Users.objects.all()
-
-def Get_User_by_username(username):
-    try:
-        return Users.objects.get(username=username)
-    except Users.DoesNotExist:
-        return None
-    
-def Ban_User(username):
-    try:
-        user = Users.objects.get(username = username)
-        user.is_active = False
+class UserService:
+    @staticmethod
+    def user_signup_role(user, role):
+        user.role = role 
         user.save()
-        return True
-    except Users.DoesNotExist:
-        return False
-    
-def UnBan_User(username):
-    try:
-        user = Users.objects.get(username = username)
-        user.is_active = True
-        user.save()
-        return True
-    except Users.DoesNotExist:
-        return False
-    
-def Remove_User(username):
-    try:
-        user = Users.objects.get(username = username)
-        user.delete()
-        return True
-    except Users.DoesNotExist:
-        return False
-    
-def User_is_active(username):
-    try:
-        user = Users.objects.get(username = username)
-        if user.is_active:
-            return True
-        else:
-            return False
-    except Users.DoesNotExist:
-        return False
+        if role == 'candidate':
+            Candidates.objects.create(user=user)
+        if role == 'recruiter':
+            Recruiters.objects.create(user=user)
 
-def Get_All_Candidates():
-    try: 
-        return Candidates.objects.all()
-    except Candidates.DoesNotExist:
-        return None
-    
-def Get_All_Recruiters():
-    try: 
-        return Users.objects.all()
-    except Users.DoesNotExist:
-        return None
-
-def Black_list_token(refresh_token_string):
-    try:
-        refrest_token = RefreshToken(refresh_token_string)
-        refrest_token.blacklist()
-        return True
-    except TokenError:
-        return False
-    except Exception:
-        return False
-
-def Is_Recruiter(user):
-    try:
-        Users.objects.get(role = user.role)
-        return True
-    except Users.DoesNotExist:
-        return False
-
-def Is_Super_User(user):
-    if user.is_superuser:
-        return True
-    else:
-        return False
-
-def Same_Company(user, job_id):
-    if Is_Recruiter(user):
-        company_of_user = user.company
-        if Jobs.objects.filter(
-            id=job_id,
-            companiesid=company_of_user
-        ).exists():
-            return True
-        else:
-            return False
-    else: 
-        return False
-
-def User_Have_Company(user, company_id):
-    company_of_recruiter = user.company
-    if Companies.objects.filter(
-        id = company_id,
-        companiesid = company_of_recruiter
-    ).exists():
-        return True
-    else:
-        return False
-
-def Get_User_Company(user):
-        try:
-            return user.company
-        except Exception as e:
-            raise ValueError(f"{e}")
-
-class UserServices:
 
     @staticmethod
-    def get_profile(user):
-        return 200, UserSerializer(user).data
-
-    @staticmethod
-    def update_profile(user, data):
-        company_name = data.pop('company_name', None)
-        
-        serializer = UserSerializer(user, data=data, partial=True)
-        if not serializer.is_valid():
-            return 400, serializer.errors
-        serializer.save()
-
+    def update_profile(user_id, validated_data):
+        company_name = validated_data['company']
         if company_name is not None and company_name != "":
             try:
+                user = Users.objects.get(user_id = user_id)
                 company = Companies.objects.get(name=company_name)
                 user.company = company
                 user.save()
             except Companies.DoesNotExist:
-                return 400, {"company_name": "Company not found"}
+                raise NotFound({"error":"Company not found"})
+        return user
 
-        return 200, UserSerializer(user).data
+    @staticmethod
+    def Get_All_User():
+        return Users.objects.all()
 
-
-class RecruiterService: 
-    @staticmethod   
-    def create_job(user, data):
-        if not users_services.Is_Recruiter(user):
-            raise PermissionError("User don't have permission")
-
-        company = Get_User_Company(user)
+    @staticmethod
+    def Get_user_profile_by_id(user_id):
         try:
-            new_job = Jobs.objects.create(**data,company=company)
-            return new_job
+            return Users.objects.get(user_id = user_id)
+        except Users.DoesNotExist:
+            raise NotFound({"error":"User not found"})
+
+    @staticmethod
+    def Get_user_profile_by_username(username):
+        try:
+            return Users.objects.get(username=username)
+        except Users.DoesNotExist:
+            raise NotFound({"error":"User not found"})
+        
+    @staticmethod    
+    def User_is_active(username):
+        try:
+            user = Users.objects.get(username = username)
+            if user.is_active:
+                return True
+            else:
+                return False
+        except Users.DoesNotExist:
+            raise NotFound({"error":"User not found"})
+
+    @staticmethod    
+    def Get_All_Candidates():
+        return Candidates.objects.all()
+
+    @staticmethod    
+    def Black_list_token(refresh_token_string):
+        try:
+            refrest_token = RefreshToken(refresh_token_string)
+            refrest_token.blacklist()
+            return True
+        except TokenError:
+            raise TokenError({"error":"Token error"})
         except Exception as e:
-            raise Exception(f"error: {e}")
+            raise Exception({"error":f"{str(e)}"})
+
+class AdminService:
+    @staticmethod    
+    def Is_Super_User(user):
+        if user.is_superuser:
+            return True
+        else:
+            return False
+        
+    @staticmethod    
+    def Ban_User(request_user, username):
+        if AdminService.Is_Super_User(request_user):
+            try:
+                user = Users.objects.get(username = username)
+                user.is_active = False
+                user.save()
+                return None
+            except Users.DoesNotExist:
+                raise NotFound({"error":"User not found"})
+        else:
+            raise PermissionDenied({"error":"user don't have permission"})
+        
+    @staticmethod    
+    def UnBan_User(request_user, username):
+        if AdminService.Is_Super_User(request_user):
+            try:
+                user = Users.objects.get(username = username)
+                user.is_active = True
+                user.save()
+                return None
+            except Users.DoesNotExist:
+                raise NotFound({"error":"User not found"})
+        else:
+            raise PermissionDenied({"error":"user don't have permission"})
+        
+    @staticmethod    
+    def Remove_User(request_user, username):
+        if AdminService.Is_Super_User(request_user):
+            try:
+                user = Users.objects.get(username = username)
+                user.isdeleted = True
+                user.save()
+                return None
+            except Users.DoesNotExist:
+                raise NotFound({"error":"User not found"})
+        else:
+            raise PermissionDenied({"error":"user don't have permission"})
+
+class RecruiterService:   
+    @staticmethod    
+    def Is_Recruiter(user):
+        if user.role == "recruiter":
+            return True
+        else:
+            return False
+
+    @staticmethod    
+    def Get_All_Recruiters():
+        return Recruiters.objects.all()
+    
+    @staticmethod
+    def Get_recruiter(user):
+        try:
+            return Recruiters.objects.get(user = user)
+        except Recruiters.DoesNotExist:
+            raise NotFound({"error":"recruiter not found"})
         
     @staticmethod
-    def fix_job(user, data, job_id):
-        recruiter = users_services.Is_Recruiter(user)
-        superuser = users_services.Is_Super_User(user)
-        samecompany = users_services.Same_Company(user, job_id)
-
-        if not (recruiter and samecompany) and not superuser:
-            return 403, {"detail": "You don't work for this company"}
-
+    def Is_Recruiter_Of_Company(user, company_id):
         try:
-            job = Jobs.objects.get(id=job_id)
-        except Jobs.DoesNotExist:
-            return 404, {"detail": "Job not found"}
+            recruiter = Recruiters.objects.get(user= user)
+        except Recruiters.DoesNotExist:
+            raise NotFound({"error":"recruiter not found"})
+        if recruiter.company_id == company_id:
+            return True
+        else:
+            return False
 
-        serializer = JobSerializer(job, data=data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return 200, serializer.data
-        return 400, serializer.errors
-        
-    def delete_job(user, job_id):
-        recruiter = users_services.Is_Recruiter(user)
-        superuser = users_services.Is_Super_User(user)
-        samecompany = users_services.Same_Company(user, job_id)
 
-        if not (recruiter and samecompany) and not superuser:
-            return 403, {"detail": "You don't work for this company"}
-        try:
-            job = Jobs.objects.get(id=job_id)
-        except Jobs.DoesNotExist:
-            return 404, {"detail": "Job not found"}
-
-        job.delete()
-        return 200, {"detail": "Job deleted successfully"}
-
+class CompanyService:
     @staticmethod
-    def create_company(user, data):
-        recruiter = users_services.RecruiterService.get_recruiter(user)
-        is_recruiter = users_services.Is_Recruiter(user)   
-        superuser = users_services.Is_Super_User(user)
+    def Get_all_company():
+        return Companies.objects.all()
+
+    @staticmethod    
+    def User_Have_Company(user, company_id):
+        company_of_recruiter = user.company
+        if Companies.objects.filter(
+            id = company_id,
+            companiesid = company_of_recruiter
+        ).exists():
+            return True
+        else:
+            return False
+
+    @staticmethod    
+    def Get_User_Company(user):
+            try:
+                return user.company
+            except Exception as e:
+                raise ValueError(f"{e}")
+    @staticmethod
+    def create_company(user, validated_data):
+        try:
+            recruiter = RecruiterService.Get_recruiter(user)
+            is_recruiter = RecruiterService.Is_Recruiter(user)   
+            superuser = AdminService.Is_Super_User(user)
+        except NotFound:
+            raise NotFound({"error":"recruiter not found"})
+        except Exception as e:
+            raise Exception({"error":f"{str(e)}"})
         if not is_recruiter and not superuser:
-            return 403, {"detail": "not a recruiter"}
-        if recruiter and recruiter.company is not None:
-            return 400, {"detail": "you already belong to a company"}
-        
-        serializer = CompanySerializer(data = data)
-        if not serializer.is_valid():
-            return 400, serializer.errors
-        
-        company = serializer.save()
-
-        if recruiter:
-            recruiter.company = company
-            recruiter.save()
-        return 201, {"detail": "company has been created"}
+            raise PermissionError({"error":"user don't have permission"})
+        if user.company is not None:
+            raise ValidationError({"error":"recruiter already had company"})
+        company = Companies.objects.create(**validated_data)
+        setattr(user, 'company', company)
+        user.save()
+        return company
         
     @staticmethod
     def delete_company(user, id):
-        recruiter = users_services.Is_Recruiter(user)
-        if not recruiter:
-            return 403, {"detail": "User is not recruiter"}
-        try:
-            company = Companies.objects.get(id=id)
-        except Companies.DoesNotExist:
-            return 404, {"detail": "company not found"}
-        company.delete()
-        return 200, {"detail": "company deleted"}
+        if AdminService.Is_Super_User(user) or RecruiterService.Is_Recruiter_Of_Company(user,id):
+            try:
+                company = Companies.objects.get(id=id)
+                company.isdeleted = True
+            except Companies.DoesNotExist:
+                raise NotFound({"error":"company not found"})
+            return company
+        else:
+            raise PermissionError({"error":"user don't have permission"})
+    
+
 
 
         

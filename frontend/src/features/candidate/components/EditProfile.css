@@ -1,0 +1,347 @@
+
+.edit-profile-container {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #ffffff;
+  font-family: 'Inter', 'Segoe UI', Tahoma, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+
+.edit-profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 60px;
+  background: linear-gradient(135deg, #1b1b6e 0%, #7658f1 100%);
+  color: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.back-arrow {
+  font-size: 28px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  font-weight: bold;
+  display: flex;      
+  align-items: center;
+}
+
+.back-arrow:hover {
+  transform: translateX(-5px);
+}
+
+.header-text h1 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.current-date {
+  margin: 5px 0 0 0;
+  font-size: 14px;
+  opacity: 0.9;
+  font-weight: 400;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.notification-btn {
+  background-color: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  font-size: 20px;
+  padding: 10px 15px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.notification-btn:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+.logout-btn {
+  background-color: #ffffff;
+  color: #ff4d4f;
+  border: 1px solid #ff4d4f;
+  padding: 10px 25px;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+  background-color: #ff4d4f;
+  color: #ffffff;
+  box-shadow: 0 4px 10px rgba(255, 77, 79, 0.3);
+  transform: translateY(-2px);
+}
+
+
+.edit-profile-main {
+  position: relative;
+  background-color: #ffffff;
+}
+
+.purple-banner {
+  height: 200px;
+  background: linear-gradient(135deg, #1b1b6e 0%, #7658f1 100%);
+  width: 100%;
+}
+
+
+.avatar-section {
+  display: flex;
+  justify-content: center;
+  margin-top: -80px;
+  position: relative;
+  z-index: 10;
+  margin-bottom: 40px;
+}
+
+.avatar-wrapper {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  border: 5px solid #ffffff;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.avatar-wrapper:hover {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  transform: translateY(-3px);
+}
+
+
+.avatar-wrapper:hover .avatar-overlay {
+  opacity: 1;
+}
+
+.avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 80px;
+  color: #7678ff;
+  background-color: #f5f5ff;
+}
+
+.avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0; /* Ẩn mặc định */
+  transition: opacity 0.3s ease;
+}
+
+.camera-icon {
+  font-size: 36px;
+  color: white;
+}
+
+/* --- FORM --- */
+.form-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 80px 60px 80px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px 80px;
+  margin-bottom: 40px;
+}
+
+.form-column {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-field label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333333;
+  margin-bottom: 5px;
+}
+
+/* Style chung cho Input và Select */
+.form-field input,
+.form-field select {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  background-color: #fafafa;
+  color: #333333;
+  transition: all 0.3s ease;
+  font-family: 'Inter', sans-serif;
+  box-sizing: border-box;
+}
+
+.form-field input:focus,
+.form-field select:focus {
+  border-color: #7678ff;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(118, 120, 255, 0.1);
+  outline: none;
+}
+
+
+.form-field select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23666' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  padding-right: 40px;
+  cursor: pointer;
+}
+
+
+.form-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.save-btn {
+  background: linear-gradient(135deg, #7678ff 0%, #5a5cd6 100%);
+  color: white;
+  border: none;
+  padding: 15px 60px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(118, 120, 255, 0.4);
+  transition: all 0.3s ease;
+}
+
+.save-btn:hover {
+  background: linear-gradient(135deg, #5a5cd6 0%, #4a4cb6 100%);
+  box-shadow: 0 6px 20px rgba(118, 120, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+.save-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 10px rgba(118, 120, 255, 0.4);
+}
+
+
+@media (max-width: 1024px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+
+  .form-container {
+    padding: 0 40px 40px 40px;
+  }
+
+  .edit-profile-header {
+    padding: 20px 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .edit-profile-header {
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px 20px;
+  }
+
+  .header-left {
+    width: 100%;
+  }
+
+  .header-right {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .form-container {
+    padding: 0 20px 30px 20px;
+  }
+
+  .avatar-wrapper {
+    width: 130px;
+    height: 130px;
+  }
+
+  .avatar-placeholder {
+    font-size: 60px;
+  }
+
+  .camera-icon {
+    font-size: 28px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-text h1 {
+    font-size: 20px;
+  }
+
+  .current-date {
+    font-size: 12px;
+  }
+
+  .form-field label {
+    font-size: 14px;
+  }
+
+  .form-field input,
+  .form-field select {
+    font-size: 14px;
+    padding: 12px 14px;
+  }
+
+  .save-btn {
+    padding: 12px 40px;
+    font-size: 14px;
+  }
+}

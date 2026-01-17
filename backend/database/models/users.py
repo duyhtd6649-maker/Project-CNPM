@@ -34,6 +34,12 @@ class Recruiters(models.Model):
     id = models.CharField(db_column='Id', primary_key=True, max_length=255,default=uuid.uuid4,editable=False)  # Field name made lowercase.
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, db_column='UserId',related_name='recruiter')  # Field name made lowercase.
 
+<<<<<<< HEAD
+=======
+class Recruiters(models.Model):
+    id = models.CharField(db_column='Id', primary_key=True, max_length=255,default=uuid.uuid4,editable=False)  # Field name made lowercase.
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, db_column='UserId',related_name='recruiter')  # Field name made lowercase.
+>>>>>>> ccb72a2b6a5721e0eefc1609fbdc526be945aea7
     class Meta:
         db_table = 'Recruiters'
         app_label = 'database'
@@ -55,8 +61,11 @@ class Candidates(models.Model):
     def __str__(self):
         return f"Candidate: {self.user.username}"
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> ccb72a2b6a5721e0eefc1609fbdc526be945aea7
 class Companies(models.Model):
     id = models.CharField(db_column='Id', primary_key=True, max_length=255,default=uuid.uuid4,editable=False)  # Field name made lowercase.
     name = models.CharField(db_column='Name', max_length=255, unique=True,null=False,blank=False)  # Field name made lowercase.

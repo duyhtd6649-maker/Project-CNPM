@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-// Thư viện Icon
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
 import { faEnvelope, faShieldAlt, faUserShield } from '@fortawesome/free-solid-svg-icons'; 
-
-import "../components/Login.css";
-
+import '../components/Login.css';
 
 const Login = () => {
   const location = useLocation();
@@ -56,7 +53,6 @@ const Login = () => {
     <div className="page-wrapper">
       <div className="login-wrapper">
         <div className="login-left">
-          {/* Nút Admin Login ở góc trên bên phải */}
           <Link to="/admin-login" className="admin-login-link">
             <FontAwesomeIcon icon={faUserShield} /> Admin Login
           </Link>
@@ -109,13 +105,13 @@ const Login = () => {
             </div>
 
             <div className="social-login">
-              <button className="social-btn google" type="button" title="Google">
+              <button className="social-btn google" type="button">
                 <FontAwesomeIcon icon={faGoogle} />
               </button>
-              <button className="social-btn oauth" type="button" title="OAuth/Secure">
+              <button className="social-btn oauth" type="button">
                 <FontAwesomeIcon icon={faShieldAlt} />
               </button>
-              <button className="social-btn gmail" type="button" title="Gmail">
+              <button className="social-btn gmail" type="button">
                 <FontAwesomeIcon icon={faEnvelope} />
               </button>
             </div>

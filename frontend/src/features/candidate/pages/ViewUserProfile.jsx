@@ -1,14 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import "../components/ViewUserProfile.css";
 
-
 const ViewUserProfile = () => {
   const navigate = useNavigate();
-  const fileInputRef = useRef(null);
-  const [isEditing, setIsEditing] = useState(false);
   const [userData, setUserData] = useState(null);
 
+  // Load dữ liệu từ LocalStorage khi vào trang
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('currentUser'));
     if (!user) {
@@ -18,31 +16,9 @@ const ViewUserProfile = () => {
     }
   }, [navigate]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setUserData({ ...userData, [name]: value });
-  };
-
-  const handleAvatarChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setUserData({ ...userData, avatar: reader.result });
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleEditToggle = () => {
-    if (isEditing) {
-      localStorage.setItem('currentUser', JSON.stringify(userData));
-      const usersList = JSON.parse(localStorage.getItem('usersList') || '[]');
-      const updatedList = usersList.map(u => u.email === userData.email ? userData : u);
-      localStorage.setItem('usersList', JSON.stringify(updatedList));
-      alert("Thông tin cá nhân đã được cập nhật!");
-    }
-    setIsEditing(!isEditing);
+  // Hàm chuyển hướng sang trang EditProfile
+  const handleEditClick = () => {
+    navigate('/edit-profile');
   };
 
   const handleLogout = () => {
@@ -54,6 +30,7 @@ const ViewUserProfile = () => {
 
   return (
     <div className="view-profile-full-page">
+      {/* --- HEADER --- */}
       <header className="profile-top-nav">
         <div className="welcome-section">
           <h1 onClick={() => navigate('/home')} className="back-home-link">
@@ -69,8 +46,9 @@ const ViewUserProfile = () => {
 
       <main className="profile-content-wrapper">
         <div className="full-width-banner"></div>
+        
         <div className="profile-intro-row">
-          {/* Avatar Container với Icon Cây bút */}
+          {/* Avatar Container (Chỉ hiển thị, không click được) */}
           <div className="avatar-container-fixed">
             <div className="avatar-circle">
               {userData.avatar ? (
@@ -79,84 +57,63 @@ const ViewUserProfile = () => {
                 "👤"
               )}
             </div>
-            {isEditing && (
-              <div 
-                className="edit-pen-overlay" 
-                onClick={() => fileInputRef.current.click()}
-              >
-                ✏️
-              </div>
-            )}
-            <input 
-              type="file" 
-              ref={fileInputRef} 
-              onChange={handleAvatarChange} 
-              hidden 
-              accept="image/*" 
-            />
+            {/* Đã xóa input file và icon bút chì ở đây */}
           </div>
 
           <div className="user-titles-fixed">
             <h2>{userData.name}</h2>
             <p>{userData.email}</p>
           </div>
+          
+          {/* Nút bấm chuyển sang trang EditProfile */}
           <button 
-            className={`btn-edit-main-fixed ${isEditing ? 'save-btn' : ''}`} 
-            onClick={handleEditToggle}
+            className="btn-edit-main-fixed" 
+            onClick={handleEditClick}
           >
-            {isEditing ? "Save Changes" : "Edit Profile"}
+            Edit Profile
           </button>
         </div>
 
+        {/* --- DANH SÁCH THÔNG TIN (READ ONLY) --- */}
         <section className="details-grid-container">
           <div className="grid-column">
             <div className="form-group">
               <label>Full Name</label>
-              <input type="text" name="name" value={userData.name} onChange={handleChange} readOnly={!isEditing} className={isEditing ? "active-input" : ""} />
+              <input type="text" value={userData.name || ''} readOnly />
             </div>
             <div className="form-group">
-              <label>Email (Không thể sửa)</label>
-              <input type="email" value={userData.email} readOnly style={{background: '#eee'}} />
+              <label>Email</label>
+              <input type="email" value={userData.email || ''} readOnly style={{background: '#fafafa'}} />
             </div>
             <div className="form-group">
               <label>Phone Number</label>
-              <input type="text" name="phone" value={userData.phone} onChange={handleChange} readOnly={!isEditing} className={isEditing ? "active-input" : ""} />
+              <input type="text" value={userData.phone || ''} readOnly />
             </div>
             <div className="form-group">
               <label>Country</label>
-              <input type="text" name="country" value={userData.country} onChange={handleChange} readOnly={!isEditing} className={isEditing ? "active-input" : ""} />
+              <input type="text" value={userData.country || ''} readOnly />
             </div>
           </div>
 
           <div className="grid-column">
             <div className="form-group">
               <label>Gender</label>
-              {isEditing ? (
-                /* Đồng bộ đồ họa ô Gender Select */
-                <select 
-                  name="gender" 
-                  value={userData.gender} 
-                  onChange={handleChange} 
-                  className="active-input gender-select-custom"
-                >
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                </select>
-              ) : (
-                <input type="text" value={userData.gender} readOnly />
-              )}
+              <input type="text" value={userData.gender || ''} readOnly />
             </div>
             <div className="form-group">
               <label>Date of Birth</label>
-              <input type={isEditing ? "date" : "text"} name="dob" value={userData.dob} onChange={handleChange} readOnly={!isEditing} className={isEditing ? "active-input" : ""} />
+              <input type="text" value={userData.dob || ''} readOnly />
             </div>
             <div className="form-group">
               <label>Jobs</label>
-              <input type="text" name="jobs" value={userData.jobs} onChange={handleChange} readOnly={!isEditing} className={isEditing ? "active-input" : ""} />
+              <input type="text" value={userData.jobs || ''} readOnly />
             </div>
             <div className="form-group">
               <label>Package</label>
-              <div className="select-box-sim">Free Membership <span>▼</span></div>
+              {/* Hiển thị package dưới dạng text box readonly cho đồng bộ */}
+              <div className="select-box-sim" style={{justifyContent: 'flex-start'}}>
+                {userData.package || 'Free Membership'}
+              </div>
             </div>
           </div>
         </section>

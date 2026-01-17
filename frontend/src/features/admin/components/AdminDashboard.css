@@ -239,3 +239,26 @@ body {
 .dot { width: 12px; height: 12px; border-radius: 50%; }
 .dot.blue { background: var(--primary-blue); }
 .dot.gray { background: #e2e8f0; }
+
+/* Thêm vào AdminDashboard.css */
+
+.nav-item-custom:hover {
+  background-color: #f1f5f9;
+  color: var(--primary-blue);
+  border-left: 4px solid var(--primary-blue);
+}
+
+.nav-item-custom.active:hover {
+  background: linear-gradient(90deg, #5b8dfa 0%, #32c192 100%);
+  color: white;
+  border-left: 4px solid transparent;
+}
+
+.user-account-box:hover {
+  background-color: #f8fafc;
+  border-color: var(--primary-blue);
+}
+
+.uth-branding:hover {
+  opacity: 0.8;
+}

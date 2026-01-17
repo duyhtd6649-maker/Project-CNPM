@@ -192,7 +192,7 @@ REST_AUTH = {
     "JWT_AUTH_HTTPONLY": False,
     "JWT_AUTH_COOKIE": 'core-app-auth',
     "JWT_AUTH_REFRESH_COOKIE": 'core-refresh-token',
-    'REGISTER_SERIALIZER': 'api.serializers.CustomRegisterSerializer',
+    'REGISTER_SERIALIZER': 'api.serializers.auth_serializers.CustomRegisterSerializer',
 
 }
 
