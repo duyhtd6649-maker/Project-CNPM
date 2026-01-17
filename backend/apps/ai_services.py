@@ -9,11 +9,15 @@ def career_coach_service(question: str):
     prompt = f"""
 You are a professional career coach.
 
-Return strictly JSON with:
-- expectedCareer
-- overview
-- skills
-- learningPaths
+    Answer the following question with career guidance and skill recommendations.
+    
+    Return result strictly in JSON with:
+- expectedCareer (list)
+- overview (list)
+- skills (list)
+- learningPaths (list)
+
+Return ONLY valid JSON. Do not include explanations, text, or markdown.
 
 Question:
 {question}
@@ -27,19 +31,25 @@ Question:
 
 def cv_analyzer_service(cv_text: str, target_job: str):
     prompt = f"""
-You are an expert AI Recruiter.
+You are an expert AI Recruiter and ATS system. 
+Your task is to compare the candidate's CV Content against the Job Description.
 
-CV: {cv_text}
-Target job: {target_job}
+Analyze the following CV for the job: {target_job}
+CANDIDATE CV CONTENT: {cv_text}
 
-Return STRICT JSON with:
-- match_percentage
-- summary
-- matching_skills
-- missing_skills
-- years_of_experience
-- pros
-- cons
+Analyze and return a STRICT JSON object with the following fields:
+    - match_percentage (float): 0 to 100 based on keyword matching and experience relevance.
+    - summary (string): A short professional summary of the candidate suitability (max 50 words).
+    - matching_skills (list of strings): Skills found in CV that match the Job.
+    - missing_skills (list of strings): Important skills from Job that are NOT in CV.
+    - years_of_experience (float): Total years of relevant experience extracted from CV.
+    - pros (list of strings): 3 key strengths.
+    - cons (list of strings): 3 key weaknesses or risks.
+
+    IMPORTANT: 
+    - Do NOT return Markdown formatting (like ```json). 
+    - Return ONLY the raw JSON string.
+    - Ignore contact info (email/phone), focus only on skills and experience.
 """
     response = client.responses.create(
         model="gpt-4.1-mini",
