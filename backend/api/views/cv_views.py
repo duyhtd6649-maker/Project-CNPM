@@ -40,4 +40,4 @@ def Analyze_Cv(request):
         data = cv_services.analyze_cv(validated_data=serializer.validated_data,user=request.user)
     except Exception as e:
         return Response({"error": f"{str(e)}"},status=status.HTTP_503_SERVICE_UNAVAILABLE)
-    return Response({data},status= status.HTTP_200_OK)
+    return Response(data,status= status.HTTP_200_OK)

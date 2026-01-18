@@ -56,16 +56,14 @@ def update_job(request, id):
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
 def delete_job(request, id):
-    serializer = JobSerializer(data = request.data)
-    if serializer.is_valid():
-        try:
-            modifield_job = JobService.delete_job(user=request.user,validated_data=serializer.validated_data,job_id=id)
-            serializer = JobSerializer(modifield_job)
-            return Response(serializer.data, status= status.HTTP_201_CREATED)
-        except PermissionDenied:
-            return Response({"error":"User don't have permission"},status= status.HTTP_403_FORBIDDEN)
-        except Exception as e:
-            return Response({"error":f"{str(e)}"},status=status.HTTP_400_BAD_REQUEST)
+    try:
+        modifield_job = JobService.delete_job(user=request.user,job_id=id)
+        serializer = JobSerializer(modifield_job)
+        return Response(serializer.data, status= status.HTTP_201_CREATED)
+    except PermissionDenied:
+        return Response({"error":"User don't have permission"},status= status.HTTP_403_FORBIDDEN)
+    except Exception as e:
+        return Response({"error":f"{str(e)}"},status=status.HTTP_400_BAD_REQUEST) 
 
 #view job
 @api_view(['GET'])

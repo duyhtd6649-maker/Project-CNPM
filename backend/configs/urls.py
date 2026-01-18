@@ -21,10 +21,9 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('', RedirectView.as_view(url='/swagger/', permanent=False)),
-    path('api/', include('api.urls')),
     path('admin/', admin.site.urls),
     path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
-    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swag ger-ui'),
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('accounts/', include('allauth.urls')),
     path("api/", include("api.urls")),

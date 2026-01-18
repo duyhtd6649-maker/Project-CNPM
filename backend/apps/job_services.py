@@ -13,15 +13,24 @@ class JobService:
     @staticmethod
     def check_job_modify_permission(user, job):
         try:
-            recruiter_create_job = getattr(job,'recruiter',None)
-            recruiter = RecruiterService.Get_recruiter(user)
-            is_super_user = AdminService.Is_Super_User(user)
-            same_company = RecruiterService.Is_Recruiter_Of_Company(user, job.company_id)
-        except Exception as e:
+            if AdminService.Is_Super_User(user):
+                return True
+            recruiter_create_job = getattr(job, 'recruiter', None)
+            try:
+                recruiter = RecruiterService.Get_recruiter(user)
+            except Exception:
+                recruiter = None
+            try:
+                same_company = RecruiterService.Is_Recruiter_Of_Company(user, job.company_id)
+            except Exception:
+                same_company = False
+            if recruiter_create_job is not None and recruiter is not None:
+                if str(getattr(recruiter, 'id', None)) == str(getattr(recruiter_create_job, 'id', None)):
+                    return True
+            if same_company:
+                return True
             return False
-        if (recruiter == recruiter_create_job) or same_company or is_super_user:
-            return True
-        else:
+        except Exception:
             return False
 
     @staticmethod
@@ -34,7 +43,7 @@ class JobService:
         except Exception as e:
             raise Exception({"error":f"{str(e)}"})
         if not permission:
-            raise PermissionError({"error":"user don't have permission"})
+            raise PermissionDenied({"error":"user don't have permission"})
         #gan du lieu moi vao instance job
         for key, value in validated_data.items():
             setattr(job, key, value)
@@ -51,7 +60,7 @@ class JobService:
         except Exception as e:
             raise Exception({"error":f"{str(e)}"})
         if not permission:
-            raise PermissionError({"error":"user don't have permission"})
+            raise PermissionDenied({"error":"user don't have permission"})
         job.isdeleted = True
         job.save()
         return job
@@ -59,7 +68,7 @@ class JobService:
     @staticmethod
     def create_job(user, validated_data):
         if not RecruiterService.Is_Recruiter(user):
-            raise PermissionError("User don't have permission")
+            raise PermissionDenied("User don't have permission")
 
         company = CompanyService.Get_User_Company(user)
         try:

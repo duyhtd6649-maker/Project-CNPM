@@ -139,18 +139,14 @@ class RecruiterService:
         try:
             return Recruiters.objects.get(user = user)
         except Recruiters.DoesNotExist:
-            raise NotFound({"error":"recruiter not found"})
+            raise Exception({"error":"recruiter not found"})
         
     @staticmethod
     def Is_Recruiter_Of_Company(user, company_id):
-        try:
-            recruiter = Recruiters.objects.get(user= user)
-        except Recruiters.DoesNotExist:
-            raise NotFound({"error":"recruiter not found"})
-        if recruiter.company_id == company_id:
-            return True
-        else:
+        is_recruiter = Recruiters.objects.filter(user=user).exists()
+        if not is_recruiter:
             return False
+        return (user.company_id is not None) and (user.company_id == company_id)
 
 
 class CompanyService:
@@ -200,6 +196,7 @@ class CompanyService:
             try:
                 company = Companies.objects.get(id=id)
                 company.isdeleted = True
+                company.save()
             except Companies.DoesNotExist:
                 raise NotFound({"error":"company not found"})
             return company

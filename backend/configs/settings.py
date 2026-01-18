@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
 
     'dj_rest_auth',
+    'dj_rest_auth.registration',
 
     'drf_yasg',
 ]
@@ -163,17 +164,27 @@ LOGIN_REDIRECT_URL = "/swagger/"
 LOGOUT_REDIRECT_URL = "/swagger/"
 SIGNUP_REDIRECT_URL = "/swagger/"
 
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_HOST = 'smtp.gmail.com' # Hoặc host của nhà cung cấp khác
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'livewallpaper2907@gmail.com'
+EMAIL_HOST_PASSWORD = 'bfnp rmuq iyjc hkyk' # App Password, không phải pass login thường
+DEFAULT_FROM_EMAIL = 'livewallpaper2907@gmail.com'
+
 ACCOUNT_LOGIN_METHODS = {'username', 'email'}
 ACCOUNT_SIGNUP_FIELDS = ['email', 'username', 'password1', 'password2']
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_EMAIL_REQUIRED = True
+# Cho phép đăng nhập bằng email
+ACCOUNT_AUTHENTICATION_METHOD = 'email' # hoặc 'username_email'
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
 )
 
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSON_CLASSES' : [
