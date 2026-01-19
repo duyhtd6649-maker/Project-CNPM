@@ -172,8 +172,16 @@ EMAIL_HOST_USER = 'livewallpaper2907@gmail.com'
 EMAIL_HOST_PASSWORD = 'bfnp rmuq iyjc hkyk' # App Password, không phải pass login thường
 DEFAULT_FROM_EMAIL = 'livewallpaper2907@gmail.com'
 
-ACCOUNT_LOGIN_METHODS = {'username', 'email'}
-ACCOUNT_SIGNUP_FIELDS = ['email', 'username', 'password1', 'password2']
+ACCOUNT_LOGIN_METHODS = {'username'}
+ACCOUNT_SIGNUP_FIELDS = {
+    'email': {
+        'required': True, 
+    },
+    'username': {
+        'required': True, 
+    }
+}
+ACCOUNT_LOGIN_METHODS = {'username'}
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_EMAIL_REQUIRED = True
