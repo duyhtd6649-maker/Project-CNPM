@@ -1,5 +1,23 @@
 import { createBrowserRouter, Outlet, Navigate, Link } from 'react-router-dom';
 import AuthLayout from '../layouts/AuthLayout';
+<<<<<<< HEAD
+=======
+import Login from '../features/candidate/pages/Login';
+import Register from '../features/candidate/pages/Register';
+import ForgotPassword from '../features/candidate/pages/ForgotPassword';
+import HomepageCandidates from '../features/candidate/pages/HomepageCandidates';
+import ViewUserProfile from '../features/candidate/pages/ViewUserProfile';
+import PremiumPage from '../features/candidate/pages/PremiumPage';
+import CreateCV from '../features/candidate/pages/CreateCV';
+import EditProfile from '../features/candidate/pages/EditProfile';
+import NotificationSystem from '../features/candidate/pages/notificationunderdevelopment';
+import AdminLogin from '../features/admin/pages/AdminLogin';
+import AdminDashboard from '../features/admin/pages/AdminDashboard';
+import ManageInternalAccount from '../features/admin/pages/ManageInternalAccount';
+import ManageCandidateAccount from '../features/admin/pages/ManageCandidateAccount';
+import SavedCV from '../features/candidate/pages/SavedCV';
+import Chatbot from '../features/candidate/pages/Chatbot';
+>>>>>>> 1e3adc65f6efcbeb31687238596ae5003e886015
 
 import Login from '../features/candidate/pages/Login.jsx';
 import Register from '../features/candidate/pages/Register.jsx';
@@ -70,6 +88,7 @@ export const router = createBrowserRouter([
       { path: 'edit-profile', element: <EditProfile /> },
       { path: 'premium', element: <PremiumPage /> },
       { path: 'saved-cv', element: <SavedCV /> },
+      { path: 'chatbot', element: <Chatbot /> },
       { path: 'create-cv', element: <CreateCV /> },
       { path: 'feature-locked', element: <NotificationSystem /> },
 

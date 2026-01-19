@@ -1,0 +1,63 @@
+:root {
+  --color-primary: #7C3AED;
+  --color-primary-hover: #6D28D9;
+}
+
+.app-container {
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  transition: background-color 0.2s;
+}
+
+.glass {
+  background-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+
+.dark .glass-dark {
+  background-color: rgba(17, 24, 39, 0.7);
+  border-color: rgba(55, 65, 81, 0.4);
+}
+
+.mesh-bg-light {
+  background-color: #Fdfbf7;
+  background-image:
+    radial-gradient(at 40% 20%, hsla(266, 51%, 90%, 1) 0px, transparent 50%),
+    radial-gradient(at 80% 0%, hsla(189, 100%, 92%, 1) 0px, transparent 50%),
+    radial-gradient(at 0% 50%, hsla(340, 100%, 96%, 1) 0px, transparent 50%);
+}
+
+.dark .app-container {
+  background-color: #111827;
+
+  .text-primary {
+    color: var(--color-primary);
+  }
+
+  .bg-primary {
+    background-color: var(--color-primary);
+  }
+
+  .hover\:text-primary:hover {
+    color: var(--color-primary);
+  }
+
+  .focus\:ring-primary:focus {
+    --tw-ring-color: var(--color-primary);
+  }
+
+  .shadow-glow {
+    box-shadow: 0 0 20px rgba(124, 58, 237, 0.15);
+  }
+
+
+  input[type="date"] {
+    color-scheme: light;
+  }
+
+  .dark input[type="date"] {
+    color-scheme: dark;
+  }
