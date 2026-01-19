@@ -1,6 +1,9 @@
 import os
 import json
 from openai import OpenAI
+from database.models import Conversation, Message
+from apps.chatbot_services.llm_client import call_llm
+from apps.chatbot_services.prompt_builder import build_prompt
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
@@ -56,3 +59,31 @@ Analyze and return a STRICT JSON object with the following fields:
         input=prompt
     )
     return json.loads(response.output_text)
+
+
+def handle_mock_interview(convo: Conversation, user_message: str):
+    Message.objects.create(
+        conversation=convo,
+        role="user",
+        content=user_message
+    )
+
+    history = [
+        {"role": m.role, "content": m.content}
+        for m in convo.messages.all()
+    ]
+
+    result = call_llm(build_prompt(convo, history))
+
+    if result["isFinished"]:
+        convo.is_finished = True
+        convo.final_score = result["finalScore"]
+        convo.save()
+    else:
+        Message.objects.create(
+            conversation=convo,
+            role="assistant",
+            content=result["nextQuestion"]
+        )
+
+    return result

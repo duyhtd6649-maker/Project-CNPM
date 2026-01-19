@@ -1,0 +1,33 @@
+from django.db import models
+from .base import AuditableModel
+
+class Conversation(AuditableModel):
+    id = models.CharField(db_column='Id', primary_key=True, max_length=255, default=models.UUIDField, editable=False)  # Field name made lowercase.
+    target_job = models.CharField(db_column='TargetJob', max_length=100)
+    level = models.CharField(db_column='Level', max_length=50)
+    max_turns = models.IntegerField(db_column='Maxturn', default=5)
+    is_finished = models.BooleanField(db_column='IsFinished', default=False)
+    final_score = models.IntegerField(db_column='FinalScore', null=True, blank=True)
+
+    def __str__(self):
+        return f"[{self.id}] {self.target_job} - {self.level}"
+
+class Message(AuditableModel):
+    id = models.CharField(db_column='Id', primary_key=True, max_length=255, default=models.UUIDField, editable=False)  # Field name made lowercase.
+    class Role(models.TextChoices):
+        USER = "user", "User"
+        ASSISTANT = "assistant", "Assistant"
+
+    conversation = models.ForeignKey(
+        'Conversation',
+        on_delete=models.CASCADE,
+        db_column='ConversationId',
+        related_name="messages"
+    )
+    role = models.CharField(
+        db_column='Role',
+        max_length=10,
+        choices=Role.choices
+    )
+    content = models.TextField(db_column='Content')
+    turn_index = models.IntegerField(db_column='TurnIndex')
