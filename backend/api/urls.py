@@ -6,6 +6,7 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
+from api.views.ai_views import mock_interview
 
 urlpatterns = [
     # ===== USER =====
@@ -39,5 +40,5 @@ urlpatterns = [
     # ===== AI =====
     path("ai/career/coach", ai_views.CareerCoachAPIView.as_view()),
     path("ai/cv/analyzer", ai_views.CvAnalyzerAPIView.as_view()),
-    
+    path("ai/mock-interview/", mock_interview)
 ]
