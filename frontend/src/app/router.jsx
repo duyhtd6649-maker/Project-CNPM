@@ -14,6 +14,7 @@ import AdminDashboard from '../features/admin/pages/AdminDashboard';
 import ManageInternalAccount from '../features/admin/pages/ManageInternalAccount';
 import ManageCandidateAccount from '../features/admin/pages/ManageCandidateAccount';
 import SavedCV from '../features/candidate/pages/SavedCV';
+import Chatbot from '../features/candidate/pages/Chatbot';
 
 
 const navStyle = {
@@ -67,6 +68,7 @@ export const router = createBrowserRouter([
       { path: 'edit-profile', element: <EditProfile /> },
       { path: 'premium', element: <PremiumPage /> },
       { path: 'saved-cv', element: <SavedCV /> },
+      { path: 'chatbot', element: <Chatbot /> },
       { path: 'create-cv', element: <CreateCV /> },
       { path: 'feature-locked', element: <NotificationSystem /> },
       { path: 'admin-login', element: <AdminLogin /> },

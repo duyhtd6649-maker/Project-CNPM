@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import CandidateNavbar from '../components/CandidateNavbar';
 import { useNavigate } from 'react-router-dom';
 import {
   Search, Home, Users, Briefcase, Bot, FileText,
@@ -32,71 +33,8 @@ const HomepageCandidates = () => {
 
   return (
     <div className="hp-container">
-      <header className="hp-header">
-        <div className="header-left-section">
-          <div className="logo-vertical" onClick={() => navigate('/home')} style={{ cursor: 'pointer' }}>
-            <div className="logo-line">UTH</div>
-            <div className="logo-line">WORKPLACE</div>
-          </div>
-          <div className="search-wrapper">
-            <Search size={18} className="search-icon-svg" />
-            <input type="text" placeholder="Search Users by Name, Email or ID" />
-          </div>
-        </div>
+      <CandidateNavbar />
 
-        <nav className="header-nav">
-          <div className="nav-item active" onClick={() => navigate('/home')}>
-            <Home size={18} /> <span>Home</span>
-          </div>
-          <div className="nav-item" onClick={handleFeatureLocked}>
-            <Users size={18} /> <span>Company</span>
-          </div>
-          <div className="nav-item" onClick={handleFeatureLocked}>
-            <Briefcase size={18} /> <span>Job</span>
-          </div>
-          <div className="nav-item" onClick={handleFeatureLocked}>
-            <Bot size={18} /> <span>AI</span>
-          </div>
-
-          <div className="nav-item" onClick={() => navigate('/create-cv')}>
-            <FileText size={18} /> <span>Create CV</span>
-          </div>
-
-          <div className="nav-item account-btn-container" onClick={() => setIsAccountOpen(!isAccountOpen)}>
-            <div className="account-icon-wrapper">
-              <UserCircle size={24} />
-              <ChevronDown size={14} className={isAccountOpen ? 'rotate' : ''} />
-            </div>
-            <span>Account</span>
-
-            {isAccountOpen && (
-              <div className="mini-account-page" onClick={(e) => e.stopPropagation()}>
-                <div className="mini-page-grid">
-                  <div className="mini-item" onClick={() => navigate('/profile')}>
-                    <div className="icon-box"><UserCircle size={28} /></div>
-                    <span>Information</span>
-                  </div>
-                  <div className="mini-item" onClick={() => navigate('/premium')}>
-                    <div className="icon-box"><CreditCard size={28} /></div>
-                    <span>Premium</span>
-                  </div>
-                  <div className="mini-item" onClick={() => { setIsNotifyOpen(true); setIsAccountOpen(false); }}>
-                    <div className="icon-box"><Bell size={28} /></div>
-                    <span>Notification</span>
-                  </div>
-                  <div className="mini-item" onClick={() => navigate('/create-cv')}>
-                    <div className="icon-box"><FileText size={28} /></div>
-                    <span>Jobs</span>
-                  </div>
-                </div>
-                <div className="mini-footer"><LogOut size={16} /> Sign out</div>
-              </div>
-            )}
-          </div>
-        </nav>
-      </header>
-
-      {/* NOTIFICATION BOX */}
       {isNotifyOpen && (
         <div className="notification-overlay" onClick={() => setIsNotifyOpen(false)}>
           <div className="notification-box" onClick={(e) => e.stopPropagation()}>
