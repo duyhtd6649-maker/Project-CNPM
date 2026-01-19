@@ -1,7 +1,6 @@
 import { createBrowserRouter, Outlet, Navigate, Link } from 'react-router-dom';
 import AuthLayout from '../layouts/AuthLayout';
-<<<<<<< HEAD
-=======
+
 import Login from '../features/candidate/pages/Login';
 import Register from '../features/candidate/pages/Register';
 import ForgotPassword from '../features/candidate/pages/ForgotPassword';
@@ -11,31 +10,15 @@ import PremiumPage from '../features/candidate/pages/PremiumPage';
 import CreateCV from '../features/candidate/pages/CreateCV';
 import EditProfile from '../features/candidate/pages/EditProfile';
 import NotificationSystem from '../features/candidate/pages/notificationunderdevelopment';
+import SavedCV from '../features/candidate/pages/SavedCV';
+import Chatbot from '../features/candidate/pages/Chatbot';
+
 import AdminLogin from '../features/admin/pages/AdminLogin';
 import AdminDashboard from '../features/admin/pages/AdminDashboard';
 import ManageInternalAccount from '../features/admin/pages/ManageInternalAccount';
 import ManageCandidateAccount from '../features/admin/pages/ManageCandidateAccount';
-import SavedCV from '../features/candidate/pages/SavedCV';
-import Chatbot from '../features/candidate/pages/Chatbot';
->>>>>>> 1e3adc65f6efcbeb31687238596ae5003e886015
-
-import Login from '../features/candidate/pages/Login.jsx';
-import Register from '../features/candidate/pages/Register.jsx';
-import ForgotPassword from '../features/candidate/pages/ForgotPassword.jsx';
-import HomepageCandidates from '../features/candidate/pages/HomepageCandidates.jsx';
-import ViewUserProfile from '../features/candidate/pages/ViewUserProfile.jsx';
-import PremiumPage from '../features/candidate/pages/PremiumPage.jsx';
-import CreateCV from '../features/candidate/pages/CreateCV.jsx';
-import EditProfile from '../features/candidate/pages/EditProfile.jsx';
-import NotificationSystem from '../features/candidate/pages/notificationunderdevelopment.jsx';
-import SavedCV from '../features/candidate/pages/SavedCV.jsx';
-
-import AdminLogin from '../features/admin/pages/AdminLogin.jsx';
-import AdminDashboard from '../features/admin/pages/AdminDashboard.jsx';
-import ManageInternalAccount from '../features/admin/pages/ManageInternalAccount.jsx';
-import ManageCandidateAccount from '../features/admin/pages/ManageCandidateAccount.jsx';
-import ManageAdminAccount from '../features/admin/pages/ManageAdminAccount.jsx';
-import ManageRecruiterAccount from '../features/admin/pages/ManageRecruiterAccount.jsx';
+import ManageRecruiterAccount from '../features/admin/pages/ManageRecruiterAccount';
+import ManageAdminAccount from '../features/admin/pages/ManageAdminAccount';
 
 const navStyle = {
   position: 'fixed',
@@ -79,8 +62,8 @@ export const router = createBrowserRouter([
         children: [
           { path: 'login', element: <Login /> },
           { path: 'register', element: <Register /> },
-          { path: 'forgot-password', element: <ForgotPassword /> }
-        ]
+          { path: 'forgot-password', element: <ForgotPassword /> },
+        ],
       },
 
       { path: 'home', element: <HomepageCandidates /> },
@@ -94,13 +77,12 @@ export const router = createBrowserRouter([
 
       { path: 'admin-login', element: <AdminLogin /> },
       { path: 'admin', element: <AdminDashboard /> },
-
       { path: 'manage-internal', element: <ManageInternalAccount /> },
       { path: 'manage-candidate', element: <ManageCandidateAccount /> },
       { path: 'manage-recruiter', element: <ManageRecruiterAccount /> },
       { path: 'manage-admin-acc', element: <ManageAdminAccount /> },
 
-      { path: '*', element: <Navigate to="/login" /> }
-    ]
-  }
+      { path: '*', element: <Navigate to="/login" /> },
+    ],
+  },
 ]);
