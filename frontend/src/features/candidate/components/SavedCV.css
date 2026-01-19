@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+.saved-cv-container {
+  font-family: 'Inter', sans-serif;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  background-color: #f1f5f9;
+  color: #1e293b;
+}
+
+
+.bg-sidebar {
+  background-color: #1e293b;
+}
+
+.bg-sidebar-active {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+
+.logo-style {
+  width: 140px;
+  mix-blend-mode: screen;
+}
+
+.create-btn {
+  background-color: #1e293b;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 6px;
+}
+
+.create-btn:hover {
+  background-color: #334155;
+}
+
+.card-shadow {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.card-title {
+  font-weight: 700;
+  font-size: 18px;
+  color: #111827;
+}
+
+.meta-text {
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 4px;
+}

@@ -1,9 +1,5 @@
-// router.jsx
-
 import { createBrowserRouter, Outlet, Navigate, Link } from 'react-router-dom';
 import AuthLayout from '../layouts/AuthLayout';
-
-// ... (Các import cũ giữ nguyên)
 import Login from '../features/candidate/pages/Login';
 import Register from '../features/candidate/pages/Register';
 import ForgotPassword from '../features/candidate/pages/ForgotPassword';
@@ -11,17 +7,14 @@ import HomepageCandidates from '../features/candidate/pages/HomepageCandidates';
 import ViewUserProfile from '../features/candidate/pages/ViewUserProfile';
 import PremiumPage from '../features/candidate/pages/PremiumPage';
 import CreateCV from '../features/candidate/pages/CreateCV';
-
-// --- THÊM DÒNG NÀY (Đảm bảo đường dẫn file đúng với nơi bạn lưu EditProfile) ---
 import EditProfile from '../features/candidate/pages/EditProfile'; 
-
-// ... (Các import Admin giữ nguyên)
+import NotificationSystem from '../features/candidate/pages/notificationunderdevelopment';
 import AdminLogin from '../features/admin/pages/AdminLogin';
 import AdminDashboard from '../features/admin/pages/AdminDashboard';
 import ManageInternalAccount from '../features/admin/pages/ManageInternalAccount';
 import ManageCandidateAccount from '../features/admin/pages/ManageCandidateAccount';
 
-// ... (Phần navStyle và RootLayout giữ nguyên) ...
+
 const navStyle = {
   position: 'fixed',
   bottom: '20px',
@@ -70,14 +63,10 @@ export const router = createBrowserRouter([
 
       { path: 'home', element: <HomepageCandidates /> },
       { path: 'profile', element: <ViewUserProfile /> },
-      
-      // --- THÊM ROUTE NÀY VÀO ĐÂY ---
       { path: 'edit-profile', element: <EditProfile /> }, 
-      
       { path: 'premium', element: <PremiumPage /> },
       { path: 'create-cv', element: <CreateCV /> },
-
-      // ... (Các route Admin giữ nguyên) ...
+      { path: 'feature-locked', element: <NotificationSystem /> },
       { path: 'admin-login', element: <AdminLogin /> },
       { path: 'admin', element: <AdminDashboard /> },
       { path: 'manage-internal', element: <ManageInternalAccount /> },

@@ -8,7 +8,6 @@ import {
 } from 'lucide-react';
 import "../components/HomepageCandidates.css";
 
-
 const HomepageCandidates = () => {
   const navigate = useNavigate();
   
@@ -27,6 +26,11 @@ const HomepageCandidates = () => {
     return item.type === activeTab;
   });
 
+  // Hàm chuyển hướng đến trang đang phát triển
+  const handleFeatureLocked = () => {
+    navigate('/feature-locked'); // Đường dẫn này phải khớp với App.js
+  };
+
   return (
     <div className="hp-container">
       {/* HEADER */}
@@ -43,11 +47,28 @@ const HomepageCandidates = () => {
         </div>
         
         <nav className="header-nav">
-          <div className="nav-item active" onClick={() => navigate('/home')}><Home size={18} /> <span>Home</span></div>
-          <div className="nav-item"><Users size={18} /> <span>Company</span></div>
-          <div className="nav-item"><Briefcase size={18} /> <span>Job</span></div>
-          <div className="nav-item"><Bot size={18} /> <span>AI</span></div>
-          <div className="nav-item" onClick={() => navigate('/create-cv')}><FileText size={18} /> <span>Create CV</span></div>
+          <div className="nav-item active" onClick={() => navigate('/home')}>
+            <Home size={18} /> <span>Home</span>
+          </div>
+          
+          {/* --- CẬP NHẬT: Thêm onClick vào Company --- */}
+          <div className="nav-item" onClick={handleFeatureLocked}>
+            <Users size={18} /> <span>Company</span>
+          </div>
+
+          {/* --- CẬP NHẬT: Thêm onClick vào Job --- */}
+          <div className="nav-item" onClick={handleFeatureLocked}>
+            <Briefcase size={18} /> <span>Job</span>
+          </div>
+
+          {/* --- CẬP NHẬT: Thêm onClick vào AI (Tùy chọn) --- */}
+          <div className="nav-item" onClick={handleFeatureLocked}>
+            <Bot size={18} /> <span>AI</span>
+          </div>
+
+          <div className="nav-item" onClick={() => navigate('/create-cv')}>
+            <FileText size={18} /> <span>Create CV</span>
+          </div>
           
           <div className="nav-item account-btn-container" onClick={() => setIsAccountOpen(!isAccountOpen)}>
             <div className="account-icon-wrapper">
@@ -153,7 +174,6 @@ const HomepageCandidates = () => {
 
         {/* CENTER COL */}
         <main className="col-center">
-          {/* Ô tạo bài viết bổ sung */}
           <div className="card create-post-mimic">
             <div className="post-input-row">
               <UserCircle size={40} color="#ddd" />
@@ -166,14 +186,12 @@ const HomepageCandidates = () => {
             </div>
           </div>
 
-          {/* Create CV Banner (PHẦN CŨ - ĐÃ GIỮ LẠI) */}
           <div className="card banner-box">
             <div className="placeholder-img-sim"><FileText size={80} color="#eee" /></div>
             <p>Let's create a CV for yourself right now</p>
             <button className="btn-main-action" onClick={() => navigate('/create-cv')}>Create CV</button>
           </div>
           
-          {/* Post Sample (PHẦN CŨ - ĐÃ GIỮ LẠI) */}
           <div className="card post-sample">
              <div className="post-top">
                 <div className="brand-sq">NCS</div>
@@ -186,7 +204,6 @@ const HomepageCandidates = () => {
              </div>
           </div>
 
-          {/* Bài đăng nhúng Iframe bổ sung */}
           <div className="card news-feed-item">
             <div className="post-header">
               <div className="brand-logo-circle cnet-bg">C</div>
@@ -235,7 +252,6 @@ const HomepageCandidates = () => {
             </div>
           </div>
 
-          {/* KHUNG CHAT (THAY THẾ TRENDING) */}
           <div className="card chat-mini-card">
             <div className="news-header-section">
               <span className="news-title">Messenger</span>
