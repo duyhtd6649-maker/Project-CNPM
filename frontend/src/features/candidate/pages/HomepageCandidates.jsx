@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Search, Home, Users, Briefcase, Bot, FileText, 
-  UserCircle, UserPlus, Key, Bookmark, Newspaper, 
+import {
+  Search, Home, Users, Briefcase, Bot, FileText,
+  UserCircle, UserPlus, Key, Bookmark, Newspaper,
   ThumbsUp, MessageCircle, ChevronDown, CreditCard, Bell, LogOut, Settings, Share2, MoreHorizontal,
   Send, Smile, Paperclip
 } from 'lucide-react';
@@ -10,7 +10,7 @@ import "../components/HomepageCandidates.css";
 
 const HomepageCandidates = () => {
   const navigate = useNavigate();
-  
+
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [isNotifyOpen, setIsNotifyOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('All');
@@ -26,14 +26,12 @@ const HomepageCandidates = () => {
     return item.type === activeTab;
   });
 
-  // Hàm chuyển hướng đến trang đang phát triển
   const handleFeatureLocked = () => {
-    navigate('/feature-locked'); // Đường dẫn này phải khớp với App.js
+    navigate('/feature-locked');
   };
 
   return (
     <div className="hp-container">
-      {/* HEADER */}
       <header className="hp-header">
         <div className="header-left-section">
           <div className="logo-vertical" onClick={() => navigate('/home')} style={{ cursor: 'pointer' }}>
@@ -45,23 +43,17 @@ const HomepageCandidates = () => {
             <input type="text" placeholder="Search Users by Name, Email or ID" />
           </div>
         </div>
-        
+
         <nav className="header-nav">
           <div className="nav-item active" onClick={() => navigate('/home')}>
             <Home size={18} /> <span>Home</span>
           </div>
-          
-          {/* --- CẬP NHẬT: Thêm onClick vào Company --- */}
           <div className="nav-item" onClick={handleFeatureLocked}>
             <Users size={18} /> <span>Company</span>
           </div>
-
-          {/* --- CẬP NHẬT: Thêm onClick vào Job --- */}
           <div className="nav-item" onClick={handleFeatureLocked}>
             <Briefcase size={18} /> <span>Job</span>
           </div>
-
-          {/* --- CẬP NHẬT: Thêm onClick vào AI (Tùy chọn) --- */}
           <div className="nav-item" onClick={handleFeatureLocked}>
             <Bot size={18} /> <span>AI</span>
           </div>
@@ -69,7 +61,7 @@ const HomepageCandidates = () => {
           <div className="nav-item" onClick={() => navigate('/create-cv')}>
             <FileText size={18} /> <span>Create CV</span>
           </div>
-          
+
           <div className="nav-item account-btn-container" onClick={() => setIsAccountOpen(!isAccountOpen)}>
             <div className="account-icon-wrapper">
               <UserCircle size={24} />
@@ -141,7 +133,7 @@ const HomepageCandidates = () => {
       <div className="hp-main">
         {/* LEFT COL */}
         <aside className="col-left">
-          <div className="card profile-card" onClick={() => navigate('/profile')} style={{cursor: 'pointer'}}>
+          <div className="card profile-card" onClick={() => navigate('/profile')} style={{ cursor: 'pointer' }}>
             <div className="banner-purple"></div>
             <div className="avatar-circle"><UserCircle size={48} color="#4b49ac" /></div>
             <div className="profile-info">
@@ -151,23 +143,23 @@ const HomepageCandidates = () => {
           </div>
 
           <div className="card premium-shortcut-card" onClick={() => navigate('/premium')}>
-             <div className="premium-content">
-                <p className="premium-title">Unlock premium</p>
-                <span className="premium-desc">Open premium now starting from just 50K</span>
-             </div>
-             <Key size={18} className="premium-key-icon" />
+            <div className="premium-content">
+              <p className="premium-title">Unlock premium</p>
+              <span className="premium-desc">Open premium now starting from just 50K</span>
+            </div>
+            <Key size={18} className="premium-key-icon" />
           </div>
 
           <div className="card action-card">
             <div className="action-row"><span>Connect with businesses</span><UserPlus size={18} /></div>
           </div>
-          
-          <div className="card action-card" onClick={() => navigate('/create-cv')} style={{cursor: 'pointer'}}>
+
+          <div className="card action-card" onClick={() => navigate('/create-cv')} style={{ cursor: 'pointer' }}>
             <div className="action-row"><span>CV Management</span><FileText size={18} /></div>
           </div>
 
           <div className="card menu-list-card">
-            <div className="menu-row"><Bookmark size={16} /> Saved items</div>
+            <div className="menu-row" onClick={() => navigate('/saved-cv')} style={{ cursor: 'pointer' }}><Bookmark size={16} /> Saved items</div>
             <div className="menu-row"><Newspaper size={16} /> News</div>
           </div>
         </aside>
@@ -191,17 +183,17 @@ const HomepageCandidates = () => {
             <p>Let's create a CV for yourself right now</p>
             <button className="btn-main-action" onClick={() => navigate('/create-cv')}>Create CV</button>
           </div>
-          
+
           <div className="card post-sample">
-             <div className="post-top">
-                <div className="brand-sq">NCS</div>
-                <div><b>NCS Group</b><div className="post-sub">Promoted</div></div>
-             </div>
-             <div className="post-mid"><p>How can we secure AI in the age of chaos? 🤔</p></div>
-             <div className="post-foot">
-                <div className="foot-item"><ThumbsUp size={18} /> Like</div>
-                <div className="foot-item"><MessageCircle size={18} /> Comment</div>
-             </div>
+            <div className="post-top">
+              <div className="brand-sq">NCS</div>
+              <div><b>NCS Group</b><div className="post-sub">Promoted</div></div>
+            </div>
+            <div className="post-mid"><p>How can we secure AI in the age of chaos? 🤔</p></div>
+            <div className="post-foot">
+              <div className="foot-item"><ThumbsUp size={18} /> Like</div>
+              <div className="foot-item"><MessageCircle size={18} /> Comment</div>
+            </div>
           </div>
 
           <div className="card news-feed-item">
@@ -214,11 +206,11 @@ const HomepageCandidates = () => {
               <MoreHorizontal size={20} className="post-more" />
             </div>
             <div className="post-iframe-container">
-              <iframe 
-                src="https://www.cnet.com/tech/" 
+              <iframe
+                src="https://www.cnet.com/tech/"
                 title="Cnet Feed"
                 className="feed-iframe"
-                style={{ top: '-400px' }} 
+                style={{ top: '-400px' }}
                 scrolling="no"
               ></iframe>
             </div>
@@ -230,17 +222,16 @@ const HomepageCandidates = () => {
           </div>
         </main>
 
-        {/* RIGHT COL */}
         <aside className="col-right">
           <div className="card news-card">
             <div className="news-header-section">
               <span className="news-title">CNet Blog (Live)</span>
               <span className="news-tag">NHÚNG</span>
             </div>
-            
+
             <div className="iframe-viewport">
-              <iframe 
-                src="https://www.cnet.com/news/" 
+              <iframe
+                src="https://www.cnet.com/news/"
                 title="CNet Blog"
                 className="clipped-iframe"
                 scrolling="no"
@@ -248,16 +239,16 @@ const HomepageCandidates = () => {
             </div>
 
             <div className="iframe-footer" onClick={() => window.open('https://www.cnet.com/news/', '_blank')}>
-                Xem tất cả bài báo ↗
+              Xem tất cả bài báo ↗
             </div>
           </div>
 
           <div className="card chat-mini-card">
             <div className="news-header-section">
               <span className="news-title">Messenger</span>
-              <Settings size={14} className="settings-icon" style={{cursor:'pointer'}} />
+              <Settings size={14} className="settings-icon" style={{ cursor: 'pointer' }} />
             </div>
-            
+
             <div className="chat-body">
               <div className="chat-bubble received">Chào bạn! Chúc bạn ngày mới tốt lành.</div>
               <div className="chat-bubble sent">Cảm ơn nhé!</div>

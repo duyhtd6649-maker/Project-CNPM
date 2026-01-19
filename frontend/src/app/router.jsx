@@ -7,12 +7,13 @@ import HomepageCandidates from '../features/candidate/pages/HomepageCandidates';
 import ViewUserProfile from '../features/candidate/pages/ViewUserProfile';
 import PremiumPage from '../features/candidate/pages/PremiumPage';
 import CreateCV from '../features/candidate/pages/CreateCV';
-import EditProfile from '../features/candidate/pages/EditProfile'; 
+import EditProfile from '../features/candidate/pages/EditProfile';
 import NotificationSystem from '../features/candidate/pages/notificationunderdevelopment';
 import AdminLogin from '../features/admin/pages/AdminLogin';
 import AdminDashboard from '../features/admin/pages/AdminDashboard';
 import ManageInternalAccount from '../features/admin/pages/ManageInternalAccount';
 import ManageCandidateAccount from '../features/admin/pages/ManageCandidateAccount';
+import SavedCV from '../features/candidate/pages/SavedCV';
 
 
 const navStyle = {
@@ -63,8 +64,9 @@ export const router = createBrowserRouter([
 
       { path: 'home', element: <HomepageCandidates /> },
       { path: 'profile', element: <ViewUserProfile /> },
-      { path: 'edit-profile', element: <EditProfile /> }, 
+      { path: 'edit-profile', element: <EditProfile /> },
       { path: 'premium', element: <PremiumPage /> },
+      { path: 'saved-cv', element: <SavedCV /> },
       { path: 'create-cv', element: <CreateCV /> },
       { path: 'feature-locked', element: <NotificationSystem /> },
       { path: 'admin-login', element: <AdminLogin /> },
