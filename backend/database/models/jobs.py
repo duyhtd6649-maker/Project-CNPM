@@ -14,7 +14,7 @@ class Categories(AuditableModel):
         db_table = 'categories'
         app_label = 'database'
 
-class Jobs(models.Model):
+class Jobs(AuditableModel):
     id = models.CharField(db_column='Id', primary_key=True, max_length=255,default=uuid.uuid4,editable=False)  # Field name made lowercase
     category = models.ForeignKey('Categories', on_delete=models.SET_NULL, db_column='CategoryId',null=True,blank=True,related_name='jobs')  # Field name made lowercase.
     company = models.ForeignKey('Companies', on_delete=models.SET_NULL, db_column='CompanyId',null=True,blank=True,related_name='jobs')  # Field name made lowercase.    

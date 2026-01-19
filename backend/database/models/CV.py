@@ -6,7 +6,7 @@ from .users import Candidates
 from .base import AuditableModel
 
 
-class Cvs(models.Model):
+class Cvs(AuditableModel):
     id = models.CharField(db_column='Id', primary_key=True, max_length=255,default=uuid.uuid4,editable=False)  # Field name made lowercase.
     candidate = models.ForeignKey('Candidates', on_delete=models.CASCADE, db_column='CandidateId', blank=True,related_name='CV', null=True)  # Field name made lowercase.
     file_name = models.CharField(db_column='FileName', max_length=255, blank=True, null=True)  # Field name made lowercase.
