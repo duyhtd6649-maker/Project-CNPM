@@ -27,7 +27,6 @@ body {
   position: relative;
 }
 
-/* SIDEBAR OVERLAY */
 .admin-sidebar {
   width: var(--sidebar-width);
   background: white;
@@ -65,6 +64,10 @@ body {
   font-weight: 900;
 }
 
+.uth-branding {
+  cursor: pointer;
+}
+
 .uth-branding h1 {
   margin: 0;
   font-weight: 900;
@@ -81,7 +84,6 @@ body {
   color: var(--text-gray);
 }
 
-/* NAVIGATION */
 .sidebar-nav-custom {
   flex: 1;
   display: flex;
@@ -97,7 +99,7 @@ body {
   font-weight: 600;
   font-size: 15px;
   cursor: pointer;
-  width: 100%; /* Đảm bảo chiếm hết chiều ngang */
+  width: 100%;
   box-sizing: border-box;
   transition: all 0.2s ease;
   border-left: 4px solid transparent;
@@ -107,10 +109,15 @@ body {
   background: linear-gradient(90deg, #5b8dfa 0%, #32c192 100%);
   color: white;
   margin: 0;
-  border-radius: 8px;
+  border-radius: 0;
 }
 
-/* CONTENT AREA */
+.nav-item-custom:hover:not(.active) {
+  background-color: #f1f5f9;
+  color: var(--primary-blue);
+  border-left: 4px solid var(--primary-blue);
+}
+
 .admin-content-wrapper {
   flex: 1;
   padding: 25px 35px;
@@ -148,15 +155,35 @@ body {
 
 .header-right { display: flex; align-items: center; gap: 25px; }
 
+.notification {
+  position: relative;
+  cursor: pointer;
+}
+
+.notification .badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #f33;
+  color: white;
+  font-size: 10px;
+  padding: 2px 5px;
+  border-radius: 10px;
+}
+
 .user-account-box {
   display: flex; align-items: center; gap: 12px; background: white;
   padding: 6px 15px; border-radius: 30px; border: 1px solid var(--border-color);
-  min-width: 180px; height: 48px;
+  min-width: 180px; height: 48px; cursor: pointer; transition: 0.2s;
+}
+
+.user-account-box:hover {
+  background-color: #f8fafc;
+  border-color: var(--primary-blue);
 }
 
 .avatar-placeholder { width: 34px; height: 34px; border-radius: 50%; background: #e2e8f0; }
 
-/* STATS GRID */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -169,6 +196,11 @@ body {
   padding: 20px;
   border-radius: 14px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+  transition: transform 0.2s;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
 }
 
 .stat-main { display: flex; justify-content: space-between; margin-bottom: 10px; }
@@ -179,7 +211,16 @@ body {
 .stat-icon.green { background: #E8F5E9; color: #4CAF50; }
 .stat-icon.red { background: #FFEBEE; color: #F44336; }
 
-/* CHARTS AREA */
+.stat-change {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.stat-change.up { color: var(--primary-green); }
+
 .chart-main-card {
   background: white;
   padding: 25px;
@@ -187,10 +228,9 @@ body {
   margin-bottom: 25px;
 }
 
-/* BIỂU ĐỒ DƯỚI TO HƠN */
 .bottom-grid {
   display: grid;
-  grid-template-columns: 1.2fr 2fr; /* Điều chỉnh tỉ lệ để rộng hơn */
+  grid-template-columns: 1.2fr 2fr;
   gap: 25px;
   margin-top: 25px;
 }
@@ -199,10 +239,9 @@ body {
   background: white;
   padding: 25px;
   border-radius: 14px;
-  min-height: 400px; /* Tăng chiều cao box */
+  min-height: 400px;
 }
 
-/* CUSTOM LEGEND CHO DONUT CHART */
 .donut-container {
   display: flex;
   flex-direction: column;
@@ -239,26 +278,3 @@ body {
 .dot { width: 12px; height: 12px; border-radius: 50%; }
 .dot.blue { background: var(--primary-blue); }
 .dot.gray { background: #e2e8f0; }
-
-/* Thêm vào AdminDashboard.css */
-
-.nav-item-custom:hover {
-  background-color: #f1f5f9;
-  color: var(--primary-blue);
-  border-left: 4px solid var(--primary-blue);
-}
-
-.nav-item-custom.active:hover {
-  background: linear-gradient(90deg, #5b8dfa 0%, #32c192 100%);
-  color: white;
-  border-left: 4px solid transparent;
-}
-
-.user-account-box:hover {
-  background-color: #f8fafc;
-  border-color: var(--primary-blue);
-}
-
-.uth-branding:hover {
-  opacity: 0.8;
-}

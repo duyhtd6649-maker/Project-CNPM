@@ -1,20 +1,23 @@
 import { createBrowserRouter, Outlet, Navigate, Link } from 'react-router-dom';
 import AuthLayout from '../layouts/AuthLayout';
-import Login from '../features/candidate/pages/Login';
-import Register from '../features/candidate/pages/Register';
-import ForgotPassword from '../features/candidate/pages/ForgotPassword';
-import HomepageCandidates from '../features/candidate/pages/HomepageCandidates';
-import ViewUserProfile from '../features/candidate/pages/ViewUserProfile';
-import PremiumPage from '../features/candidate/pages/PremiumPage';
-import CreateCV from '../features/candidate/pages/CreateCV';
-import EditProfile from '../features/candidate/pages/EditProfile';
-import NotificationSystem from '../features/candidate/pages/notificationunderdevelopment';
-import AdminLogin from '../features/admin/pages/AdminLogin';
-import AdminDashboard from '../features/admin/pages/AdminDashboard';
-import ManageInternalAccount from '../features/admin/pages/ManageInternalAccount';
-import ManageCandidateAccount from '../features/admin/pages/ManageCandidateAccount';
-import SavedCV from '../features/candidate/pages/SavedCV';
 
+import Login from '../features/candidate/pages/Login.jsx';
+import Register from '../features/candidate/pages/Register.jsx';
+import ForgotPassword from '../features/candidate/pages/ForgotPassword.jsx';
+import HomepageCandidates from '../features/candidate/pages/HomepageCandidates.jsx';
+import ViewUserProfile from '../features/candidate/pages/ViewUserProfile.jsx';
+import PremiumPage from '../features/candidate/pages/PremiumPage.jsx';
+import CreateCV from '../features/candidate/pages/CreateCV.jsx';
+import EditProfile from '../features/candidate/pages/EditProfile.jsx';
+import NotificationSystem from '../features/candidate/pages/notificationunderdevelopment.jsx';
+import SavedCV from '../features/candidate/pages/SavedCV.jsx';
+
+import AdminLogin from '../features/admin/pages/AdminLogin.jsx';
+import AdminDashboard from '../features/admin/pages/AdminDashboard.jsx';
+import ManageInternalAccount from '../features/admin/pages/ManageInternalAccount.jsx';
+import ManageCandidateAccount from '../features/admin/pages/ManageCandidateAccount.jsx';
+import ManageAdminAccount from '../features/admin/pages/ManageAdminAccount.jsx';
+import ManageRecruiterAccount from '../features/admin/pages/ManageRecruiterAccount.jsx';
 
 const navStyle = {
   position: 'fixed',
@@ -69,10 +72,14 @@ export const router = createBrowserRouter([
       { path: 'saved-cv', element: <SavedCV /> },
       { path: 'create-cv', element: <CreateCV /> },
       { path: 'feature-locked', element: <NotificationSystem /> },
+
       { path: 'admin-login', element: <AdminLogin /> },
       { path: 'admin', element: <AdminDashboard /> },
+
       { path: 'manage-internal', element: <ManageInternalAccount /> },
       { path: 'manage-candidate', element: <ManageCandidateAccount /> },
+      { path: 'manage-recruiter', element: <ManageRecruiterAccount /> },
+      { path: 'manage-admin-acc', element: <ManageAdminAccount /> },
 
       { path: '*', element: <Navigate to="/login" /> }
     ]

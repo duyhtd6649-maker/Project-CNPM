@@ -1,0 +1,150 @@
+:root {
+  --admin-primary: #2b109e;
+  --admin-bg: #F5F6FA;
+}
+
+.admin-acc-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background: var(--admin-bg);
+}
+
+.admin-left-subnav {
+  width: 280px;
+  background: linear-gradient(180deg, #4880FF 0%, #10B981 100%);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  color: white;
+}
+
+.admin-blue-top {
+  padding: 30px 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.admin-menu-toggle {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  padding: 8px;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+}
+
+.admin-logo-white {
+  font-weight: 900;
+  font-size: 18px;
+}
+
+.admin-sub-menu {
+  flex: 1;
+  padding: 10px 0;
+}
+
+.admin-sub-item {
+  padding: 14px 25px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.admin-sub-item.active {
+  background: white;
+  color: var(--admin-primary);
+  border-radius: 8px;
+  margin: 0 15px;
+}
+
+.admin-footer-sub {
+  padding-bottom: 30px;
+}
+
+.admin-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 15px 20px;
+}
+
+.admin-sub-small {
+  padding: 8px 25px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.admin-main-view {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-header-actions {
+  height: 80px;
+  padding: 0 40px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.admin-act-icons {
+  display: flex;
+  gap: 20px;
+}
+
+.admin-content-body {
+  padding: 0 40px 40px;
+}
+
+.admin-view-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.admin-btn-add {
+  background: var(--admin-primary);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.admin-empty-card {
+  background: white;
+  border-radius: 20px;
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+}
+
+.admin-main-sidebar {
+  width: 280px;
+  background: white;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  z-index: 1000;
+  transform: translateX(-100%);
+  transition: 0.3s;
+}
+
+.admin-main-sidebar.open {
+  transform: translateX(0);
+}
+
+.admin-overlay-screen {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 999;
+}

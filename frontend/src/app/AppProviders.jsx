@@ -3,7 +3,11 @@ import { RouterProvider } from 'react-router-dom';
 import { router } from './router';
 
 const AppProviders = () => {
-  return <RouterProvider router={router} />;
+  return (
+    <React.StrictMode>
+      <RouterProvider router={router} />
+    </React.StrictMode>
+  );
 };
 
 export default AppProviders;

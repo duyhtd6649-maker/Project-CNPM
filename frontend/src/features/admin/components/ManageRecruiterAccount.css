@@ -1,0 +1,142 @@
+.recruiter-page-wrap {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  background: #F5F6FA;
+}
+
+.rec-left-panel {
+  width: 280px;
+  background: linear-gradient(135deg, #10B981 0%, #4880FF 100%);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  color: white;
+}
+
+.rec-top-gradient {
+  padding: 30px 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.rec-btn-menu {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  padding: 8px;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+}
+
+.rec-logo-txt {
+  font-weight: 800;
+  font-size: 19px;
+}
+
+.rec-sub-links {
+  flex: 1;
+  padding-top: 15px;
+}
+
+.rec-sub-link {
+  padding: 14px 25px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.rec-sub-link.active {
+  background: white;
+  color: #10B981;
+  border-radius: 10px;
+  margin: 0 15px;
+}
+
+.rec-panel-footer {
+  padding-bottom: 25px;
+}
+
+.rec-hr {
+  height: 1px;
+  background: rgba(255,255,255,0.1);
+  margin: 15px 20px;
+}
+
+.rec-small-txt {
+  padding: 6px 25px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.6);
+}
+
+.rec-main-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.rec-top-bar {
+  height: 80px;
+  padding: 0 40px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.rec-bar-right {
+  display: flex;
+  gap: 25px;
+}
+
+.rec-view-port {
+  padding: 0 40px;
+}
+
+.rec-view-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.rec-btn-action {
+  background: #10B981;
+  color: white;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.rec-empty-state {
+  background: white;
+  border-radius: 20px;
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.rec-side-drawer {
+  width: 280px;
+  background: white;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  transform: translateX(-100%);
+  transition: 0.3s ease;
+  z-index: 1000;
+}
+
+.rec-side-drawer.show {
+  transform: translateX(0);
+}
+
+.rec-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.3);
+  z-index: 999;
+}

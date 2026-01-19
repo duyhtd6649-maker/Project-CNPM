@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Hook để chuyển trang
+import { useNavigate } from 'react-router-dom';
 import { 
   Search, Bell, ChevronDown, Users, FileText, 
   DollarSign, TrendingUp, LayoutDashboard, 
@@ -34,9 +34,8 @@ const AdminDashboard = () => {
   
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
-  // Hàm điều hướng
   const goToManageAccount = () => {
-    navigate('/manage-internal-account'); // Chỉnh đường dẫn cho khớp với App.js của bạn
+    navigate('/manage-internal');
   };
 
   return (
@@ -57,7 +56,6 @@ const AdminDashboard = () => {
             <LayoutDashboard size={20} /> <span>Dashboard</span>
           </div>
           
-          {/* SỰ KIỆN CLICK CHUYỂN TRANG TẠI ĐÂY */}
           <div className="nav-item-custom" onClick={goToManageAccount}>
             <UserCog size={20} /> <span>Manage Account</span>
           </div>
@@ -83,7 +81,6 @@ const AdminDashboard = () => {
           <div className="header-right">
             <div className="notification"><Bell size={22} /><span className="badge">6</span></div>
             
-            {/* CLICK AVATAR CŨNG CÓ THỂ CHUYỂN TRANG */}
             <div className="user-account-box" onClick={goToManageAccount} style={{cursor:'pointer'}}>
               <div className="avatar-placeholder"></div>
               <ChevronDown size={16} color="#94a3b8" />
@@ -91,9 +88,8 @@ const AdminDashboard = () => {
           </div>
         </header>
 
-        {/* STATS */}
         <div className="stats-grid">
-          <div className="stat-card">
+          <div className="stat-card" onClick={goToManageAccount} style={{cursor: 'pointer'}}>
             <div className="stat-main">
               <div><p style={{color:'#606060', fontSize:'14px'}}>Total User</p><h2 className="stat-value">40,689</h2></div>
               <div className="stat-icon purple"><Users size={22} /></div>
@@ -123,7 +119,6 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        {/* CV DETAILS */}
         <div className="chart-main-card">
           <h3 style={{marginBottom:'20px', fontWeight:800}}>CVs Details</h3>
           <ResponsiveContainer width="100%" height={300}>
@@ -142,7 +137,6 @@ const AdminDashboard = () => {
           </ResponsiveContainer>
         </div>
 
-        {/* BOTTOM CHARTS */}
         <div className="bottom-grid">
           <div className="bottom-card">
             <h3 style={{fontWeight:800, marginBottom:'20px'}}>Users</h3>
