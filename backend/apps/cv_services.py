@@ -5,7 +5,7 @@ from django.conf import settings
 from django.db import transaction
 from database.models.CV import Cvs,Cvanalysisresult
 from database.models.users import Candidates, Users
-from .ai_services import cv_analyzer_service
+from .chatbot_services.ai_services import cv_analyzer_service
 
 def extract_text_from_cv(file):
     text = ""
