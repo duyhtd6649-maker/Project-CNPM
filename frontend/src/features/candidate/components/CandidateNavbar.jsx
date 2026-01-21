@@ -41,7 +41,7 @@ const CandidateNavbar = () => {
                 <div className="nav-item" onClick={() => handleNavigation('feature-locked')}>
                     <Users size={18} /> <span>Company</span>
                 </div>
-                <div className="nav-item" onClick={() => handleNavigation('feature-locked')}>
+                <div className={`nav-item ${isActive('/job-list') ? 'active' : ''}`} onClick={() => navigate('/job-list')}>
                     <Briefcase size={18} /> <span>Job</span>
                 </div>
                 <div className={`nav-item ${isActive('/chatbot') ? 'active' : ''}`} onClick={() => navigate('/chatbot')}>

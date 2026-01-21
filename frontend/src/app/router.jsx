@@ -12,6 +12,8 @@ import EditProfile from '../features/candidate/pages/EditProfile';
 import NotificationSystem from '../features/candidate/pages/notificationunderdevelopment';
 import SavedCV from '../features/candidate/pages/SavedCV';
 import Chatbot from '../features/candidate/pages/Chatbot';
+import Viewjob from '../features/candidate/pages/Viewjob';
+import JobBrowsing from '../features/candidate/pages/Joblist';
 
 import AdminLogin from '../features/admin/pages/AdminLogin';
 import AdminDashboard from '../features/admin/pages/AdminDashboard';
@@ -72,6 +74,8 @@ export const router = createBrowserRouter([
       { path: 'premium', element: <PremiumPage /> },
       { path: 'saved-cv', element: <SavedCV /> },
       { path: 'chatbot', element: <Chatbot /> },
+      { path: 'view-job', element: <Viewjob /> },
+      { path: 'job-list', element: <JobBrowsing /> },
       { path: 'create-cv', element: <CreateCV /> },
       { path: 'feature-locked', element: <NotificationSystem /> },
 

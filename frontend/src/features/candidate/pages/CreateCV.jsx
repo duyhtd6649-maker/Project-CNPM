@@ -1,9 +1,9 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Search, Home, Users, Briefcase, Bot, FileText, 
-  UserCircle, ChevronDown, CreditCard, Bell, LogOut, Camera, X, Eye
+import {
+  UserCircle, Camera, X, Eye
 } from 'lucide-react';
+import CandidateNavbar from '../components/CandidateNavbar';
 import "../components/HomepageCandidates.css";
 import "../components/CreateCV.css";
 
@@ -11,7 +11,6 @@ import "../components/CreateCV.css";
 const CreateCV = () => {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
-  const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
 
   // State quản lý dữ liệu người dùng nhập
@@ -46,46 +45,14 @@ const CreateCV = () => {
   return (
     <div className="hp-container">
       {/* HEADER GIỮ NGUYÊN */}
-      <header className="hp-header">
-        <div className="header-left-section">
-          <div className="logo-vertical" onClick={() => navigate('/home')} style={{ cursor: 'pointer' }}>
-            <div className="logo-line">UTH</div>
-            <div className="logo-line">WORKPLACE</div>
-          </div>
-          <div className="search-wrapper">
-            <Search size={18} className="search-icon-svg" />
-            <input type="text" placeholder="Search Users by Name, Email or ID" />
-          </div>
-        </div>
-        <nav className="header-nav">
-          <div className="nav-item" onClick={() => navigate('/home')}><Home size={18} /> <span>Home</span></div>
-          <div className="nav-item"><Users size={18} /> <span>Company</span></div>
-          <div className="nav-item"><Briefcase size={18} /> <span>Job</span></div>
-          <div className="nav-item"><Bot size={18} /> <span>AI</span></div>
-          <div className="nav-item active"><FileText size={18} /> <span>Create CV</span></div>
-          
-          <div className="nav-item account-btn-container" onClick={() => setIsAccountOpen(!isAccountOpen)}>
-            <div className="account-icon-wrapper"><UserCircle size={24} /><ChevronDown size={14} /></div>
-            <span>Account</span>
-            {isAccountOpen && (
-              <div className="mini-account-page" onClick={(e) => e.stopPropagation()}>
-                <div className="mini-page-grid">
-                  <div className="mini-item" onClick={() => navigate('/profile')}><div className="icon-box"><UserCircle size={28} /></div><span>Information</span></div>
-                  <div className="mini-item" onClick={() => navigate('/premium')}><div className="icon-box"><CreditCard size={28} /></div><span>Premium</span></div>
-                </div>
-                <div className="mini-footer"><LogOut size={16} /> Sign out</div>
-              </div>
-            )}
-          </div>
-        </nav>
-      </header>
+      <CandidateNavbar />
 
       {/* --- PHẦN BOX REVIEW ĐÃ ĐƯỢC CHỈNH SỬA THEO NỘI DUNG NGƯỜI DÙNG NHẬP --- */}
       {showPreview && (
         <div className="cv-preview-overlay" onClick={() => setShowPreview(false)}>
           <div className="cv-preview-modal" onClick={(e) => e.stopPropagation()}>
             <button className="close-preview-btn" onClick={() => setShowPreview(false)}><X size={20} /></button>
-            
+
             <div className="preview-paper-layout">
               {/* Cột trái: Hiển thị từ cvData */}
               <div className="preview-left-col">
@@ -99,7 +66,7 @@ const CreateCV = () => {
                 <div className="preview-side-content">
                   <h5 className="preview-side-title">Contact</h5>
                   <p className="pre-wrap">{cvData.contactInfo || "Chưa nhập thông tin liên hệ"}</p>
-                  
+
                   <h5 className="preview-side-title">Tools Skill</h5>
                   <p className="pre-wrap">{cvData.toolsSkill || "Chưa nhập kỹ năng công cụ"}</p>
 
