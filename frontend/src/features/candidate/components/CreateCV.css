@@ -1,4 +1,3 @@
-/* --- PHẦN 1: GIỮ NGUYÊN TOÀN BỘ CSS GỐC CỦA TRANG CREATE CV --- */
 .cv-builder-content {
   background-color: #f3f2ef;
   padding: 40px 20px;
@@ -135,7 +134,6 @@
   resize: vertical;
 }
 
-/* --- PHẦN 2: ĐIỀU CHỈNH CỤM NÚT SAVE & REVIEW --- */
 .cv-actions {
   margin-top: 40px;
   text-align: right;
@@ -165,14 +163,13 @@
   opacity: 0.9;
 }
 
-/* --- LỚP PHỦ MỜ TOÀN MÀN HÌNH --- */
 .cv-preview-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.7); /* Làm tối nền để nổi bật modal */
+  background: rgba(0, 0, 0, 0.7); 
   display: flex;
   justify-content: center;
   align-items: center;
@@ -180,52 +177,50 @@
   padding: 20px;
 }
 
-/* --- KHUNG CHỨA MODAL --- */
+
 .cv-preview-modal {
   position: relative;
-  width: 900px; /* Độ rộng cố định giống tờ A4 */
+  width: 900px; 
   max-height: 95vh;
-  background: white; /* Đảm bảo luôn có nền trắng */
+  background: white; 
   border-radius: 8px;
   overflow-y: auto;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
-/* --- BỐ CỤC CHÍNH BÊN TRONG (GIỐNG ẢNH DEMO) --- */
+
 .preview-paper-layout {
   display: flex;
-  min-height: 1000px; /* Chiều cao tối thiểu để giữ form dáng */
+  min-height: 1000px;
   background: white;
 }
 
-/* --- CỘT TRÁI (TÍM NHẠT) --- */
+
 .preview-left-col {
-  width: 35%; /* Tương đương 315px */
-  background-color: #f8f7ff; /* Màu tím cực nhạt từ ảnh mẫu */
+  width: 35%; 
+  background-color: #f8f7ff; 
   padding: 40px 30px;
   border-right: 1px solid #eee;
 }
 
-/* --- CỘT PHẢI (TRẮNG) --- */
+
 .preview-right-col {
   width: 65%;
   background-color: white;
   padding: 60px 50px;
 }
 
-/* --- CHI TIẾT CỘT TRÁI --- */
-/* --- ĐIỀU CHỈNH AVATAR CĂN GIỮA TUYỆT ĐỐI --- */
+
 .preview-avatar-circle {
-  width: 160px;          /* Kích thước vòng tròn */
+  width: 160px;          
   height: 160px;
   border-radius: 50%;
-  overflow: hidden;      /* Cắt các phần ảnh thừa ra ngoài vòng tròn */
-  margin: 0 auto 30px;   /* Căn giữa khung tròn so với cột trái */
+  overflow: hidden;      
+  margin: 0 auto 30px;   
   border: 5px solid #fff;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  background: #e5e7eb;   /* Màu nền nhẹ khi chưa có ảnh */
-  
-  /* Hai dòng này giúp căn giữa ảnh/icon bên trong */
+  background: #e5e7eb;  
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -234,24 +229,23 @@
 .preview-avatar-circle img {
   width: 100%;
   height: 100%;
-  object-fit: cover;     /* Đảm bảo ảnh lấp đầy vòng tròn mà không bị méo */
-  display: block;
+  object-fit: cover;    
 }
 
-/* Trường hợp dùng Icon mặc định khi chưa upload ảnh */
+
 .preview-avatar-circle svg {
   display: block;
   margin: auto;
 }
 
-/* --- ĐẢM BẢO CỘT TRÁI CĂN GIỮA NỘI DUNG --- */
+
 .preview-left-col {
   width: 320px;
   background-color: #f8f7ff;
   padding: 40px 25px;
   display: flex;
   flex-direction: column;
-  align-items: stretch; /* Để các tiêu đề gạch ngang chiếm hết chiều rộng */
+  align-items: stretch; 
 }
 
 .preview-side-title {
@@ -265,7 +259,7 @@
   padding-bottom: 5px;
 }
 
-/* --- CHI TIẾT CỘT PHẢI --- */
+
 .preview-name {
   font-size: 36px;
   font-weight: 800;
@@ -291,7 +285,7 @@
   position: relative;
 }
 
-/* Gạch chân nhỏ dưới tiêu đề chính giống ảnh */
+
 .preview-main-title::after {
   content: "";
   display: block;
@@ -301,7 +295,7 @@
   margin-top: 8px;
 }
 
-/* --- TEXT FORMATTING --- */
+
 .pre-wrap {
   white-space: pre-wrap;
   word-wrap: break-word;
@@ -310,7 +304,7 @@
   color: #444;
 }
 
-/* --- NÚT ĐÓNG --- */
+
 .close-preview-btn {
   position: absolute;
   top: 20px;

@@ -1,18 +1,17 @@
-/* Reset toàn bộ trình duyệt */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Đảm bảo khung hình luôn chiếm trọn màn hình */
 html, body, #root {
   width: 100%;
   min-height: 100vh;
-  background-color: white; /* Hoặc màu nền chủ đạo của bạn */
+  background-color: white;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
-/* Loại bỏ các khoảng trắng thừa do Vite tạo ra */
 body {
   display: block;
   place-items: unset;

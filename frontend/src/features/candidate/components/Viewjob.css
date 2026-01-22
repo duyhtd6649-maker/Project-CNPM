@@ -59,7 +59,7 @@ button {
     font-family: inherit;
 }
 
-/* --- 2. Header Styles --- */
+
 .app-header {
     background: var(--header-bg);
     height: var(--header-height);
@@ -101,7 +101,7 @@ button {
     letter-spacing: 0.05em;
 }
 
-/* Search Bar in Header */
+
 .header-search {
     display: flex;
     align-items: center;
@@ -131,7 +131,7 @@ button {
     color: rgba(255, 255, 255, 0.7);
 }
 
-/* Navigation */
+
 .header-nav {
     display: flex;
     gap: 1.5rem;
@@ -192,19 +192,19 @@ button {
     margin-top: 4px;
 }
 
-/* --- 3. Main Layout --- */
+
 .main-layout {
     max-width: var(--max-width);
     margin: 0 auto;
     padding: 1.5rem 1rem;
     display: grid;
     grid-template-columns: 300px 1fr;
-    /* Sidebar width fixed, Content flexible */
+    
     gap: 1.5rem;
     width: 100%;
 }
 
-/* Mobile Responsive */
+
 @media (max-width: 1024px) {
     .main-layout {
         grid-template-columns: 1fr;
@@ -212,7 +212,7 @@ button {
 
     .sidebar {
         display: none;
-        /* Hide sidebar on small screens for simplicity */
+        
     }
 
     .header-search {
@@ -224,7 +224,7 @@ button {
     }
 }
 
-/* --- 4. Sidebar Styles --- */
+
 .sidebar {
     display: flex;
     flex-direction: column;
@@ -342,14 +342,14 @@ button {
     border-left-color: var(--primary);
 }
 
-/* --- 5. Content Area Styles --- */
+
 .content-area {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
 }
 
-/* Top Bar */
+
 .content-top-bar {
     display: flex;
     justify-content: space-between;
@@ -399,7 +399,7 @@ button {
     color: var(--text-muted);
 }
 
-/* Job Detail Card */
+
 .job-detail-card {
     position: relative;
 }
@@ -462,7 +462,7 @@ button {
     padding: 1.5rem 2rem;
 }
 
-/* Tags */
+
 .job-tags {
     display: flex;
     flex-wrap: wrap;
@@ -485,7 +485,7 @@ button {
     margin-right: 4px;
 }
 
-/* Tag Colors */
+
 .tag.purple {
     background: #F3E8FF;
     color: #6B21A8;
@@ -510,7 +510,7 @@ button {
     border-color: #E5E7EB;
 }
 
-/* Dark mode adjustments for tags */
+
 body.dark-theme .tag.purple {
     background: rgba(107, 33, 168, 0.2);
     color: #D8B4FE;
@@ -535,7 +535,7 @@ body.dark-theme .tag.gray {
     border-color: rgba(75, 85, 99, 0.5);
 }
 
-/* Job Grid Layout */
+
 .job-grid-layout {
     display: grid;
     grid-template-columns: 2fr 1fr;
@@ -592,7 +592,7 @@ body.dark-theme .tag.gray {
     margin-top: 2px;
 }
 
-/* Action Box (Sticky) */
+
 .job-action-col {
     position: relative;
 }
@@ -694,7 +694,7 @@ body.dark-theme .tag.gray {
     color: var(--text-muted);
 }
 
-/* Similar Jobs */
+
 .similar-jobs-section h3 {
     font-size: 1rem;
     font-weight: 700;

@@ -1,4 +1,4 @@
-/* --- HEADER ACTIONS & LOGOUT BUTTON --- */
+
 .header-actions {
   display: flex;
   align-items: center;
@@ -23,7 +23,7 @@
   box-shadow: 0 4px 10px rgba(255, 77, 79, 0.2);
 }
 
-/* --- TRANG PROFILE CHÍNH (LAYOUT) --- */
+
 .view-profile-full-page {
   background-color: #ffffff;
   min-height: 100vh;
@@ -86,7 +86,7 @@
   position: relative;
 }
 
-/* AVATAR (Đã bỏ icon cây bút vì chỉ xem) */
+
 .avatar-container-fixed {
   position: relative;
   width: 140px;
@@ -133,7 +133,7 @@
   font-size: 18px; 
 }
 
-/* Button chuyển trang Edit */
+
 .btn-edit-main-fixed {
   background: #7a78ff; 
   color: white; 
@@ -151,7 +151,6 @@
   background: #6664d1;
 }
 
-/* --- FORM DISPLAY (READ ONLY) --- */
 .details-grid-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -173,7 +172,7 @@
   font-size: 23px;
 }
 
-/* Style chung cho input và box hiển thị text */
+
 .form-group input, 
 .select-box-sim {
   width: 100%;
@@ -181,16 +180,16 @@
   padding: 0 15px;
   border: 1px solid #e8e8e8;
   border-radius: 10px;
-  background-color: #fafafa; /* Màu nền xám nhẹ để thể hiện Read-only */
+  background-color: #fafafa; 
   font-size: 15px;
-  color: #555; /* Màu chữ đậm hơn chút cho dễ đọc */
+  color: #555; 
   display: flex;
   align-items: center;
   box-sizing: border-box;
-  outline: none; /* Bỏ viền xanh khi click vì không sửa được */
+  outline: none; 
 }
 
-/* Chỉnh style riêng cho input readOnly để người dùng biết không sửa được */
+
 .form-group input:read-only {
   cursor: default;
   background-color: #fafafa;

@@ -43,10 +43,10 @@
   font-size: 1rem;
 }
 
-/* Đồng bộ Input và Select */
+
 .form-group input,
 .form-select {
-  padding: 0 20px; /* Căn giữa nội dung theo chiều dọc */
+  padding: 0 20px; 
   border-radius: 15px;
   border: none;
   background-color: #ffffff;
@@ -59,7 +59,7 @@
   color: #333;
 }
 
-/* Chỉnh riêng cho Select để giống Input */
+
 .form-select {
   appearance: none;
   -webkit-appearance: none;

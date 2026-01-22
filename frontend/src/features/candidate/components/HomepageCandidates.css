@@ -11,7 +11,7 @@
   font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-/* --- HEADER --- */
+
 .hp-header {
   background: var(--header-grad);
   height: 70px;
@@ -66,7 +66,7 @@
 }
 .nav-item.active { color: white; font-weight: bold; border-bottom: 2px solid white; padding-bottom: 4px; }
 
-/* --- ACCOUNT DROPDOWN --- */
+
 .account-btn-container { position: relative; }
 .account-icon-wrapper { display: flex; align-items: center; gap: 2px; }
 
@@ -102,7 +102,7 @@
 }
 .rotate { transform: rotate(180deg); transition: transform 0.3s; }
 
-/* --- NOTIFICATIONS --- */
+
 .notification-overlay {
   position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
   background: rgba(0, 0, 0, 0.2); z-index: 3000;
@@ -129,7 +129,7 @@
 .notify-msg { font-size: 13px; color: #666; margin-top: 4px; }
 .notify-time { font-size: 11px; color: #bbb; margin-top: 4px; }
 
-/* --- MAIN LAYOUT --- */
+
 .hp-main {
   max-width: 1128px; margin: 20px auto;
   display: grid; grid-template-columns: 225px 1fr 290px; gap: 24px; padding: 0 15px;
@@ -149,7 +149,7 @@
 .user-name { font-weight: bold; font-size: 16px; }
 .sub-text { font-size: 12px; color: #666; }
 
-/* --- PREMIUM CARD --- */
+
 .premium-shortcut-card {
   display: flex; justify-content: space-between; align-items: center;
   padding: 12px 16px; cursor: pointer; border-left: 5px solid #ffbb00 !important;
@@ -166,7 +166,7 @@
 .menu-row { padding: 10px 16px; font-size: 13px; color: #666; display: flex; align-items: center; gap: 12px; cursor: pointer; }
 .menu-row:hover { background-color: #f3f2ef; }
 
-/* --- CENTER CONTENT --- */
+
 .col-center { height: calc(100vh - 90px); overflow-y: auto; scrollbar-width: none; }
 .banner-box { text-align: center; padding: 20px; }
 .placeholder-img-sim { height: 140px; background: #f9f9f9; display: flex; align-items: center; justify-content: center; border-radius: 8px; }
@@ -178,7 +178,7 @@
 .post-foot { display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #f0f2f5; color: #666; font-size: 13px; font-weight: 600; }
 .foot-item { display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 8px 12px; border-radius: 4px; }
 
-/* --- IFRAME NHÚNG ITVIEC (DÀNH CHO CỘT PHẢI) --- */
+
 .news-header-section { display: flex; justify-content: space-between; padding: 15px 15px 10px; }
 .news-title { font-weight: bold; font-size: 14px; }
 .news-tag { background: #f0f2f5; color: #3f3da0; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
@@ -202,7 +202,7 @@
   left: 15px;
   zoom : 1.8;
   border: none;
-  transform: scale(0.38); /* Thu nhỏ vừa cột sidebar */
+  transform: scale(0.38); 
   transform-origin: top left;
 }
 
@@ -218,16 +218,16 @@
 
 .news-content-placeholder { height: 180px; background: #fafafa; border: 1px dashed #ccc; margin: 0 15px 15px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
 
-/* --- NEWS FEED LAYOUT --- */
+
 
 .col-center {
   height: calc(100vh - 90px);
   overflow-y: auto;
-  scrollbar-width: none; /* Firefox */
+  scrollbar-width: none; 
 }
-.col-center::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+.col-center::-webkit-scrollbar { display: none; } 
 
-/* Ô tạo bài viết */
+
 .create-post-mimic {
   padding: 15px;
   margin-bottom: 16px;
@@ -265,7 +265,7 @@
 }
 .post-action-item:hover { background: #f2f2f2; }
 
-/* Các bài đăng nhúng Iframe */
+
 .news-feed-item {
   margin-bottom: 16px;
 }
@@ -293,10 +293,10 @@
 .post-date { font-size: 12px; color: #65676b; display: flex; align-items: center; gap: 4px; }
 .post-more { color: #65676b; cursor: pointer; }
 
-/* Container của Iframe - Điểm mấu chốt để "cắt" bài báo */
+
 .post-iframe-container {
   width: 100%;
-  height: 480px; /* Độ cao khung hình hiển thị trên feed */
+  height: 480px; 
   overflow: hidden;
   position: relative;
   background: white;
@@ -305,12 +305,12 @@
 }
 
 .feed-iframe {
-  width: 1000px; /* Chiều rộng giả lập máy tính */
-  height: 3000px; /* Chiều cao để tải đủ nội dung */
+  width: 1000px; 
+  height: 3000px; 
   position: absolute;
   border: none;
   
-  /* Thu nhỏ trang web lại để vừa với cột giữa của bạn */
+
   transform: scale(0.65); 
   transform-origin: top left;
 }
@@ -334,7 +334,7 @@
 }
 .f-action:hover { background: #f2f2f2; }
 
-/* Job Mini List Cột Phải */
+
 .job-mini-item {
   display: flex;
   gap: 10px;
@@ -345,11 +345,11 @@
 .job-name { font-size: 13px; font-weight: bold; }
 .job-corp { font-size: 11px; color: #666; }
 
-/* --- MINI CHAT BOX STYLE --- */
+
 .chat-mini-card {
   display: flex;
   flex-direction: column;
-  height: 350px; /* Độ cao khung chat */
+  height: 350px; 
 }
 
 .chat-body {

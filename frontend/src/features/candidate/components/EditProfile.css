@@ -165,7 +165,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0; /* Ẩn mặc định */
+  opacity: 0; 
   transition: opacity 0.3s ease;
 }
 
@@ -174,7 +174,7 @@
   color: white;
 }
 
-/* --- FORM --- */
+
 .form-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -207,7 +207,7 @@
   margin-bottom: 5px;
 }
 
-/* Style chung cho Input và Select */
+
 .form-field input,
 .form-field select {
   width: 100%;

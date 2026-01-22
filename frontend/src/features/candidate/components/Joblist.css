@@ -130,7 +130,7 @@ body.dark-mode .glass-panel {
     border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Sidebar Content */
+
 .sidebar-top {
     display: flex;
     flex-direction: column;
@@ -400,14 +400,14 @@ body.dark-mode .top-header {
     overflow-x: auto;
     padding-bottom: 0.25rem;
     scrollbar-width: none;
-    /* Firefox */
+    
 }
 
 .filters-row::-webkit-scrollbar {
     display: none;
 }
 
-/* Chrome/Safari */
+
 
 .filter-chip {
     height: 36px;
@@ -670,7 +670,7 @@ body.dark-mode .filter-divider {
     font-size: 1.125rem;
 }
 
-/* Pagination */
+
 .pagination-wrapper {
     display: flex;
     justify-content: center;
