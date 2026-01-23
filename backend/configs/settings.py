@@ -180,7 +180,13 @@ ACCOUNT_SIGNUP_FIELDS = {
     },
     'username': {
         'required': True, 
-    }
+    },
+    'password1': {
+        'required': True,   
+    },
+    'password2': {
+        'required': True,   
+    },
 }
 ACCOUNT_LOGIN_METHODS = {'username'}
 ACCOUNT_EMAIL_VERIFICATION = 'none'
