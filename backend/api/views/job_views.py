@@ -7,6 +7,7 @@ from database.models.jobs import Jobs
 from ..serializers.job_serializers import JobSerializer
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.exceptions import *
+from drf_yasg import openapi
 
 
 #Dang Job
@@ -71,3 +72,53 @@ def view_job(request):
     jobs = JobService.Get_all_job()
     serializer = JobSerializer(jobs, many=True)
     return Response(serializer.data)
+
+
+
+@api_view(['GET'])  # Thử đổi sang GET xem
+@permission_classes([IsAuthenticated])
+@swagger_auto_schema(
+    manual_parameters=[
+        openapi.Parameter(
+            'search',
+            openapi.IN_QUERY,
+            description="Từ khóa tìm kiếm",
+            type=openapi.TYPE_STRING,
+            required=False
+        ),
+        openapi.Parameter(
+            'location',
+            openapi.IN_QUERY,
+            description="Địa điểm",
+            type=openapi.TYPE_STRING,
+            required=False
+        ),
+        openapi.Parameter(
+            'job_type',
+            openapi.IN_QUERY,
+            description="Loại công việc",
+            type=openapi.TYPE_STRING,
+            required=False
+        ),
+    ]
+)
+def search_jobs(request):
+    search_term = request.query_params.get('search', None)
+    location = request.query_params.get('location', None)
+    job_type = request.query_params.get('job_type', None)
+    
+    # Gọi service để lấy data
+    jobs = JobService.search_jobs(
+        search_term=search_term,
+        location=location,
+        job_type=job_type
+    )
+    
+    # Phân trang
+    # paginator = JobPagination()
+    # paginated_jobs = paginator.paginate_queryset(jobs, request)
+    
+    # Serialize data
+    serializer = JobSerializer(jobs, many=True)
+
+    return Response(serializer.data, status=status.HTTP_200_OK)

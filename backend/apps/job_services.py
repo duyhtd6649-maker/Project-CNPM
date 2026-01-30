@@ -76,3 +76,26 @@ class JobService:
             return Jobs.objects.create(**validated_data,company=company,recruiter=recruiter)
         except Exception as e:
             raise Exception(f"error: {e}")
+        
+    @staticmethod
+    def search_jobs(search_term = None, location = None, job_type = None):
+        queryset = Jobs.objects.all()
+        if search_term:
+            qs_title = Jobs.objects.filter(title__icontains=search_term)
+            qs_company = Jobs.objects.filter(company__icontains=search_term)
+            qs_description = Jobs.objects.filter(description__icontains=search_term)
+            
+            queryset = (qs_title | qs_company | qs_description).distinct()
+            
+        filter = {}
+        if location:
+            filter['location__icontains'] = location
+        if job_type:
+            filter['job_type__iexact'] = job_type
+        
+        if filter:
+            queryset = queryset.filter(**filter)
+        return queryset.order_by('-created_date')
+
+        
+        

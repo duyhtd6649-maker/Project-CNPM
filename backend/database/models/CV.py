@@ -5,7 +5,6 @@ from django.contrib.auth.models import AbstractUser
 from .users import Candidates
 from .base import AuditableModel
 
-
 class Cvs(AuditableModel):
     id = models.CharField(db_column='Id', primary_key=True, max_length=255,default=uuid.uuid4,editable=False)  # Field name made lowercase.
     candidate = models.ForeignKey('Candidates', on_delete=models.CASCADE, db_column='CandidateId', blank=True,related_name='CV', null=True)  # Field name made lowercase.
@@ -50,3 +49,4 @@ class CareerRoadMap(AuditableModel):
     class Meta:
         db_table = 'careerroadmap'
         app_label = 'database'
+

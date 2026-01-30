@@ -1,5 +1,6 @@
 from .views import user_views, ai_views, auth_views, cv_views, job_views
 from django.urls import path, include
+from rest_framework.views import APIView
 from dj_rest_auth.views import PasswordResetView, PasswordResetConfirmView
 from rest_framework_simplejwt.views import TokenVerifyView
 from rest_framework_simplejwt.views import (
@@ -17,18 +18,23 @@ urlpatterns = [
     path('user/<str:username>/',user_views.GetUserbyUsername),
     # ===== CANDIDATE =====
     path('candidate/cvanalyzer/',cv_views.Analyze_Cv),
+    path('candidate/search/', job_views.search_jobs),
     # ===== RECRUITER =====
     path('recruiter/jobs/', job_views.create_job),
     path('recruiter/jobs/<uuid:id>/', job_views.update_job),
     path('recruiter/company/<uuid:id>/', user_views.delete_companies),
     path('recruiter/conpany_create', user_views.company_create),
-    path("recruiter/jobs/delete/<uuid:id>/", job_views.delete_job),
+    path('recruiter/company/update_logo/', user_views.upload_company_logo),
+    path('recruiter/company_update/info/', user_views.update_company_info),
+    path('recruiter/company/<str:id>/delete_logo/', user_views.delete_company_logo),
+    path('recruiter/jobs/delete/<uuid:id>/', job_views.delete_job),
     # ===== ADMIN =====
     path('admin/banuser/',user_views.BanUser),
     path('admin/unbanuser/',user_views.UnBanUser),
     path('admin/removeuser/',user_views.RemoveUser),
     path('admin/viewcandidateslist/',user_views.GetCandidatesInfor),
     path('admin/viewrecruiterslist/',user_views.GetRecruitersInfor),
+    path('admin/deletecv/<uuid:id>/',cv_views.Delete_Cv),
     # ===== AUTH =====
     path("accounts/", include("allauth.urls")),
     # ===== LOGIN / SIGNUP =====

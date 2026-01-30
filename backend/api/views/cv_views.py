@@ -7,6 +7,9 @@ from apps import cv_services
 from ..serializers.cv_serializers import CVScanSerializer
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework.exceptions import *
+from database.models.CV import Cvs
+
 
 @swagger_auto_schema(
     method='post',
@@ -41,3 +44,14 @@ def Analyze_Cv(request):
     except Exception as e:
         return Response({"error": f"{str(e)}"},status=status.HTTP_503_SERVICE_UNAVAILABLE)
     return Response(data,status= status.HTTP_200_OK)
+
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def Delete_Cv(request, id):
+    try:
+        cv = Cvs.objects.get(id=id)
+        cv.delete()
+        return Response({"message": "CV deleted successfully."}, status=status.HTTP_200_OK)
+    except Cvs.DoesNotExist:
+        return Response({"error": "CV not found."}, status=status.HTTP_404_NOT_FOUND)

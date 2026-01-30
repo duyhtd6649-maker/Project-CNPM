@@ -5,6 +5,7 @@ from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from api.serializers.user_serializers import UserSerializer, RecruiterSerializer, CompanySerializer
 from api.serializers.job_serializers import JobSerializer
 from rest_framework.exceptions import *
+from django.core.files.storage import default_storage
 
 
 class UserService:
@@ -74,6 +75,7 @@ class UserService:
             raise TokenError({"error":"Token error"})
         except Exception as e:
             raise Exception({"error":f"{str(e)}"})
+    
 
 class AdminService:
     @staticmethod    
@@ -202,6 +204,54 @@ class CompanyService:
             return company
         else:
             raise PermissionError({"error":"user don't have permission"})
+    
+    @staticmethod
+    def update_company_info(user, company_id, data):
+        company = Companies.objects.get(id=company_id)
+        
+        is_owner = (user.company == company) if user.company else False
+        if not user.is_superuser and not is_owner:
+            raise PermissionDenied({"error": "You don't have permission to update this company"})
+
+        if 'name' in data: company.name = data['name']
+        if 'description' in data: company.description = data['description']
+        if 'website' in data: company.website = data['website']
+        if 'address' in data: company.address = data['address']
+        if 'tax_code' in data: company.tax_code = data['tax_code']
+        
+        company.save()
+        return company
+
+    @staticmethod
+    def upload_logo(user, company_id, file_data):
+        company = Companies.objects.get(id=company_id)
+
+        is_owner = (user.company == company) if user.company else False
+        if not user.is_superuser and not is_owner:
+            raise PermissionDenied({"error": "You don't have permission to update this company logo"})
+
+        file_path = default_storage.save(f"logos/{file_data.name}", file_data)
+        file_url = default_storage.url(file_path)
+        
+        #đường dẫn vào DB
+        company.logo_url = file_url
+        company.save()
+        return company
+
+    @staticmethod
+    def delete_logo(user, company_id):
+        company = Companies.objects.get(id=company_id)
+        
+        # Check quyền
+        is_owner = (user.company == company) if user.company else False
+        if not user.is_superuser and not is_owner:
+            raise PermissionDenied({"error": "You don't have permission to update this company logo"})
+
+        company.logo_url = None # Xóa url 
+        company.save()
+        return company
+
+        
     
 
 

@@ -1,3 +1,4 @@
+from openai import NotFoundError
 import pdfplumber
 import re
 import requests
@@ -148,5 +149,5 @@ def analyze_cv(validated_data, user):
         },
         "content_analysis": ai_data 
     }
-
+    
     return final_response
