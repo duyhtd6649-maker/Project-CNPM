@@ -118,3 +118,42 @@ class ApplicationService:
         if filters.get('job_title') is not None:
             queryset = queryset.filter(job__title__icontains=filters.get('job_title'))
         return queryset
+    
+    @staticmethod
+    def update_application_system_status(user, application_id, new_status):
+        try:
+            application = Applications.objects.get(id=application_id, isdeleted=False)
+        except Applications.DoesNotExist:
+            raise NotFound("Application not found")
+        is_admin = AdminService.Is_Super_User(user)
+        if is_admin:
+            application.system_status = new_status
+            if new_status == 'Approved':
+                application.job_status = 'Waiting'
+            else:
+                application.job_status = None
+            application.save()
+            return application
+        else:
+            raise PermissionDenied("User doesn't have permission to update system status")
+
+        
+    @staticmethod
+    def update_application_job_status(user, application_id, new_status):
+        try:
+            application = Applications.objects.get(id=application_id, isdeleted=False)
+            recruiter = RecruiterService.Get_recruiter(user)
+        except Applications.DoesNotExist:
+            raise NotFound("Application not found")
+        except NotFound:
+            raise PermissionDenied("User doesn't have permission")
+        is_recruiter_of_company = False
+        company = application.job.company
+        if company is not None:
+            is_recruiter_of_company = RecruiterService.Is_Recruiter_Of_Company(user, company.id)
+        if (is_recruiter_of_company or application.job.recruiter == recruiter) and application.system_status == 'Approved':  
+            application.job_status = new_status
+            application.save()
+            return application
+        else:
+            raise PermissionDenied("User doesn't have permission to update job status")

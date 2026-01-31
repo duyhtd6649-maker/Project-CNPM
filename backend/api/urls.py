@@ -12,7 +12,6 @@ from api.views.ai_views import mock_interview
 urlpatterns = [
     # ===== USER =====
     path('user/',user_views.GetUserInfor),
-    path('user/profile/<uuid:id>', user_views.profile_api),
     path('user/<str:username>/',user_views.GetUserbyUsername),
     # ===== CV =====
     path('cv/analyzer/',cv_views.Analyze_Cv),
@@ -34,10 +33,12 @@ urlpatterns = [
     path('company/<str:id>/delete_logo/', user_views.delete_company_logo),
     # ===== APPLICATION =====    
     path('applications/<uuid:id>/delete/', application_views.delete_application),
+    path('applications/<uuid:id>/UpdateStatus/', application_views.update_application_system_status),
     path('applications/', application_views.applications),
     path('applications/<uuid:id>/', application_views.application_by_id),
     path('recruiter/jobs/',job_views.jobs_of_recruiter),
     path('recruiter/applications/', application_views.applications_of_recruiter),
+    path('recruiter/applications/<uuid:id>/UpdateStatus/', application_views.update_application_job_status),
     path('user/<uuid:id>/applications/', application_views.applications_of_user),
     path('user/profile/<uuid:id>', user_views.profile_view),
     path('user/profile/update/<uuid:id>', user_views.update_profile),

@@ -6,3 +6,16 @@ class ApplicationSerializer(serializers.ModelSerializer):
         model = Applications
         fields = ['id', 'job_id', 'cvsid', 'job_status','system_status']
         read_only_fields = ['id','job_status','system_status']
+
+class ApplicationSystemStatusUpdateSerializer(serializers.Serializer):
+    new_status = serializers.ChoiceField(choices=[
+        ('Approved', 'Approved'),
+        ('Rejected', 'Rejected')
+    ])
+class ApplicationJobStatusUpdateSerializer(serializers.Serializer):
+    new_status = serializers.ChoiceField(choices=[
+        ('Waiting', 'Waiting'),
+        ('Hired', 'Hired'),
+        ('Rejected', 'Rejected'),
+        ('Scheduling', 'Scheduling')
+    ])
