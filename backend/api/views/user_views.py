@@ -63,6 +63,45 @@ def update_profile(request, id):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@swagger_auto_schema(
+    method='post',
+    operation_description="Upload avatar",
+    manual_parameters=[
+        openapi.Parameter(name='avatar', in_=openapi.IN_FORM, type=openapi.TYPE_FILE, required=True, description='File jpg, png')
+    ]
+)
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+@parser_classes([MultiPartParser, FormParser])
+def upload_avatar(request):
+    
+    
+    file_obj = request.FILES.get('avatar')
+    
+    if not file_obj:
+        return Response({"error": "No avatar file selected"}, status=status.HTTP_400_BAD_REQUEST)
+        
+    try:
+        updated_user = UserService.upload_avatar(request.user, file_obj)
+        return Response({
+            "message": "Avatar uploaded successfully", 
+            "avatar_url": updated_user.avatar_url
+        }, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({"error": f"{str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_cv(request, id):
+    try:
+        deleted_cv = UserService.delete_cv_of_user(user_id=request.user.id, cv_id=id)
+        return Response({"detail": "CV deleted successfully"}, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({"error": f"{str(e)}"}, status=status.HTTP_404_NOT_FOUND)
+    
+
+
 #Tao company
 @swagger_auto_schema(
     method='post',
@@ -309,3 +348,13 @@ def GetRecruitersInfor(request):
     recruiters = RecruiterService.Get_All_Recruiters()
     serializer = RecruiterSerializer(recruiters, many = True)
     return Response(serializer.data)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_interview(request):
+    try:
+        interview = UserService.create_interview(request.user, request.data)
+        return Response({"detail":"Interview created successfully"}, status=status.HTTP_201_CREATED)
+    except Exception as e:
+        return Response({"error": f"{str(e)}"}, status=status.HTTP_400_BAD_REQUEST)

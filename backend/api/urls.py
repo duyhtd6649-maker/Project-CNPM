@@ -14,12 +14,14 @@ urlpatterns = [
     path('user/',user_views.GetUserInfor),
     path('user/profile/<uuid:id>', user_views.profile_view),
     path('user/profile/update/<uuid:id>', user_views.update_profile),
+    path('user/upload_avatar/', user_views.upload_avatar),
     path('views/viewjobs/', job_views.view_job),
     path('views/viewcompanies/', user_views.view_companies),
     path('user/<str:username>/',user_views.GetUserbyUsername),
     # ===== CANDIDATE =====
     path('candidate/cvanalyzer/',cv_views.Analyze_Cv),
     path('candidate/search/', job_views.search_jobs),
+    path('candidate/cv/delete/<uuid:id>/', user_views.delete_cv),
     # ===== RECRUITER =====
     path('recruiter/jobs/', job_views.create_job),
     path('recruiter/jobs/<uuid:id>/', job_views.update_job),

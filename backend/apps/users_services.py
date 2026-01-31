@@ -1,5 +1,6 @@
 from database.models.users import Users, Candidates, Companies, Recruiters
 from database.models.jobs import Jobs
+from database.models.services import Interviews
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from api.serializers.user_serializers import UserSerializer, RecruiterSerializer, CompanySerializer
@@ -46,6 +47,16 @@ class UserService:
             
         except Users.DoesNotExist:
             raise NotFound({"error": "User not found"})
+        
+    def upload_avatar(user, file_data):
+        try:
+            user = Users.objects.get(id=user.id)
+        except Users.DoesNotExist:
+            raise NotFound({"error":"User not found"})
+
+        user.avatar_url = file_data
+        user.save()
+        return user
 
     @staticmethod
     def Get_All_User():
@@ -90,6 +101,24 @@ class UserService:
             raise TokenError({"error":"Token error"})
         except Exception as e:
             raise Exception({"error":f"{str(e)}"})
+        
+    @staticmethod 
+    def delete_cv_of_user(user_id, cv_id):
+        try:
+            user = Users.objects.get(id=user_id)
+        except Users.DoesNotExist:
+            raise NotFound({"error":"User not found"})
+        try:
+            candidate = Candidates.objects.get(user=user)
+        except Candidates.DoesNotExist:
+            raise NotFound({"error":"Candidate not found"})
+        try:
+            cv = candidate.cvs.get(id=cv_id)
+            cv.isdeleted = True
+            cv.save()
+            return cv
+        except Exception as e:
+            raise NotFound({"error":"CV not found"})
     
 
 class AdminService:
@@ -164,8 +193,8 @@ class RecruiterService:
         if not is_recruiter:
             return False
         return (user.company_id is not None) and (user.company_id == company_id)
-
     
+
 class CompanyService:
     @staticmethod
     def Get_all_company():
@@ -319,6 +348,24 @@ class CompanyService:
         except Recruiters.DoesNotExist:
             raise NotFound("Recruiter not found")
 
-        
+class interviewService:
+    @staticmethod
+    def create_interview(recruiter, data):
+        job_id = data.get('job_id')
 
+        if not Jobs.objects.filter(id=job_id, recruiter__user=recruiter).exists():
+            raise PermissionDenied("You don't have permission to create interview for this job")
+        
+        interview = Interviews.objects.create(
+            job_id=job_id,
+            candidate_id=data.get('candidate_id'),
+            scheduled_time=data.get('scheduled_time'),
+            location=data.get('location'),
+            mode=data.get('mode'),
+            notes=data.get('notes', ''),
+            status=data.get('status', 'pending')
+        )
+        return interview
     
+          
+
