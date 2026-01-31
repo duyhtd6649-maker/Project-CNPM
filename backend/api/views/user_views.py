@@ -28,7 +28,7 @@ def GetUserbyUsername(request,username):
 #Lay thong tin profile
 @swagger_auto_schema(
     method='get',
-    operation_description="Xem thông tin Profile",
+    operation_description="view Profile",
     responses={200: UserProfileSerializer}
 )
 @api_view(['GET'])
@@ -45,7 +45,7 @@ def profile_view(request, id):
 #sua profile
 @swagger_auto_schema(
     method='put',
-    operation_description="Cập nhật Profile",
+    operation_description="update Profile",
     request_body=UserProfileSerializer,
     responses={200: UserProfileSerializer}
 )
@@ -150,7 +150,7 @@ def get_company_profile(request, id):
     method='post',
     operation_description="Upload logo company",
     manual_parameters=[
-        openapi.Parameter(name='logo', in_=openapi.IN_FORM, type=openapi.TYPE_FILE, required=True, description='File ảnh logo')
+        openapi.Parameter(name='logo', in_=openapi.IN_FORM, type=openapi.TYPE_FILE, required=True, description='File jpg, png')
     ]
 )
 @api_view(['POST'])
@@ -208,12 +208,9 @@ def list_recruiters_company(request):
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
 def delete_recruiter_from_company(request, recruiter_id):
-    # 1. Check cơ bản
     if not request.user.company:
         return Response({"error": "This user does not belong to any company"}, status=status.HTTP_400_BAD_REQUEST)
     
-    # 2. Gọi Service
-    # Không cần try-except bọc ngoài cùng nữa, để DRF tự bắt lỗi 404/403
     CompanyService.delete_recruiter_from_company(request.user, request.user.company.id, recruiter_id)
     
     return Response({"message": "Recruiter removed from company successfully"}, status=status.HTTP_200_OK)
