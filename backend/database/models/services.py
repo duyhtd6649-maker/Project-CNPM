@@ -4,6 +4,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from .users import Candidates, Users
 from .base import AuditableModel
+from .jobs import Jobs
 
 class Auditlogs(AuditableModel):
     id = models.CharField(db_column='Id', primary_key=True, max_length=255,default=uuid.uuid4,editable=False)  # Field name made lowercase.
@@ -54,3 +55,16 @@ class Subscriptions(AuditableModel):
         db_table = 'subscriptions'
         app_label = 'database'
 
+class Interviews(AuditableModel):
+    id = models.CharField(db_column='Id', primary_key=True, max_length=255,default=uuid.uuid4,editable=False)  # Field name made lowercase.
+    recruiter = models.ForeignKey('Users', on_delete=models.CASCADE, db_column='RecruiterId', blank=True, related_name='interviews_scheduled')  # Field name made lowercase.
+    candidate = models.ForeignKey('Candidates', on_delete=models.CASCADE, db_column='CandidateId', blank=True, related_name='interviews')  # Field name made lowercase.
+    job = models.ForeignKey('Jobs', on_delete=models.CASCADE, db_column='JobId', blank=True, related_name='interviews')  # Field name made lowercase.
+    scheduled_time = models.DateTimeField(db_column='ScheduledTime', blank=True, null=True)  # Field name made lowercase.
+    at = models.CharField(db_column='At', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    status = models.CharField(db_column='Status', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    feedback = models.TextField(db_column='Feedback', blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        db_table = 'interviews'
+        app_label = 'database'

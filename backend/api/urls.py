@@ -39,6 +39,16 @@ urlpatterns = [
     path('recruiter/jobs/',job_views.jobs_of_recruiter),
     path('recruiter/applications/', application_views.applications_of_recruiter),
     path('user/<uuid:id>/applications/', application_views.applications_of_user),
+    path('user/profile/<uuid:id>', user_views.profile_view),
+    path('user/profile/update/<uuid:id>', user_views.update_profile),
+    path('user/upload_avatar/', user_views.upload_avatar),
+    path('views/viewjobs/', job_views.view_job),
+    path('views/viewcompanies/', user_views.view_companies),
+    path('user/<str:username>/',user_views.GetUserbyUsername),
+    # ===== RECRUITER =====
+    path('recruiter/delete_recruiter_from_company/<uuid:recruiter_id>/', user_views.delete_recruiter_from_company),
+    path('recruiter/recruiters_of_company/',user_views.list_recruiters_company),
+    path('recruiter/add_recruiter_to_company/<uuid:recruiter_id>/',user_views.add_recruiter_to_company),
     # ===== ADMIN =====
     path('banuser/',user_views.BanUser),
     path('unbanuser/',user_views.UnBanUser),
