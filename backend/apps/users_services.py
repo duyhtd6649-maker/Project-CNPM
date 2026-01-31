@@ -6,6 +6,7 @@ from api.serializers.user_serializers import UserSerializer, RecruiterSerializer
 from api.serializers.job_serializers import JobSerializer
 from rest_framework.exceptions import *
 from django.core.files.storage import default_storage
+import os
 
 
 class UserService:
@@ -21,16 +22,30 @@ class UserService:
 
     @staticmethod
     def update_profile(user_id, validated_data):
-        company_name = validated_data['company']
-        if company_name is not None and company_name != "":
-            try:
-                user = Users.objects.get(user_id = user_id)
-                company = Companies.objects.get(name=company_name)
-                user.company = company
-                user.save()
-            except Companies.DoesNotExist:
-                raise NotFound({"error":"Company not found"})
-        return user
+        try:
+            user = Users.objects.get(id=user_id) 
+            company_name = validated_data.pop('company', None) 
+            
+            if company_name: 
+                try:
+                    company = Companies.objects.get(name=company_name)
+                    user.company = company
+                except Companies.DoesNotExist:
+                    raise NotFound({"error": "Company not found"})
+            
+            user.phone = validated_data.get('phone', user.phone)
+            user.first_name = validated_data.get('first_name', user.first_name)
+            user.last_name = validated_data.get('last_name', user.last_name)
+            user.address = validated_data.get('address', user.address)
+
+            if 'avatar' in validated_data:
+                user.avatar = validated_data['avatar']
+
+            user.save()
+            return user
+            
+        except Users.DoesNotExist:
+            raise NotFound({"error": "User not found"})
 
     @staticmethod
     def Get_All_User():
@@ -150,7 +165,7 @@ class RecruiterService:
             return False
         return (user.company_id is not None) and (user.company_id == company_id)
 
-
+    
 class CompanyService:
     @staticmethod
     def Get_all_company():
@@ -241,20 +256,68 @@ class CompanyService:
     @staticmethod
     def delete_logo(user, company_id):
         company = Companies.objects.get(id=company_id)
-        
         # Check quyền
         is_owner = (user.company == company) if user.company else False
         if not user.is_superuser and not is_owner:
             raise PermissionDenied({"error": "You don't have permission to update this company logo"})
 
-        company.logo_url = None # Xóa url 
+        company.logo_url = None # xoa url 
         company.save()
         return company
-
-        
     
+    @staticmethod
+    def list_recruiters_of_company(user, company_id):
+        company = Companies.objects.get(id=company_id)
+
+        is_owner = (user.company == company) if user.company else False
+        if not user.is_superuser and not is_owner:
+            raise PermissionDenied({"error": "You don't have permission to view recruiters of this company"})
+
+        recruiters = Recruiters.objects.filter(user__company_id=company_id)
+        return recruiters
 
 
+    @staticmethod
+    def delete_recruiter_from_company(user, company_id, recruiter_id):
+        try:
+            target_company = Companies.objects.get(id=company_id)
+        except Companies.DoesNotExist:
+            raise NotFound("company not found")
+
+        if user.company != target_company:
+             raise PermissionDenied("You don't have permission to view recruiters of this company")
+
+        try:
+            recruiter = Recruiters.objects.get(id=recruiter_id, user__company_id=company_id)
+            target_user = recruiter.user
+            target_user.company = None
+            target_user.save()
+            
+            return True
+
+        except Recruiters.DoesNotExist:
+            raise NotFound("Recruiter not found in this company")
+    
+    @staticmethod
+    def add_recruiter_to_company(user, company_id, recruiter_id):
+        try:
+            target_company = Companies.objects.get(id=company_id)
+        except Companies.DoesNotExist:
+            raise NotFound("company not found")
+
+        if user.company != target_company:
+             raise PermissionDenied("You don't have permission to add recruiters to this company")
+
+        try:
+            recruiter = Recruiters.objects.get(id=recruiter_id)
+            target_user = recruiter.user
+            target_user.company = target_company
+            target_user.save()
+            
+            return True
+
+        except Recruiters.DoesNotExist:
+            raise NotFound("Recruiter not found")
 
         
 

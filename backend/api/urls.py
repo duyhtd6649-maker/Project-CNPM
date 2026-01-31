@@ -12,7 +12,8 @@ from api.views.ai_views import mock_interview
 urlpatterns = [
     # ===== USER =====
     path('user/',user_views.GetUserInfor),
-    path('user/profile/<uuid:id>', user_views.profile_api),
+    path('user/profile/<uuid:id>', user_views.profile_view),
+    path('user/profile/update/<uuid:id>', user_views.update_profile),
     path('views/viewjobs/', job_views.view_job),
     path('views/viewcompanies/', user_views.view_companies),
     path('user/<str:username>/',user_views.GetUserbyUsername),
@@ -22,12 +23,15 @@ urlpatterns = [
     # ===== RECRUITER =====
     path('recruiter/jobs/', job_views.create_job),
     path('recruiter/jobs/<uuid:id>/', job_views.update_job),
+    path('recruiter/jobs/delete/<uuid:id>/', job_views.delete_job),
     path('recruiter/company/<uuid:id>/', user_views.delete_companies),
     path('recruiter/conpany_create', user_views.company_create),
     path('recruiter/company/update_logo/', user_views.upload_company_logo),
     path('recruiter/company_update/info/', user_views.update_company_info),
     path('recruiter/company/<str:id>/delete_logo/', user_views.delete_company_logo),
-    path('recruiter/jobs/delete/<uuid:id>/', job_views.delete_job),
+    path('recruiter/delete_recruiter_from_company/<uuid:recruiter_id>/', user_views.delete_recruiter_from_company),
+    path('recruiter/recruiters_of_company/',user_views.list_recruiters_company),
+    path('recruiter/add_recruiter_to_company/<uuid:recruiter_id>/',user_views.add_recruiter_to_company),
     # ===== ADMIN =====
     path('admin/banuser/',user_views.BanUser),
     path('admin/unbanuser/',user_views.UnBanUser),
