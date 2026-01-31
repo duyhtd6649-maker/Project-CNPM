@@ -2,6 +2,7 @@ from openai import NotFoundError
 import pdfplumber
 import re
 import requests
+import hashlib
 from django.conf import settings
 from django.db import transaction
 from database.models.CV import Cvs,Cvanalysisresult
@@ -151,3 +152,28 @@ def analyze_cv(validated_data, user):
     }
     
     return final_response
+
+def upload_cv(user, validated_data):
+    upload_file = validated_data['file_url']
+    try:
+        candidate_profile = Candidates.objects.get(user=user)
+        file_hash = hash_file(upload_file)
+        existing_cv = Cvs.objects.filter(candidate=candidate_profile, file_hash=file_hash)
+        if existing_cv.exists():
+            raise ValueError(f"CV đã tồn tại cho người dùng {user.username}")
+    except Candidates.DoesNotExist:
+        raise ValueError(f"User {user.username} chưa có hồ sơ Candidate (Profile).")
+    cv_instance = Cvs.objects.create(
+        candidate=candidate_profile,
+        file_name=upload_file.name,
+        file_url=upload_file,
+        file_hash = file_hash,
+        created_by=user.username
+    )
+    return cv_instance
+
+def hash_file(file):
+    hasher = hashlib.sha256()
+    for chunk in file.chunks():
+        hasher.update(chunk)
+    return hasher.hexdigest()

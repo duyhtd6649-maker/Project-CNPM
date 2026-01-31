@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from database.models.jobs import Jobs
+from .cv_serializers import CVSerializer
+from database.models.jobs import Jobs, Applications
 
 class JobSerializer(serializers.ModelSerializer):
     isdeleted = serializers.BooleanField(read_only = True)
@@ -7,3 +8,8 @@ class JobSerializer(serializers.ModelSerializer):
     class Meta:
         model = Jobs
         fields = ['id', 'company', 'title', 'description', 'location', 'skill', 'salary_min', 'salary_max','isdeleted']
+
+class JobForFilterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Jobs
+        fields = ['id', 'title']

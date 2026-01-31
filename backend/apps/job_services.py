@@ -1,4 +1,7 @@
-from database.models.jobs import Jobs
+from email.mime import application
+from database.models.jobs import Jobs, Applications
+from database.models.users import Candidates, Recruiters
+from database.models.CV import Cvs
 from .users_services import UserService, CompanyService, RecruiterService, AdminService
 from rest_framework.exceptions import *
 
@@ -7,8 +10,16 @@ class JobService:
     @staticmethod
     def Get_all_job():
         return Jobs.objects.filter(isdeleted = False)
-
-
+    
+    @staticmethod
+    def Get_job(user):
+        try:
+            recruiter = RecruiterService.Get_recruiter(user)
+            jobs = Jobs.objects.filter(recruiter=recruiter, isdeleted=False)
+            return jobs
+        except NotFound:
+            raise PermissionDenied("User don't have permission")
+    
     #ham ktra perrmission
     @staticmethod
     def check_job_modify_permission(user, job):
@@ -18,12 +29,9 @@ class JobService:
             recruiter_create_job = getattr(job, 'recruiter', None)
             try:
                 recruiter = RecruiterService.Get_recruiter(user)
-            except Exception:
-                recruiter = None
-            try:
                 same_company = RecruiterService.Is_Recruiter_Of_Company(user, job.company_id)
-            except Exception:
-                same_company = False
+            except NotFound:
+                recruiter = None
             if recruiter_create_job is not None and recruiter is not None:
                 if str(getattr(recruiter, 'id', None)) == str(getattr(recruiter_create_job, 'id', None)):
                     return True
@@ -98,4 +106,4 @@ class JobService:
         return queryset.order_by('-created_date')
 
         
-        
+    

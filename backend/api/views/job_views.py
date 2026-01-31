@@ -1,10 +1,10 @@
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, parser_classes
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.parsers import MultiPartParser, FormParser
 from apps.job_services import JobService
-from database.models.jobs import Jobs 
-from ..serializers.job_serializers import JobSerializer
+from ..serializers.job_serializers import JobSerializer,JobForFilterSerializer
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.exceptions import *
 from drf_yasg import openapi
@@ -73,8 +73,6 @@ def view_job(request):
     serializer = JobSerializer(jobs, many=True)
     return Response(serializer.data)
 
-
-
 @api_view(['GET'])  # Thử đổi sang GET xem
 @permission_classes([IsAuthenticated])
 @swagger_auto_schema(
@@ -122,3 +120,17 @@ def search_jobs(request):
     serializer = JobSerializer(jobs, many=True)
 
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated]) 
+def jobs_of_recruiter(request):
+    try:
+        filters = JobService.Get_job(user=request.user)
+        serializer = JobForFilterSerializer(filters, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({"error": f"Error: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
+
+

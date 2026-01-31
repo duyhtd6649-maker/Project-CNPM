@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status
 from apps import cv_services
-from ..serializers.cv_serializers import CVScanSerializer
+from ..serializers.cv_serializers import CVScanSerializer,CVSerializer
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.exceptions import *
@@ -55,3 +55,31 @@ def Delete_Cv(request, id):
         return Response({"message": "CV deleted successfully."}, status=status.HTTP_200_OK)
     except Cvs.DoesNotExist:
         return Response({"error": "CV not found."}, status=status.HTTP_404_NOT_FOUND)
+    
+
+@swagger_auto_schema(
+    method='post',
+    operation_description="Upload CV PDF",
+    manual_parameters=[
+        openapi.Parameter(
+            name='file',
+            in_=openapi.IN_FORM,
+            type=openapi.TYPE_FILE,
+            required=True,
+            description='File PDF CV'
+        ),
+    ],
+    responses={200: 'Kết quả phân tích JSON', 400: 'Lỗi dữ liệu'}
+)
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+@parser_classes([MultiPartParser, FormParser])
+def Upload_Cv(request):
+    serializer = CVSerializer(data=request.data)
+    if serializer.is_valid():
+        try:
+            new_cv = cv_services.upload_cv(user=request.user, validated_data= serializer.validated_data)
+            serializer = CVSerializer(new_cv)
+            return Response(serializer.data, status= status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response({"error":f"{str(e)}"},status=status.HTTP_400_BAD_REQUEST)

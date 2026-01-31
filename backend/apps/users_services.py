@@ -141,7 +141,7 @@ class RecruiterService:
         try:
             return Recruiters.objects.get(user = user)
         except Recruiters.DoesNotExist:
-            raise Exception({"error":"recruiter not found"})
+            raise NotFound({"error":"recruiter not found"})
         
     @staticmethod
     def Is_Recruiter_Of_Company(user, company_id):

@@ -10,10 +10,16 @@ class Cvs(AuditableModel):
     candidate = models.ForeignKey('Candidates', on_delete=models.CASCADE, db_column='CandidateId', blank=True,related_name='CV', null=True)  # Field name made lowercase.
     file_name = models.CharField(db_column='FileName', max_length=255, blank=True, null=True)  # Field name made lowercase.
     file_url = models.FileField(upload_to='cvs/%Y/%m/', null=True, db_column='FileUrl')
+    file_hash = models.CharField(db_column='FileHash',max_length=64, null=True, blank=True,db_index=True)
+    file_size = models.IntegerField(db_column='FileSize', null=True, blank=True)
 
     class Meta:
         db_table = 'cvs'
         app_label = 'database'
+    def save(self, *args, **kwargs):
+        if self.file_url and not self.file_size:
+            self.file_size = self.file_url.size
+        super().save(*args, **kwargs)
 
 class Cvanalysisresult(AuditableModel):
     id = models.CharField(db_column='Id', primary_key=True, max_length=255, default=uuid.uuid4, editable=False)
