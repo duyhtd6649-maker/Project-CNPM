@@ -73,12 +73,11 @@ def view_job(request):
     serializer = JobSerializer(jobs, many=True)
     return Response(serializer.data)
 
-@api_view(['GET'])  # Thử đổi sang GET xem
-@permission_classes([IsAuthenticated])
 @swagger_auto_schema(
+    method='get',
     manual_parameters=[
         openapi.Parameter(
-            'search',
+            'title',
             openapi.IN_QUERY,
             description="Từ khóa tìm kiếm",
             type=openapi.TYPE_STRING,
@@ -92,34 +91,40 @@ def view_job(request):
             required=False
         ),
         openapi.Parameter(
-            'job_type',
+            'category',
             openapi.IN_QUERY,
             description="Loại công việc",
             type=openapi.TYPE_STRING,
             required=False
         ),
-    ]
+        openapi.Parameter(
+            'description',
+            openapi.IN_QUERY,
+            description="Mô tả công việc",
+            type=openapi.TYPE_STRING,
+            required=False
+        ),
+        openapi.Parameter(
+            'Skill',
+            openapi.IN_QUERY,
+            description="Kỹ năng yêu cầu",
+            type=openapi.TYPE_ARRAY,
+            items=openapi.Items(type=openapi.TYPE_STRING), 
+            collectionFormat='multi',
+            required=False
+        ),
+    ],
+    responses={200: JobSerializer(many=True)}
 )
+@api_view(['GET'])  # Thử đổi sang GET xem
+@permission_classes([IsAuthenticated])
 def search_jobs(request):
-    search_term = request.query_params.get('search', None)
-    location = request.query_params.get('location', None)
-    job_type = request.query_params.get('job_type', None)
-    
-    # Gọi service để lấy data
-    jobs = JobService.search_jobs(
-        search_term=search_term,
-        location=location,
-        job_type=job_type
-    )
-    
-    # Phân trang
-    # paginator = JobPagination()
-    # paginated_jobs = paginator.paginate_queryset(jobs, request)
-    
-    # Serialize data
-    serializer = JobSerializer(jobs, many=True)
-
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    try:
+        jobs = JobService.search_jobs(filters = request.query_params)
+        serializer = JobSerializer(jobs, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({"error": f"Error: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 

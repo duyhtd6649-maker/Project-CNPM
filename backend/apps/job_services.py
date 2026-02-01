@@ -1,5 +1,5 @@
 from email.mime import application
-from database.models.jobs import Jobs, Applications
+from database.models.jobs import Jobs, Categories
 from database.models.users import Candidates, Recruiters
 from database.models.CV import Cvs
 from .users_services import UserService, CompanyService, RecruiterService, AdminService
@@ -86,24 +86,25 @@ class JobService:
             raise Exception(f"error: {e}")
         
     @staticmethod
-    def search_jobs(search_term = None, location = None, job_type = None):
-        queryset = Jobs.objects.all()
-        if search_term:
-            qs_title = Jobs.objects.filter(title__icontains=search_term)
-            qs_company = Jobs.objects.filter(company__icontains=search_term)
-            qs_description = Jobs.objects.filter(description__icontains=search_term)
-            
-            queryset = (qs_title | qs_company | qs_description).distinct()
-            
-        filter = {}
-        if location:
-            filter['location__icontains'] = location
-        if job_type:
-            filter['job_type__iexact'] = job_type
-        
-        if filter:
-            queryset = queryset.filter(**filter)
-        return queryset.order_by('-created_date')
+    def search_jobs(filters):
+        job_list = Jobs.objects.filter(isdeleted=False)
+        if filters.get('title') is not None:
+            job_list = job_list.filter(title__icontains=filters.get('title'))
+        if filters.get('description') is not None:
+            job_list = job_list.filter(description__icontains=filters.get('description'))
+        if filters.get('location') is not None:
+            job_list = job_list.filter(location__icontains=filters.get('location'))
+        if filters.get('category') is not None:
+            try:
+                category = Categories.objects.get(name=filters.get('category'))
+                job_list = job_list.filter(category=category)
+            except Categories.DoesNotExist:
+                raise NotFound("Category not found")
+        if filters.get('Skill') is not None:
+            skills = filters.getlist('Skill')
+            for skill in skills:
+                job_list = job_list.filter(skill__icontains=skill)
+        return job_list
 
         
     
