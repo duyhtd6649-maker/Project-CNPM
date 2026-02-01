@@ -18,3 +18,5 @@ class CVSerializer(serializers.ModelSerializer):
 
 class CVScanSerializer(CVSerializer):
     targetjob = serializers.CharField(max_length=255)
+    class Meta(CVSerializer.Meta):
+        fields = CVSerializer.Meta.fields + ['targetjob']

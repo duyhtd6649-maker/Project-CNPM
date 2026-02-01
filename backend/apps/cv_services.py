@@ -104,7 +104,7 @@ def save_analysis_result(user, cv_file, ai_result, format_result, target_job):
         raise e 
     
 def analyze_cv(validated_data, user):
-    upload_file = validated_data['file']
+    upload_file = validated_data['file_url']
     target_job = validated_data['targetjob']
     scanned_text = extract_text_from_cv(upload_file)
 

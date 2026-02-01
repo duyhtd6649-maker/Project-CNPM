@@ -32,6 +32,7 @@ class Cvanalysisresult(AuditableModel):
     format_analysis_json = models.JSONField(db_column='FormatAnalysisJson', blank=True, null=True)
     extracted_email = models.CharField(db_column='ExtractedEmail', max_length=255, blank=True, null=True)
     extracted_phone = models.CharField(db_column='ExtractedPhone', max_length=50, blank=True, null=True)
+    extracted_skill = models.JSONField(db_column='ExtractedSkill',blank=True,null=True)
 
 
     class Meta:

@@ -1,9 +1,10 @@
 from email.mime import application
 from database.models.jobs import Jobs, Categories
 from database.models.users import Candidates, Recruiters
-from database.models.CV import Cvs
+from database.models.CV import Cvs, Cvanalysisresult
 from .users_services import UserService, CompanyService, RecruiterService, AdminService
 from rest_framework.exceptions import *
+from django.db.models import Case, When, Value, IntegerField, F
 
 
 class JobService:
@@ -104,7 +105,37 @@ class JobService:
             skills = filters.getlist('Skill')
             for skill in skills:
                 job_list = job_list.filter(skill__icontains=skill)
+        job_list = job_list.order_by('-created_date')
         return job_list
+    
+
+    @staticmethod
+    def get_recommended_jobs(user):
+        try:
+            candidate = Candidates.objects.get(user=user)
+            candidate_skills = []
+            cv = Cvs.objects.filter(candidate=candidate, isdeleted=False).first()
+            if cv is not None:
+                cv_analysis = Cvanalysisresult.objects.filter(cv=cv, isdeleted=False).first()
+                if cv_analysis and cv_analysis.extracted_skill:
+                    candidate_skills = cv_analysis.extracted_skill 
+            skill_score_expression = Value(0, output_field=IntegerField())
+            if candidate_skills:
+                for skill in candidate_skills:
+                    skill_score_expression = skill_score_expression + Case(
+                        When(skills__contains=skill, then=Value(10)),
+                        default=Value(0),
+                        output_field=IntegerField()
+                    )
+            recommended_jobs = Jobs.objects.filter(isdeleted=False).annotate(
+                total_score=skill_score_expression
+            ).filter(
+                total_score__gt=0
+            ).order_by('-total_score', '-created_date')
+            return recommended_jobs
+        except Candidates.DoesNotExist:
+            raise PermissionDenied("User is not a candidate")
+
 
         
     

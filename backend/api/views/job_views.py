@@ -137,5 +137,15 @@ def jobs_of_recruiter(request):
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({"error": f"Error: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def recommended_jobs(request):
+    try:
+        jobs = JobService.get_recommended_jobs(user=request.user)
+        serializer = JobSerializer(jobs, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({"error": f"Error: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
 
 
