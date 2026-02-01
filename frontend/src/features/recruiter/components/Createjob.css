@@ -5,8 +5,9 @@
 
 .app-container {
   font-family: 'Inter', sans-serif;
-  min-height: 100vh;
+  min-height: 100vh; 
   transition: background-color 0.2s;
+  overflow-y: visible; 
 }
 
 .glass {
@@ -32,7 +33,7 @@
 
 .dark .app-container {
   background-color: #111827;
-
+}
   .text-primary {
     color: var(--color-primary);
   }

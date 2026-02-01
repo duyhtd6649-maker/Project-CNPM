@@ -220,12 +220,30 @@
 
 
 
+
 .col-center {
-  height: calc(100vh - 90px);
-  overflow-y: auto;
-  scrollbar-width: none; 
+  height: calc(100vh - 90px); 
+  overflow-y: auto;           
+  padding-bottom: 20px;
 }
-.col-center::-webkit-scrollbar { display: none; } 
+
+
+.col-center::-webkit-scrollbar {
+  width: 8px; 
+}
+
+.col-center::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+
+.col-center::-webkit-scrollbar-thumb {
+  background: #ccc;    
+  border-radius: 4px;  
+}
+
+.col-center::-webkit-scrollbar-thumb:hover {
+  background: #888;    
+}
 
 
 .create-post-mimic {

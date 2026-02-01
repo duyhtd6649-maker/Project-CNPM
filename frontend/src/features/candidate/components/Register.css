@@ -4,16 +4,17 @@
   background: linear-gradient(135deg, #2b1fd4 0%, #7e87ff 100%);
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start; 
   padding: 40px 20px;
   font-family: Arial, sans-serif;
   box-sizing: border-box;
+  overflow-y: auto; 
 }
-
 .register-card {
   width: 100%;
   max-width: 950px;
   text-align: center;
+  margin: auto;
 }
 
 .register-card h1 {
