@@ -25,7 +25,6 @@ Project_Root
 
 ```bash
 git clone https://github.com/duyhtd6649-maker/Project-CNPM.git
-cd CareerMate
 ```
 
 # Kiểm tra đã cài python & nodejs trên máy chưa
