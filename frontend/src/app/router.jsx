@@ -1,5 +1,6 @@
 import { createBrowserRouter, Outlet, Navigate, Link } from 'react-router-dom';
 import AuthLayout from '../layouts/AuthLayout';
+import { useAuth } from './AppProviders';
 
 import Login from '../features/candidate/pages/Login';
 import Register from '../features/candidate/pages/Register';
@@ -21,6 +22,11 @@ import ManageInternalAccount from '../features/admin/pages/ManageInternalAccount
 import ManageCandidateAccount from '../features/admin/pages/ManageCandidateAccount';
 import ManageRecruiterAccount from '../features/admin/pages/ManageRecruiterAccount';
 import ManageAdminAccount from '../features/admin/pages/ManageAdminAccount';
+
+const ProtectedRoute = ({ children }) => {
+  const { user } = useAuth();
+  return user ? children : <Navigate to="/login" />;
+};
 
 const navStyle = {
   position: 'fixed',
@@ -58,7 +64,6 @@ export const router = createBrowserRouter([
     element: <RootLayout />,
     children: [
       { index: true, element: <Navigate to="/login" /> },
-
       {
         element: <AuthLayout />,
         children: [
@@ -67,25 +72,22 @@ export const router = createBrowserRouter([
           { path: 'forgot-password', element: <ForgotPassword /> },
         ],
       },
-
-      { path: 'home', element: <HomepageCandidates /> },
-      { path: 'profile', element: <ViewUserProfile /> },
-      { path: 'edit-profile', element: <EditProfile /> },
-      { path: 'premium', element: <PremiumPage /> },
-      { path: 'saved-cv', element: <SavedCV /> },
-      { path: 'chatbot', element: <Chatbot /> },
-      { path: 'view-job', element: <Viewjob /> },
-      { path: 'job-list', element: <JobBrowsing /> },
-      { path: 'create-cv', element: <CreateCV /> },
+      { path: 'home', element: <ProtectedRoute><HomepageCandidates /></ProtectedRoute> },
+      { path: 'profile', element: <ProtectedRoute><ViewUserProfile /></ProtectedRoute> },
+      { path: 'edit-profile', element: <ProtectedRoute><EditProfile /></ProtectedRoute> },
+      { path: 'premium', element: <ProtectedRoute><PremiumPage /></ProtectedRoute> },
+      { path: 'saved-cv', element: <ProtectedRoute><SavedCV /></ProtectedRoute> },
+      { path: 'chatbot', element: <ProtectedRoute><Chatbot /></ProtectedRoute> },
+      { path: 'view-job', element: <ProtectedRoute><Viewjob /></ProtectedRoute> },
+      { path: 'job-list', element: <ProtectedRoute><JobBrowsing /></ProtectedRoute> },
+      { path: 'create-cv', element: <ProtectedRoute><CreateCV /></ProtectedRoute> },
       { path: 'feature-locked', element: <NotificationSystem /> },
-
       { path: 'admin-login', element: <AdminLogin /> },
-      { path: 'admin', element: <AdminDashboard /> },
-      { path: 'manage-internal', element: <ManageInternalAccount /> },
-      { path: 'manage-candidate', element: <ManageCandidateAccount /> },
-      { path: 'manage-recruiter', element: <ManageRecruiterAccount /> },
-      { path: 'manage-admin-acc', element: <ManageAdminAccount /> },
-
+      { path: 'admin', element: <ProtectedRoute><AdminDashboard /></ProtectedRoute> },
+      { path: 'manage-internal', element: <ProtectedRoute><ManageInternalAccount /></ProtectedRoute> },
+      { path: 'manage-candidate', element: <ProtectedRoute><ManageCandidateAccount /></ProtectedRoute> },
+      { path: 'manage-recruiter', element: <ProtectedRoute><ManageRecruiterAccount /></ProtectedRoute> },
+      { path: 'manage-admin-acc', element: <ProtectedRoute><ManageAdminAccount /></ProtectedRoute> },
       { path: '*', element: <Navigate to="/login" /> },
     ],
   },

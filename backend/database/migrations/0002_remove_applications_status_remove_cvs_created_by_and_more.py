@@ -13,10 +13,6 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RemoveField(
-            model_name='applications',
-            name='status',
-        ),
-        migrations.RemoveField(
             model_name='cvs',
             name='created_by',
         ),
