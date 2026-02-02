@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGoogle } from '@fortawesome/free-brands-svg-icons';
-import { faEnvelope, faShieldAlt, faUser, faLock } from '@fortawesome/free-solid-svg-icons'; 
-import axiosClient from "/src/infrastructure/http/axiosClient";
-import { useAuth } from '../../../app/AppProviders'; 
-import '../components/Login.css';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGoogle } from "@fortawesome/free-brands-svg-icons";
+import { faEnvelope, faShieldAlt } from "@fortawesome/free-solid-svg-icons";
+import axiosClient from "../../../infrastructure/http/axiosClient";
+import { useAuth } from "../../../app/AppProviders";
+import "../components/Login.css";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { setUser } = useAuth(); 
-  const [loginData, setLoginData] = useState({ username: '', password: '' });
+  const { setUser } = useAuth();
+  const [loginData, setLoginData] = useState({ username: "", password: "" });
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -22,40 +22,22 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      // Gọi API đăng nhập
-      const response = await axiosClient.post('/api/auth/jwt/login/', loginData);
-      
-      // FIX LỖI toLowerCase: Đặt giá trị mặc định cho role là chuỗi rỗng nếu backend trả về null
-      const { access, role = '', username } = response.data;
-      
-      // 1. Lưu vào localStorage để đồng bộ với AppProviders
-      localStorage.setItem('access_token', access);
-      localStorage.setItem('user_role', role || ''); 
-      localStorage.setItem('username', username || '');
-      
-      // 2. Cập nhật State trong AppProviders
-      setUser({ username, role });
+      const response = await axiosClient.post("/api/auth/jwt/login/", {
+        username: loginData.username,
+        password: loginData.password,
+      });
 
-      alert("Login successful!");
+      login(response.data);
 
-      // FIX LỖI: Sử dụng Optional Chaining (?.) để an toàn tuyệt đối
-      const userRole = role?.toLowerCase() || '';
-
-      if (userRole === 'candidate') {
-        navigate('/homepage'); 
-      } else if (userRole === 'recruiter') {
-        navigate('/recruiter-dashboard'); 
-      } else if (userRole === 'admin') {
-        navigate('/admin'); 
+      if (response.data.role === "admin") {
+        navigate("/admin");
       } else {
-        // Nếu role null hoặc không xác định, mặc định về homepage của candidate
-        navigate('/homepage');
+        navigate("/home");
       }
-
     } catch (error) {
-      console.error("Login Error:", error);
-      const errorMsg = error.response?.data?.detail || "Invalid username or password!";
-      alert("Error: " + errorMsg);
+      alert(
+        "Đăng nhập thất bại! Vui lòng kiểm tra lại tài khoản hoặc mật khẩu.",
+      );
     } finally {
       setLoading(false);
     }
@@ -75,46 +57,51 @@ const Login = () => {
           for ADMIN
         </Link>
 
-        <div className="login-content-box">
-          <div className="login-header">
-            <h2 className="welcome-text">LOGIN</h2>
-            <p className="sub-text">Let's get started !!!</p>
-          </div>
+        <div className="brand-logo-container">
+          <span className="text-uth">UTH</span>
+          <span className="text-workplace">WORKPLACE</span>
+        </div>
 
-          <form className="login-form" onSubmit={handleLogin}>
-            <div className="input-group">
-              {/* ICON TRONG INPUT THEO ẢNH MẪU */}
-              <FontAwesomeIcon icon={faUser} className="input-icon-inner" />
-              <input 
-                type="text" 
-                name="username" 
-                placeholder="Username" 
+        <div className="login-form-content">
+          <h1 className="login-title">LOGIN</h1>
+          <p className="login-subtitle">Let's get started !!!</p>
+
+          <form onSubmit={handleLogin} className="form-actual">
+            <div className="custom-input-group">
+              <span className="input-icon">👤</span>
+              <input
+                type="text"
+                name="username"
+                placeholder="Username"
                 value={loginData.username}
-                onChange={handleChange} 
-                required 
+                onChange={handleChange}
+                required
               />
             </div>
 
-            <div className="input-group">
-              {/* ICON TRONG INPUT THEO ẢNH MẪU */}
-              <FontAwesomeIcon icon={faLock} className="input-icon-inner" />
-              <input 
-                type="password" 
-                name="password" 
-                placeholder="Password" 
+            <div className="custom-input-group">
+              <span className="input-icon">🔒</span>
+              <input
+                type="password"
+                name="password"
+                placeholder="Password"
                 value={loginData.password}
-                onChange={handleChange} 
-                required 
+                onChange={handleChange}
+                required
               />
             </div>
 
             <div className="forgot-link-container">
-              <Link to="/forgot">Forgot password</Link>
+              <Link to="/forgot-password">Forgot password</Link>
             </div>
 
             <div className="login-action-area">
-              <button type="submit" className="login-btn-purple" disabled={loading}>
-                {loading ? "Logging in..." : "Login"}
+              <button
+                type="submit"
+                className="login-btn-purple"
+                disabled={loading}
+              >
+                {loading ? "..." : "Login"}
               </button>
               <div className="reg-hint">
                 Not a member ? <Link to="/register">Register now</Link>
@@ -141,8 +128,6 @@ const Login = () => {
           </div>
         </div>
       </div>
-
-      {/* PHẦN MẢNG MÀU GRADIENT BÊN PHẢI THEO ẢNH MẪU */}
       <div className="login-right-side"></div>
     </div>
   );
