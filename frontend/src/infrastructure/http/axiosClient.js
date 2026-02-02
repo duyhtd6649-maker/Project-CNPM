@@ -1,14 +1,8 @@
-// src/infrastructure/http/axiosClient.js
-import axios from "axios";
-
-const axiosClient = axios.create({
-  // Thử thêm tiền tố 'api/' vì file urls.py bạn gửi thường được include vào api/
-  baseURL: "http://127.0.0.1:8000/api/", 
-  timeout: 10000,
 import axios from 'axios';
 
 const axiosClient = axios.create({
-  baseURL: 'http://127.0.0.1:8000',
+  baseURL: 'http://127.0.0.1:8000/api/',
+  timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
   },
