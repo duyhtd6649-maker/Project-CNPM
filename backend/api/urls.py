@@ -27,6 +27,7 @@ urlpatterns = [
     path('job/search/', job_views.search_jobs),
     path('job/<uuid:id>/delete/', job_views.delete_job),
     path('job/recommended/', job_views.recommended_jobs),
+    path('job/<uuid:id>/', job_views.close_job),
     # ===== COMPANY =====
     path('company/viewcompanies/', user_views.view_companies),
     path('company/<uuid:id>/delete/', user_views.delete_companies),
