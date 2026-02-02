@@ -15,6 +15,9 @@ import SavedCV from '../features/candidate/pages/SavedCV';
 import Chatbot from '../features/candidate/pages/Chatbot';
 import Viewjob from '../features/candidate/pages/Viewjob';
 import JobBrowsing from '../features/candidate/pages/Joblist';
+import JobDirectory from '../features/candidate/pages/companies';
+import CompanyProfile from '../features/candidate/pages/companyprofile';
+import CVAnalyzer from '../features/candidate/pages/analyzcv';
 
 import AdminLogin from '../features/admin/pages/AdminLogin';
 import AdminDashboard from '../features/admin/pages/AdminDashboard';
@@ -74,8 +77,11 @@ export const router = createBrowserRouter([
       { path: 'premium', element: <ProtectedRoute><PremiumPage /></ProtectedRoute> },
       { path: 'saved-cv', element: <ProtectedRoute><SavedCV /></ProtectedRoute> },
       { path: 'chatbot', element: <ProtectedRoute><Chatbot /></ProtectedRoute> },
+      { path: 'analyze-cv', element: <ProtectedRoute><CVAnalyzer /></ProtectedRoute> },
       { path: 'view-job/:id', element: <ProtectedRoute><Viewjob /></ProtectedRoute> },
       { path: 'job-list', element: <ProtectedRoute><JobBrowsing /></ProtectedRoute> },
+      { path: 'companies', element: <ProtectedRoute><JobDirectory /></ProtectedRoute> },
+      { path: 'company-profile/:id', element: <ProtectedRoute><CompanyProfile /></ProtectedRoute> },
       { path: 'create-cv', element: <ProtectedRoute><CreateCV /></ProtectedRoute> },
       { path: 'feature-locked', element: <NotificationSystem /> },
 

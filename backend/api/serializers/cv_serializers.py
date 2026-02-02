@@ -13,8 +13,8 @@ class CVSerializer(serializers.ModelSerializer):
     def validate_file(self, value):
         if not value.name.lower().endswith('.pdf'):
             raise serializers.ValidationError("Chỉ chấp nhận file định dạng PDF.")
-        if value.size > 5 * 1024 * 1024:
-            raise serializers.ValidationError("File quá lớn. Vui lòng upload file dưới 5MB.")
+        if value.size > 50 * 1024 * 1024:
+            raise serializers.ValidationError("File quá lớn. Vui lòng upload file dưới 50MB.")
         return value
 
 class CVScanSerializer(CVSerializer):

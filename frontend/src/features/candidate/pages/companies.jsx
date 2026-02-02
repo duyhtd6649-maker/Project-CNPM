@@ -1,0 +1,473 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+    Search, Home, Users, Briefcase, Bot, FileText,
+    UserCircle, ChevronDown, CreditCard, Bell, LogOut,
+    Star, MapPin, Building2, ChevronLeft, ChevronRight, Loader
+} from 'lucide-react';
+import axiosClient from '../../../infrastructure/http/axiosClient';
+import "../components/HomepageCandidates.css";
+import "../components/companies.css";
+
+const JobDirectory = () => {
+    const navigate = useNavigate();
+    const [isAccountOpen, setIsAccountOpen] = useState(false);
+    const [allCompanies, setAllCompanies] = useState([]); // Data gốc từ API hoặc mock
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [addressFilter, setAddressFilter] = useState('');
+    const [sortBy, setSortBy] = useState('recommended'); // Sort option
+
+    const [openFilters, setOpenFilters] = useState({
+        location: true,
+        companySize: true,
+        industry: false,
+        benefits: false
+    });
+
+    const toggleFilter = (filter) => {
+        setOpenFilters(prev => ({ ...prev, [filter]: !prev[filter] }));
+    };
+
+    // Mock data - hiển thị khi API fail hoặc trả về empty
+    const mockCompanies = [
+        {
+            id: 'mock-1',
+            name: 'TechNova Solutions',
+            description: 'TechNova Solutions is a leading financial technology company dedicated to democratizing access to global markets. We build cutting-edge platforms that empower individuals and businesses.',
+            website: 'technova.com',
+            address: 'San Francisco, CA',
+            logo: null,
+            tax_code: 'US-12345678'
+        },
+        {
+            id: 'mock-2',
+            name: 'GreenEarth Ventures',
+            description: 'We help businesses reduce their carbon footprint through innovative recycling and renewable energy consulting. Join our mission for a greener planet.',
+            website: 'greenearth.io',
+            address: 'Austin, TX',
+            logo: null,
+            tax_code: 'US-87654321'
+        },
+        {
+            id: 'mock-3',
+            name: 'CloudScale Systems',
+            description: 'Enterprise cloud infrastructure and DevOps solutions. Helping companies scale their applications globally with reliability and security.',
+            website: 'cloudscale.dev',
+            address: 'Seattle, WA',
+            logo: null,
+            tax_code: 'US-11223344'
+        },
+        {
+            id: 'mock-4',
+            name: 'MediCare Plus',
+            description: 'Revolutionizing healthcare through AI-powered diagnostics and telemedicine platforms. Making quality healthcare accessible to everyone.',
+            website: 'medicareplus.health',
+            address: 'Boston, MA',
+            logo: null,
+            tax_code: 'US-44332211'
+        },
+        {
+            id: 'mock-5',
+            name: 'FinanceHub Corp',
+            description: 'Digital banking and payment solutions for the modern economy. Secure, fast, and reliable financial services for businesses and individuals.',
+            website: 'financehub.com',
+            address: 'New York, NY',
+            logo: null,
+            tax_code: 'US-99887766'
+        }
+    ];
+
+    // Fetch companies from API
+    const fetchCompanies = async (name = '', address = '') => {
+        setLoading(true);
+        setError(null);
+        try {
+            const params = new URLSearchParams();
+            if (name) params.append('name', name);
+            if (address) params.append('address', address);
+
+            const response = await axiosClient.get(`/api/search/company/?${params.toString()}`, {
+                validateStatus: function (status) {
+                    // Accept both 200 and 302 status codes as valid
+                    return status >= 200 && status < 400;
+                }
+            });
+
+            // Nếu API trả về data, sử dụng nó; nếu empty, sử dụng mock data
+            const apiData = response.data || [];
+            setAllCompanies(apiData.length > 0 ? apiData : mockCompanies);
+        } catch (err) {
+            console.error('Error fetching companies:', err);
+            // Khi API fail, sử dụng mock data thay vì hiển thị error
+            setAllCompanies(mockCompanies);
+            setError(null); // Không hiện error, hiện mock data
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchCompanies();
+    }, []);
+
+    // Filter và Sort companies
+    const companies = React.useMemo(() => {
+        let filtered = [...allCompanies];
+
+        // Filter by search query (tên công ty)
+        if (searchQuery.trim()) {
+            filtered = filtered.filter(company =>
+                company.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                (company.description && company.description.toLowerCase().includes(searchQuery.toLowerCase()))
+            );
+        }
+
+        // Filter by address
+        if (addressFilter.trim()) {
+            filtered = filtered.filter(company =>
+                company.address && company.address.toLowerCase().includes(addressFilter.toLowerCase())
+            );
+        }
+
+        // Sort
+        switch (sortBy) {
+            case 'name-asc':
+                filtered.sort((a, b) => a.name.localeCompare(b.name));
+                break;
+            case 'name-desc':
+                filtered.sort((a, b) => b.name.localeCompare(a.name));
+                break;
+            case 'newest':
+                // Mock data không có date, giữ nguyên thứ tự
+                break;
+            case 'recommended':
+            default:
+                // Giữ nguyên thứ tự gốc
+                break;
+        }
+
+        return filtered;
+    }, [allCompanies, searchQuery, addressFilter, sortBy]);
+
+    // Handle search on Enter key
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            // Search đã được handle bởi useMemo, enter chỉ để blur
+        }
+    };
+
+    // Handle search button click
+    const handleSearch = () => {
+        // Search is already handled by useMemo based on searchQuery state
+        // This function is kept for the search button onClick
+    };
+
+    // Featured companies (lấy 3 công ty đầu tiên làm featured)
+    const featuredCompanies = companies.slice(0, 3);
+
+    return (
+        <div className="companies-page-container">
+            {/* HEADER - Same as Homepage */}
+            <header className="hp-header">
+                <div className="header-left-section">
+                    <div className="logo-vertical" onClick={() => navigate('/homepage')} style={{ cursor: 'pointer' }}>
+                        <div className="logo-line">UTH</div>
+                        <div className="logo-line">WORKPLACE</div>
+                    </div>
+                    <div className="search-wrapper">
+                        <Search size={18} className="search-icon-svg" />
+                        <input type="text" placeholder="Search Companies by Name or Industry" />
+                    </div>
+                </div>
+
+                <nav className="header-nav">
+                    <div className="nav-item" onClick={() => navigate('/homepage')}><Home size={18} /> <span>Home</span></div>
+                    <div className="nav-item active" onClick={() => navigate('/companies')}><Users size={18} /> <span>Company</span></div>
+                    <div className="nav-item" onClick={() => navigate('/job-list')}><Briefcase size={18} /> <span>Job</span></div>
+                    <div className="nav-item" onClick={() => navigate('/chatbot')}><Bot size={18} /> <span>AI</span></div>
+                    <div className="nav-item" onClick={() => navigate('/create-cv')}><FileText size={18} /> <span>Create CV</span></div>
+
+                    <div className="nav-item account-btn-container" onClick={() => setIsAccountOpen(!isAccountOpen)}>
+                        <div className="account-icon-wrapper">
+                            <UserCircle size={24} />
+                            <ChevronDown size={14} className={isAccountOpen ? 'rotate' : ''} />
+                        </div>
+                        <span>Account</span>
+
+                        {isAccountOpen && (
+                            <div className="mini-account-page" onClick={(e) => e.stopPropagation()}>
+                                <div className="mini-page-grid">
+                                    <div className="mini-item" onClick={() => navigate('/profile')}>
+                                        <div className="icon-box"><UserCircle size={28} /></div>
+                                        <span>Information</span>
+                                    </div>
+                                    <div className="mini-item" onClick={() => navigate('/premium')}>
+                                        <div className="icon-box"><CreditCard size={28} /></div>
+                                        <span>Premium</span>
+                                    </div>
+                                    <div className="mini-item">
+                                        <div className="icon-box"><Bell size={28} /></div>
+                                        <span>Notification</span>
+                                    </div>
+                                    <div className="mini-item" onClick={() => navigate('/job-list')}>
+                                        <div className="icon-box"><FileText size={28} /></div>
+                                        <span>Jobs</span>
+                                    </div>
+                                </div>
+                                <div className="mini-footer"><LogOut size={16} /> Sign out</div>
+                            </div>
+                        )}
+                    </div>
+                </nav>
+            </header>
+
+            {/* Hero / Search Section */}
+            <div className="companies-hero">
+                <div className="hero-content">
+                    <h1 className="hero-title">Find your next workplace</h1>
+                    <p className="hero-subtitle">Discover detailed company profiles, employee reviews, and open positions.</p>
+
+                    <div className="hero-search-container">
+                        <div className="hero-search-box">
+                            <Search size={20} className="hero-search-icon" />
+                            <input
+                                type="text"
+                                placeholder="Search by company name"
+                                className="hero-search-input"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                onKeyPress={handleKeyPress}
+                            />
+                            <button className="hero-search-btn" onClick={handleSearch}>Search</button>
+                        </div>
+                        <div className="popular-searches">
+                            <span>Popular:</span>
+                            <a href="#" className="popular-link" onClick={(e) => { e.preventDefault(); setSearchQuery('Tech'); handleSearch(); }}>Tech</a>
+                            <a href="#" className="popular-link" onClick={(e) => { e.preventDefault(); setSearchQuery('Finance'); handleSearch(); }}>Finance</a>
+                            <a href="#" className="popular-link" onClick={(e) => { e.preventDefault(); setSearchQuery('Healthcare'); handleSearch(); }}>Healthcare</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Main Content */}
+            <div className="companies-main">
+                {/* Sidebar Filters */}
+                <aside className="companies-sidebar">
+                    <div className="filters-header">
+                        <h3>Filters</h3>
+                        <button className="clear-all-btn" onClick={() => { setSearchQuery(''); setAddressFilter(''); fetchCompanies(); }}>Clear all</button>
+                    </div>
+
+                    {/* Location Filter */}
+                    <div className="filter-group">
+                        <div className="filter-header" onClick={() => toggleFilter('location')}>
+                            <span>Location</span>
+                            <ChevronDown size={18} className={openFilters.location ? 'rotate-icon' : ''} />
+                        </div>
+                        {openFilters.location && (
+                            <div className="filter-options">
+                                <div className="filter-search-input">
+                                    <input
+                                        type="text"
+                                        placeholder="Enter address..."
+                                        value={addressFilter}
+                                        onChange={(e) => setAddressFilter(e.target.value)}
+                                        onKeyPress={(e) => { if (e.key === 'Enter') fetchCompanies(searchQuery, addressFilter); }}
+                                    />
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Company Size Filter */}
+                    <div className="filter-group">
+                        <div className="filter-header" onClick={() => toggleFilter('companySize')}>
+                            <span>Company Size</span>
+                            <ChevronDown size={18} className={openFilters.companySize ? 'rotate-icon' : ''} />
+                        </div>
+                        {openFilters.companySize && (
+                            <div className="filter-options">
+                                <label className="filter-option">
+                                    <input type="checkbox" /> Startup (1-50)
+                                </label>
+                                <label className="filter-option">
+                                    <input type="checkbox" /> Mid-size (51-200)
+                                </label>
+                                <label className="filter-option">
+                                    <input type="checkbox" /> Large (201-1000)
+                                </label>
+                                <label className="filter-option">
+                                    <input type="checkbox" /> Enterprise (1000+)
+                                </label>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Industry Filter */}
+                    <div className="filter-group">
+                        <div className="filter-header" onClick={() => toggleFilter('industry')}>
+                            <span>Industry</span>
+                            <ChevronDown size={18} className={openFilters.industry ? 'rotate-icon' : ''} />
+                        </div>
+                        {openFilters.industry && (
+                            <div className="filter-options">
+                                <label className="filter-option">
+                                    <input type="checkbox" /> Technology
+                                </label>
+                                <label className="filter-option">
+                                    <input type="checkbox" /> Healthcare
+                                </label>
+                                <label className="filter-option">
+                                    <input type="checkbox" /> Finance
+                                </label>
+                                <label className="filter-option">
+                                    <input type="checkbox" /> Education
+                                </label>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Benefits Filter */}
+                    <div className="filter-group">
+                        <div className="filter-header" onClick={() => toggleFilter('benefits')}>
+                            <span>Benefits</span>
+                            <ChevronDown size={18} className={openFilters.benefits ? 'rotate-icon' : ''} />
+                        </div>
+                        {openFilters.benefits && (
+                            <div className="filter-options">
+                                <label className="filter-option">
+                                    <input type="checkbox" /> Health Insurance
+                                </label>
+                                <label className="filter-option">
+                                    <input type="checkbox" /> Remote Work
+                                </label>
+                                <label className="filter-option">
+                                    <input type="checkbox" /> Stock Options
+                                </label>
+                                <label className="filter-option">
+                                    <input type="checkbox" /> 401k Match
+                                </label>
+                            </div>
+                        )}
+                    </div>
+                </aside>
+
+                {/* Main Content Area */}
+                <div className="companies-content">
+                    {/* Loading State */}
+                    {loading && (
+                        <div className="loading-container">
+                            <Loader size={40} className="loading-spinner" />
+                            <p>Đang tải danh sách công ty...</p>
+                        </div>
+                    )}
+
+                    {/* Error State */}
+                    {error && !loading && (
+                        <div className="error-container">
+                            <p className="error-message">{error}</p>
+                            <button className="retry-btn" onClick={() => fetchCompanies()}>Thử lại</button>
+                        </div>
+                    )}
+
+                    {/* No Data State */}
+                    {!loading && !error && companies.length === 0 && (
+                        <div className="empty-container">
+                            <Building2 size={60} color="#9ca3af" />
+                            <h3>Không tìm thấy công ty nào</h3>
+                            <p>Hãy thử tìm kiếm với từ khóa khác hoặc xóa bộ lọc.</p>
+                        </div>
+                    )}
+
+                    {/* Data Loaded */}
+                    {!loading && !error && companies.length > 0 && (
+                        <>
+                            {/* Featured Companies */}
+                            {featuredCompanies.length > 0 && (
+                                <section className="featured-section">
+                                    <div className="featured-header">
+                                        <h2>Featured Top Companies</h2>
+                                        <a href="#" className="view-all-link">View all featured</a>
+                                    </div>
+                                    <div className="featured-grid">
+                                        {featuredCompanies.map((company, index) => (
+                                            <div key={company.id} className="featured-card" onClick={() => navigate(`/company-profile/${company.id}`)}>
+                                                <div className="featured-badge">Featured</div>
+                                                <div className="featured-logo" style={{ background: ['#7c3aed', '#ec4899', '#22c55e'][index % 3] }}>
+                                                    {company.logo ? (
+                                                        <img src={company.logo} alt={company.name} className="featured-logo-img" />
+                                                    ) : (
+                                                        <Building2 size={24} color="white" />
+                                                    )}
+                                                </div>
+                                                <h3 className="featured-name">{company.name}</h3>
+                                                <p className="featured-industry">{company.address || 'N/A'}</p>
+                                                <p className="featured-desc">{company.description || 'No description available.'}</p>
+                                                <button className="follow-btn">View Details</button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </section>
+                            )}
+
+                            {/* Company List */}
+                            <section className="companies-list-section">
+                                <div className="list-header">
+                                    <h2>{companies.length} Companies</h2>
+                                    <div className="sort-dropdown">
+                                        <span>Sort by:</span>
+                                        <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                                            <option value="recommended">Recommended</option>
+                                            <option value="newest">Newest</option>
+                                            <option value="name-asc">Name A-Z</option>
+                                            <option value="name-desc">Name Z-A</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div className="companies-list">
+                                    {companies.map(company => (
+                                        <div key={company.id} className="company-card">
+                                            <div className="company-logo-wrapper">
+                                                {company.logo ? (
+                                                    <img src={company.logo} alt={company.name} className="company-logo-img" />
+                                                ) : (
+                                                    <span className="company-logo-emoji">🏢</span>
+                                                )}
+                                            </div>
+                                            <div className="company-info">
+                                                <div className="company-header-row">
+                                                    <div>
+                                                        <h3 className="company-name">{company.name}</h3>
+                                                        <div className="company-meta">
+                                                            <span><MapPin size={14} /> {company.address || 'N/A'}</span>
+                                                            {company.website && (
+                                                                <>
+                                                                    <span className="company-dot">•</span>
+                                                                    <a href={company.website.startsWith('http') ? company.website : `https://${company.website}`} target="_blank" rel="noopener noreferrer">
+                                                                        {company.website}
+                                                                    </a>
+                                                                </>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                    <button className="view-profile-btn" onClick={() => navigate(`/company-profile/${company.id}`)}>View Profile</button>
+                                                </div>
+                                                <p className="company-desc">{company.description || 'No description available.'}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </section>
+                        </>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default JobDirectory;

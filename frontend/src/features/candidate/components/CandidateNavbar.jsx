@@ -38,7 +38,7 @@ const CandidateNavbar = () => {
                 <div className={`nav-item ${isActive('/homepage') ? 'active' : ''}`} onClick={() => navigate('/homepage')}>
                     <Home size={18} /> <span>Home</span>
                 </div>
-                <div className="nav-item" onClick={() => handleNavigation('feature-locked')}>
+                <div className={`nav-item ${isActive('/companies') || location.pathname.startsWith('/company-profile') ? 'active' : ''}`} onClick={() => navigate('/companies')}>
                     <Users size={18} /> <span>Company</span>
                 </div>
                 <div className={`nav-item ${isActive('/job-list') ? 'active' : ''}`} onClick={() => navigate('/job-list')}>

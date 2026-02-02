@@ -572,3 +572,48 @@
     width: 32px;
     height: 32px;
 }
+
+/* Analyze CV Navigation Button */
+.sidebar-analyze-nav {
+    padding: 20px 16px;
+    flex: 1;
+    display: flex;
+    align-items: flex-start;
+}
+
+.analyze-cv-circle-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 12px 16px;
+    border-radius: 12px;
+    width: 100%;
+    transition: all 0.2s;
+}
+
+.analyze-cv-circle-btn:hover {
+    background-color: #f0f2ff;
+}
+
+.circle-icon-2 {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 20px;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.analyze-text {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}

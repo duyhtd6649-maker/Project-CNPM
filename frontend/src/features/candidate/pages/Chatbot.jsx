@@ -223,32 +223,10 @@ How can I assist you today?`
 
             <div className="chatbot-main-layout">
                 <aside className="chatbot-sidebar">
-                    <div className="sidebar-header">
-                        <h2 className="sidebar-title">History</h2>
-                        <button className="icon-btn" title="Start new chat" onClick={clearChat}>
-                            <span className="material-icons-outlined">add_comment</span>
-                        </button>
-                    </div>
-                    <div className="sidebar-search">
-                        <div className="search-input-wrapper">
-                            <span className="material-icons-outlined search-icon">search</span>
-                            <input
-                                className="search-input"
-                                placeholder="Search conversations..."
-                                type="text"
-                            />
-                        </div>
-                    </div>
-                    <div className="history-list custom-scrollbar">
-                        <div className="history-section-title">Today</div>
-                        <button className="history-item active">
-                            <div className="history-icon">
-                                <span className="material-icons-outlined">chat_bubble_outline</span>
-                            </div>
-                            <div className="history-info">
-                                <h3 className="history-title">Current Chat</h3>
-                                <p className="history-preview">{messages.length} messages</p>
-                            </div>
+                    <div className="sidebar-analyze-nav">
+                        <button className="analyze-cv-circle-btn" onClick={() => navigate('/analyze-cv')}>
+                            <div className="circle-icon-2">2</div>
+                            <span className="analyze-text">Analyze CV</span>
                         </button>
                     </div>
                     <div className="sidebar-footer">

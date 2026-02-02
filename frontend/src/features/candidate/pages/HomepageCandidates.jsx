@@ -43,7 +43,7 @@ const HomepageCandidates = () => {
 
         <nav className="header-nav">
           <div className="nav-item active" onClick={() => navigate('/homepage')}><Home size={18} /> <span>Home</span></div>
-          <div className="nav-item" onClick={() => navigate('/feature-locked')}><Users size={18} /> <span>Company</span></div>
+          <div className="nav-item" onClick={() => navigate('/companies')}><Users size={18} /> <span>Company</span></div>
           <div className="nav-item" onClick={() => navigate('/job-list')}><Briefcase size={18} /> <span>Job</span></div>
           <div className="nav-item" onClick={() => navigate('/chatbot')}><Bot size={18} /> <span>AI</span></div>
           <div className="nav-item" onClick={() => navigate('/create-cv')}><FileText size={18} /> <span>Create CV</span></div>
