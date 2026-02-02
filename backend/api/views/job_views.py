@@ -113,6 +113,13 @@ def view_job(request):
             collectionFormat='multi',
             required=False
         ),
+        openapi.Parameter(
+            'Company',
+            openapi.IN_QUERY,
+            description="Công ty",
+            type=openapi.TYPE_STRING,
+            required=False
+        ),
     ],
     responses={200: JobSerializer(many=True)}
 )
@@ -148,4 +155,30 @@ def recommended_jobs(request):
     except Exception as e:
         return Response({"error": f"Error: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
 
+@swagger_auto_schema(
+    method='put',
+    responses={200: JobSerializer}
+)
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def close_job(request, id):
+    try:
+        job = JobService.close_job(user=request.user, job_id= id)
+        return Response({"detail":"success"}, status=status.HTTP_200_OK)
+    except NotFound:
+        return Response({"detail":"Job not found"}, status=status.HTTP_404_NOT_FOUND)
+    
+
+@swagger_auto_schema(
+    method = 'get'
+)
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def view_job_detail(request, id):
+    try:
+        job = JobService.view_job_detail(id)
+        serializer = JobSerializer(job)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except NotFound as e:
+        return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
 

@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
-import { faEnvelope, faShieldAlt } from '@fortawesome/free-solid-svg-icons'; 
-import axiosClient from "../../../infrastructure/http/axiosClient";
-import { useAuth } from '../../../app/AppProviders';
+import { faEnvelope, faShieldAlt, faUser, faLock } from '@fortawesome/free-solid-svg-icons'; 
+import axiosClient from "/src/infrastructure/http/axiosClient";
+import { useAuth } from '../../../app/AppProviders'; 
 import '../components/Login.css';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { setUser } = useAuth(); 
   const [loginData, setLoginData] = useState({ username: '', password: '' });
   const [loading, setLoading] = useState(false);
 
@@ -22,27 +22,40 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      // Đảm bảo endpoint khớp với BE (bỏ /api/ nếu baseURL đã có)
-      const response = await axiosClient.post('auth/jwt/login/', loginData);
-      localStorage.setItem('access_token', response.data.access);
-      localStorage.setItem('role', response.data.role);
-      navigate('/homepage'); 
-    } catch (error) {
-      alert("Đăng nhập thất bại! Vui lòng kiểm tra lại.");
-      const response = await axiosClient.post('/api/auth/jwt/login/', {
-        username: loginData.username,
-        password: loginData.password
-      });
+      // Gọi API đăng nhập
+      const response = await axiosClient.post('/api/auth/jwt/login/', loginData);
       
-      login(response.data);
+      // FIX LỖI toLowerCase: Đặt giá trị mặc định cho role là chuỗi rỗng nếu backend trả về null
+      const { access, role = '', username } = response.data;
       
-      if (response.data.role === 'admin') {
-        navigate('/admin');
+      // 1. Lưu vào localStorage để đồng bộ với AppProviders
+      localStorage.setItem('access_token', access);
+      localStorage.setItem('user_role', role || ''); 
+      localStorage.setItem('username', username || '');
+      
+      // 2. Cập nhật State trong AppProviders
+      setUser({ username, role });
+
+      alert("Login successful!");
+
+      // FIX LỖI: Sử dụng Optional Chaining (?.) để an toàn tuyệt đối
+      const userRole = role?.toLowerCase() || '';
+
+      if (userRole === 'candidate') {
+        navigate('/homepage'); 
+      } else if (userRole === 'recruiter') {
+        navigate('/recruiter-dashboard'); 
+      } else if (userRole === 'admin') {
+        navigate('/admin'); 
       } else {
-        navigate('/home'); 
+        // Nếu role null hoặc không xác định, mặc định về homepage của candidate
+        navigate('/homepage');
       }
+
     } catch (error) {
-      alert("Đăng nhập thất bại! Vui lòng kiểm tra lại tài khoản hoặc mật khẩu.");
+      console.error("Login Error:", error);
+      const errorMsg = error.response?.data?.detail || "Invalid username or password!";
+      alert("Error: " + errorMsg);
     } finally {
       setLoading(false);
     }
@@ -50,37 +63,31 @@ const Login = () => {
 
   return (
     <div className="login-wrapper">
-      {/* PHẦN BÊN TRÁI: CHIẾM 1.2 PHẦN MÀN HÌNH */}
       <div className="login-left">
-        {/* Nút ADMIN góc phải */}
-        <Link to="/admin-login" className="admin-login-link">ADMIN</Link>
-        
-        {/* Logo hệ thống */}
-        <Link to="/admin-login" className="admin-login-link">
-           for ADMIN
-        </Link>
-
-        <div className="brand-logo-container">
-          <h2 style={{ color: '#7678ff', fontWeight: '800', margin: 0 }}>UTH WORKPLACE</h2>
+        {/* LOGO SECTION - THEO ẢNH MẪU */}
+        <div className="logo-section">
+          <div className="uth-text">UTH</div>
+          <div className="workplace-text">WORKPLACE</div>
         </div>
 
-        {/* Khối chứa Form trung tâm */}
-        <div className="login-box">
-          <div className="login-header">
-            <h1>Hello Again!</h1>
-            <p>Welcome back, you've been missed!</p>
-          </div>
-        <div className="login-form-content">
-          <h1 className="login-title">LOGIN</h1>
-          <p className="login-subtitle">Let's get started !!!</p>
+        {/* ADMIN LINK */}
+        <Link to="/admin-login" className="admin-login-link">
+          for ADMIN
+        </Link>
 
-          <form onSubmit={handleLogin}>
+        <div className="login-content-box">
+          <div className="login-header">
+            <h2 className="welcome-text">LOGIN</h2>
+            <p className="sub-text">Let's get started !!!</p>
+          </div>
+
+          <form className="login-form" onSubmit={handleLogin}>
             <div className="input-group">
-              <span className="input-icon">👤</span>
+              {/* ICON TRONG INPUT THEO ẢNH MẪU */}
+              <FontAwesomeIcon icon={faUser} className="input-icon-inner" />
               <input 
                 type="text" 
                 name="username" 
-                placeholder="Enter username" 
                 placeholder="Username" 
                 value={loginData.username}
                 onChange={handleChange} 
@@ -89,7 +96,8 @@ const Login = () => {
             </div>
 
             <div className="input-group">
-              <span className="input-icon">🔒</span>
+              {/* ICON TRONG INPUT THEO ẢNH MẪU */}
+              <FontAwesomeIcon icon={faLock} className="input-icon-inner" />
               <input 
                 type="password" 
                 name="password" 
@@ -101,21 +109,19 @@ const Login = () => {
             </div>
 
             <div className="forgot-link-container">
-              <Link to="/forgot">Recovery Password</Link>
-              <Link to="/forgot-password">Forgot password</Link>
+              <Link to="/forgot">Forgot password</Link>
             </div>
 
             <div className="login-action-area">
               <button type="submit" className="login-btn-purple" disabled={loading}>
-                {loading ? "Signing In..." : "Sign In"}
+                {loading ? "Logging in..." : "Login"}
               </button>
               <div className="reg-hint">
-                Not a member? <Link to="/register">Register now</Link>
+                Not a member ? <Link to="/register">Register now</Link>
               </div>
             </div>
           </form>
 
-          {/* Phần icons mạng xã hội */}
           <div className="social-section-wrapper">
             <div className="social-divider">
               <span>Or continue with</span>
@@ -136,10 +142,8 @@ const Login = () => {
         </div>
       </div>
 
-      {/* PHẦN BÊN PHẢI: MÀNG MÀU XANH TÍM (Kích hoạt .login-right-side trong CSS) */}
-      <div className="login-right-side">
-        {/* Phần này để trống, CSS sẽ lo phần màu sắc và bo góc */}
-      </div>
+      {/* PHẦN MẢNG MÀU GRADIENT BÊN PHẢI THEO ẢNH MẪU */}
+      <div className="login-right-side"></div>
     </div>
   );
 };

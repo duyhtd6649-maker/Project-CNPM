@@ -38,7 +38,6 @@ class UserService:
             user.phone = validated_data.get('phone', user.phone)
             user.first_name = validated_data.get('first_name', user.first_name)
             user.last_name = validated_data.get('last_name', user.last_name)
-            user.address = validated_data.get('address', user.address)
 
             if 'avatar' in validated_data:
                 user.avatar = validated_data['avatar']
@@ -48,6 +47,23 @@ class UserService:
             
         except Users.DoesNotExist:
             raise NotFound({"error": "User not found"})
+        
+    @staticmethod
+    def update_candidate_profile(user, validated_data):
+        try:
+            candidate = Candidates.objects.get(user = user, isdeleted = False)
+            user_data = validated_data.pop('user', {})
+            instance = UserService.update_profile(user_id=user.id, validated_data=user_data)
+            candidate.description = validated_data.get('description')
+            candidate.address = validated_data.get('address')
+            candidate.date_of_birth = validated_data.get('date_of_birth')
+            candidate.save()
+            return candidate
+        except Candidates.DoesNotExist:
+            raise NotFound({"error":"candidate not found"})
+        except NotFound as e:
+            raise NotFound({f"{e}"})
+            
         
     def upload_avatar(user, file_data):
         try:
@@ -154,12 +170,21 @@ class UserService:
         except Recruiters.DoesNotExist:
             raise NotFound({"error":"Recruiter not found"})
     
-    def find_job_by_id(job_id):
+    def view_my_profile(user):
         try:
-            job = Jobs.objects.get(id = job_id)
-            return job
-        except Jobs.DoesNotExist:
-            raise NotFound({"error":"Job not found"})
+            if user.role == 'candidate':
+                return Candidates.objects.get(user=user) 
+            elif user.role == 'recruiter':
+                return Recruiters.objects.get(user=user)
+            else:
+                return user
+                
+        except Users.DoesNotExist:
+            raise NotFound({"error":"User not found"})
+        except Candidates.DoesNotExist:
+            raise NotFound({"error":"Candidate not found"})
+        except Recruiters.DoesNotExist:
+            raise NotFound({"error":"Recruiter not found"})
 
 class AdminService:
     @staticmethod    
@@ -387,6 +412,22 @@ class CompanyService:
 
         except Recruiters.DoesNotExist:
             raise NotFound("Recruiter not found")
+        
+    @staticmethod
+    def search_company(filters):
+        company_list = Companies.objects.filter(isdeleted = False)
+        if filters.get('name'):
+            company_list = company_list.filter(name__icontains = filters.get('name'))
+        if filters.get('address'):
+            company_list = company_list.filter(address = filters.get('address'))
+        return company_list
+    
+    @staticmethod
+    def company_detail(company_id):
+        try:
+            return Companies.objects.get(id = company_id, isdeleted = False)
+        except Companies.DoesNotExist:
+            raise NotFound({"error":"Company not found"})
 
 class interviewService:
     @staticmethod

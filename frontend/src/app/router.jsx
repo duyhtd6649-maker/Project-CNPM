@@ -23,40 +23,31 @@ import ManageCandidateAccount from '../features/admin/pages/ManageCandidateAccou
 import ManageRecruiterAccount from '../features/admin/pages/ManageRecruiterAccount';
 import ManageAdminAccount from '../features/admin/pages/ManageAdminAccount';
 
+import RecruiterDashboard from '../features/recruiter/pages/RecruiterDashboard'; // Đảm bảo đường dẫn này đúng
+
+// --- CẬP NHẬT PROTECTED ROUTE THÔNG MINH HƠN ---
 const ProtectedRoute = ({ children }) => {
   const { user } = useAuth();
-  return user ? children : <Navigate to="/login" />;
+  
+  // Kiểm tra cả state user và localStorage để tránh lỗi khi F5 trang
+  const token = localStorage.getItem('access_token');
+  const role = localStorage.getItem('role');
+
+  // Nếu không có user trong context VÀ cũng không có token trong máy -> Bắt đăng nhập
+  if (!user && !token) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
 };
 
-const navStyle = {
-  position: 'fixed',
-  bottom: '20px',
-  left: '50%',
-  transform: 'translateX(-50%)',
-  zIndex: 1000,
-  display: 'flex',
-  gap: '15px',
-  background: 'rgba(24, 25, 107, 0.95)',
-  padding: '12px 25px',
-  borderRadius: '50px',
-  boxShadow: '0 8px 20px rgba(0,0,0,0.4)',
-  fontSize: '11px',
-  fontWeight: '600'
+const RootLayout = () => {
+  return (
+    <div className="app-container">
+      <Outlet />
+    </div>
+  );
 };
-
-const linkStyle = { color: '#fff', textDecoration: 'none' };
-
-const RootLayout = () => (
-  <>
-    <nav style={navStyle}>
-      <Link to="/home" style={linkStyle}>Home</Link>
-      <Link to="/login" style={linkStyle}>Login</Link>
-      <Link to="/register" style={linkStyle}>Register</Link>
-      <Link to="/admin" style={linkStyle}>Admin</Link>
-    </nav>
-    <Outlet />
-  </>
-);
 
 export const router = createBrowserRouter([
   {
@@ -65,14 +56,19 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Navigate to="/login" /> },
       {
+        path: '/',
         element: <AuthLayout />,
         children: [
           { path: 'login', element: <Login /> },
           { path: 'register', element: <Register /> },
-          { path: 'forgot-password', element: <ForgotPassword /> },
+          { path: 'forgot', element: <ForgotPassword /> },
         ],
       },
-      { path: 'home', element: <ProtectedRoute><HomepageCandidates /></ProtectedRoute> },
+      // Đường dẫn cho Candidate (Khớp với navigate('/homepage') trong Login.jsx)
+      { 
+        path: 'homepage', 
+        element: <ProtectedRoute><HomepageCandidates /></ProtectedRoute> 
+      },
       { path: 'profile', element: <ProtectedRoute><ViewUserProfile /></ProtectedRoute> },
       { path: 'edit-profile', element: <ProtectedRoute><EditProfile /></ProtectedRoute> },
       { path: 'premium', element: <ProtectedRoute><PremiumPage /></ProtectedRoute> },
@@ -82,12 +78,22 @@ export const router = createBrowserRouter([
       { path: 'job-list', element: <ProtectedRoute><JobBrowsing /></ProtectedRoute> },
       { path: 'create-cv', element: <ProtectedRoute><CreateCV /></ProtectedRoute> },
       { path: 'feature-locked', element: <NotificationSystem /> },
+      
+      // --- ROUTE RECRUITER ---
+      { 
+        path: 'recruiter-dashboard', 
+        element: <ProtectedRoute><RecruiterDashboard /></ProtectedRoute> 
+      },
+
+      // --- ROUTE ADMIN ---
       { path: 'admin-login', element: <AdminLogin /> },
       { path: 'admin', element: <ProtectedRoute><AdminDashboard /></ProtectedRoute> },
       { path: 'manage-internal', element: <ProtectedRoute><ManageInternalAccount /></ProtectedRoute> },
       { path: 'manage-candidate', element: <ProtectedRoute><ManageCandidateAccount /></ProtectedRoute> },
       { path: 'manage-recruiter', element: <ProtectedRoute><ManageRecruiterAccount /></ProtectedRoute> },
       { path: 'manage-admin-acc', element: <ProtectedRoute><ManageAdminAccount /></ProtectedRoute> },
+      
+      // Mặc định nếu sai đường dẫn thì về login
       { path: '*', element: <Navigate to="/login" /> },
     ],
   },

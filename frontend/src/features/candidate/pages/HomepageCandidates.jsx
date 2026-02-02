@@ -1,165 +1,188 @@
-import React, { useState, useEffect } from 'react'; // 1. Import useEffect
+import React, { useState, useEffect } from 'react';
 import CandidateNavbar from '../components/CandidateNavbar';
 import { useNavigate } from 'react-router-dom';
-// Đảm bảo đường dẫn import đúng tới file axiosClient của bạn
 import axiosClient from "/src/infrastructure/http/axiosClient";
 import {
   Search, Home, Users, Briefcase, Bot, FileText,
   UserCircle, UserPlus, Key, Bookmark, Newspaper,
   ThumbsUp, MessageCircle, ChevronDown, CreditCard, Bell, LogOut, Settings, Share2, MoreHorizontal,
-  Send, Smile, Paperclip
+  Send, Smile, Paperclip, ImageIcon, Video, Calendar, Edit3, Globe
 } from 'lucide-react';
 import "../components/HomepageCandidates.css";
 
 const HomepageCandidates = () => {
   const navigate = useNavigate();
-
-  // --- STATE QUẢN LÝ DỮ LIỆU ---
   const [userData, setUserData] = useState({ fullName: 'Loading...', university: '' });
-  const [notifications, setNotifications] = useState([]); // State lưu thông báo từ API
   const [loading, setLoading] = useState(true);
 
-  // UI States
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [isNotifyOpen, setIsNotifyOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('All');
 
-  // --- GỌI API KHI COMPONENT MOUNT ---
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-
-        // 1. Gọi API lấy thông tin User
-        // Giả sử backend bạn có endpoint: GET /api/users/me/ hoặc /api/profile/
-        const userRes = await axiosClient.get('users/profile/');
+        const userRes = await axiosClient.get('/api/auth/profile/');
         setUserData(userRes.data);
-
-        // 2. Gọi API lấy thông báo
-        // Giả sử backend có endpoint: GET /api/notifications/
-        const notifyRes = await axiosClient.get('notifications/');
-        setNotifications(notifyRes.data);
-
-      } catch (error) {
-        console.error("Lỗi khi tải dữ liệu:", error);
-        // Có thể navigate về trang login nếu lỗi 401 (Unauthorized)
-        if (error.response && error.response.status === 401) {
-          // navigate('/login');
-        }
+      } catch (err) {
+        console.error("Error fetching data:", err);
       } finally {
         setLoading(false);
       }
     };
-
     fetchData();
-  }, []); // [] rỗng nghĩa là chỉ chạy 1 lần khi vào trang
-
-  // --- XỬ LÝ DỮ LIỆU HIỂN THỊ ---
-  // Lọc thông báo dựa trên Tab đang chọn
-  const filteredNotifications = notifications.filter(item => {
-    if (activeTab === 'All') return true;
-    return item.type === activeTab;
-    // Lưu ý: Backend cần trả về field 'type' khớp với 'Admin'/'Recruiter'
-    // Nếu backend trả về số (vd: 1, 2), bạn cần map lại ở đây.
-  });
-
-  const handleFeatureLocked = () => {
-    navigate('/feature-locked');
-  };
+  }, []);
 
   return (
     <div className="hp-container">
-      <CandidateNavbar />
+      <CandidateNavbar 
+        userData={userData} 
+        isAccountOpen={isAccountOpen}
+        setIsAccountOpen={setIsAccountOpen}
+        isNotifyOpen={isNotifyOpen}
+        setIsNotifyOpen={setIsNotifyOpen}
+      />
 
-      {isNotifyOpen && (
-        <div className="notification-overlay" onClick={() => setIsNotifyOpen(false)}>
-          <div className="notification-box" onClick={(e) => e.stopPropagation()}>
-            <div className="notify-header">
-              <div className="header-title"><span>Inbox</span> <ChevronDown size={14} /></div>
-              <Settings size={18} className="settings-icon" />
-            </div>
-            <div className="notify-tabs">
-              {['All', 'Admin', 'Recruiter'].map(tab => (
-                <div key={tab} className={`tab ${activeTab === tab ? 'active' : ''}`} onClick={() => setActiveTab(tab)}>{tab}</div>
-              ))}
-            </div>
-            <div className="notify-content">
-              {loading ? (
-                <div className="empty-state-notify">Đang tải...</div>
-              ) : filteredNotifications.length > 0 ? (
-                filteredNotifications.map(item => (
-                  <div key={item.id} className="notify-item">
-                    <div className="notify-avatar">
-                      <UserCircle size={32} color={item.type === 'Admin' ? '#4b49ac' : '#666'} />
-                    </div>
-                    <div className="notify-info">
-                      <div className="notify-user">
-                        {item.user} {/* Thay bằng field tên user từ API */}
-                        <span className={`type-tag-small ${item.type?.toLowerCase()}`}>{item.type}</span>
-                      </div>
-                      <div className="notify-msg">{item.msg}</div> {/* Thay msg bằng field nội dung từ API */}
-                      <div className="notify-time">{item.time}</div> {/* Thay time bằng field thời gian từ API */}
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="empty-state-notify">No notifications in {activeTab}</div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* MAIN CONTENT */}
-      <div className="hp-main">
-        {/* LEFT COL */}
+      <div className="hp-main-layout">
+        {/* --- CỘT TRÁI --- */}
         <aside className="col-left">
-          <div className="card profile-card" onClick={() => navigate('/profile')} style={{ cursor: 'pointer' }}>
-            <div className="banner-purple"></div>
-            <div className="avatar-circle"><UserCircle size={48} color="#4b49ac" /></div>
-            <div className="profile-info">
-              {/* DỮ LIỆU TỪ API ĐƯỢC HIỂN THỊ Ở ĐÂY */}
-              <div className="user-name">{userData?.full_name || "Guest User"}</div>
-              <div className="sub-text">{userData?.university || "Cập nhật trường học"}</div>
+          <div className="card profile-card">
+            <div className="banner-top"></div>
+            <div className="profile-content">
+              <div className="avatar-wrapper">
+                <UserCircle size={72} className="avatar-img" />
+              </div>
+              <div className="user-meta">
+                <h2 className="name">{userData?.first_name} {userData?.last_name}</h2>
+                <p className="bio">{userData?.university || "Sinh viên tại UTH"}</p>
+              </div>
+            </div>
+            
+            <div className="stats-box">
+              <div className="stat-line">
+                <span className="label">Lượt xem hồ sơ</span>
+                <span className="value">42</span>
+              </div>
+              <div className="stat-line">
+                <span className="label">Ấn tượng bài viết</span>
+                <span className="value">128</span>
+              </div>
+            </div>
+
+            <div className="premium-box-pro" onClick={() => navigate('/premium')}>
+              <p className="p-title">Tính năng độc quyền</p>
+              <div className="p-cta"><Key size={14} className="k-icon"/> Thử Premium miễn phí</div>
+            </div>
+
+            <div className="my-items" onClick={() => navigate('/saved-cv')}>
+              <Bookmark size={16} /> <span>Mục đã lưu</span>
             </div>
           </div>
 
-          {/* ... (Các phần code giữ nguyên: Premium, Action Card...) */}
-          <div className="card premium-shortcut-card" onClick={() => navigate('/premium')}>
-            <div className="premium-content">
-              <p className="premium-title">Unlock premium</p>
-              <span className="premium-desc">Open premium now starting from just 50K</span>
-            </div>
-            <Key size={18} className="premium-key-icon" />
-          </div>
-
-          <div className="card action-card">
-            <div className="action-row"><span>Connect with businesses</span><UserPlus size={18} /></div>
-          </div>
-
-          <div className="card action-card" onClick={() => navigate('/create-cv')} style={{ cursor: 'pointer' }}>
-            <div className="action-row"><span>CV Management</span><FileText size={18} /></div>
-          </div>
-
-          <div className="card menu-list-card">
-            <div className="menu-row" onClick={() => navigate('/saved-cv')} style={{ cursor: 'pointer' }}><Bookmark size={16} /> Saved items</div>
-            <div className="menu-row"><Newspaper size={16} /> News</div>
+          <div className="card group-card">
+            <p className="card-title">Gần đây</p>
+            <div className="group-item"><Users size={14} /> CLB Kỹ năng UTH</div>
+            <div className="group-item"><Users size={14} /> ReactJS Vietnam</div>
+            <div className="group-more">Xem tất cả</div>
           </div>
         </aside>
 
-        {/* ... (Các phần code main content và right col giữ nguyên) */}
-        {/* CENTER COL */}
+        {/* --- CỘT GIỮA --- */}
         <main className="col-center">
-          {/* ... Code cũ giữ nguyên ... */}
-          <div className="card create-post-mimic">
-            {/* ... */}
-            <div className="fake-input">Bạn đang nghĩ gì, {userData?.first_name}?</div>
+          <div className="card post-box-full">
+            <div className="post-top">
+              <UserCircle size={48} color="#ccc" />
+              <button className="post-trigger-btn">Bạn đang nghĩ gì, {userData?.first_name}?</button>
+            </div>
+            <div className="post-bottom">
+              <div className="action-btn"><ImageIcon size={20} color="#378fe9" /> <span>Ảnh</span></div>
+              <div className="action-btn"><Video size={20} color="#5f9b41" /> <span>Video</span></div>
+              <div className="action-btn"><Calendar size={20} color="#c37d16" /> <span>Sự kiện</span></div>
+              <div className="action-btn"><Edit3 size={20} color="#e16745" /> <span>Bài viết</span></div>
+            </div>
           </div>
-          {/* ... */}
+
+          <div className="feed-sort-divider">
+            <hr /> <span>Sắp xếp theo: <b>Phù hợp nhất</b> <ChevronDown size={14} /></span>
+          </div>
+
+          {/* Post mẫu 1 */}
+          <div className="card feed-post">
+            <div className="p-header">
+              <div className="p-brand-avatar">UTH</div>
+              <div className="p-user-details">
+                <div className="p-name-row">
+                  <span className="p-name">UTH Workplace</span>
+                  <span className="p-follow">• Đang theo dõi</span>
+                </div>
+                <p className="p-desc">Hệ thống hỗ trợ việc làm sinh viên UTH</p>
+                <p className="p-time">2 giờ • <Globe size={12} /></p>
+              </div>
+              <MoreHorizontal size={20} className="p-more" />
+            </div>
+            
+            <div className="p-text">
+              🚀 Bạn đã sẵn sàng cho kỳ thực tập sắp tới chưa? Đừng quên cập nhật Hồ sơ cá nhân trên hệ thống để không bỏ lỡ những cơ hội hấp dẫn nhất nhé!
+            </div>
+
+            <div className="p-image">
+              <img src="https://uth.edu.vn/images/slider/vi/uth-banner.jpg" alt="UTH Banner" />
+            </div>
+
+            <div className="p-stats-bar">
+              <div className="p-likes">👍❤️ 1,240</div>
+              <div className="p-comments">86 bình luận • 12 lượt chia sẻ</div>
+            </div>
+
+            <div className="p-actions-footer">
+              <button><ThumbsUp size={18} /> <span>Thích</span></button>
+              <button><MessageCircle size={18} /> <span>Bình luận</span></button>
+              <button><Share2 size={18} /> <span>Chia sẻ</span></button>
+              <button><Send size={18} /> <span>Gửi</span></button>
+            </div>
+          </div>
         </main>
 
+        {/* --- CỘT PHẢI --- */}
         <aside className="col-right">
-          {/* ... Code cũ giữ nguyên ... */}
+          <div className="card job-widget">
+            <div className="j-header">
+              <h3>Gợi ý việc làm</h3>
+              <Settings size={16} />
+            </div>
+
+            <div className="j-list">
+              <div className="j-item">
+                <div className="j-logo" style={{background: '#0a66c2'}}>F</div>
+                <div className="j-content">
+                  <div className="j-name">Senior Frontend Developer</div>
+                  <div className="j-company">FPT Software</div>
+                  <div className="j-loc">TP. Hồ Chí Minh</div>
+                  <button className="j-apply">Ứng tuyển nhanh</button>
+                </div>
+              </div>
+
+              <div className="j-item">
+                <div className="j-logo" style={{background: '#e11d48'}}>V</div>
+                <div className="j-content">
+                  <div className="j-name">UI/UX Designer (Junior)</div>
+                  <div className="j-company">VNG Corporation</div>
+                  <div className="j-loc">Quận 7, TP. HCM</div>
+                  <button className="j-apply">Ứng tuyển nhanh</button>
+                </div>
+              </div>
+            </div>
+            <div className="j-footer">Xem tất cả gợi ý →</div>
+          </div>
+
+          <div className="card footer-card">
+            <div className="f-links">
+              <span>Giới thiệu</span>
+              <span>Trợ giúp</span>
+              <span>Quyền riêng tư</span>
+            </div>
+            <p className="f-copy">UTH WORKPLACE © 2026</p>
+          </div>
         </aside>
       </div>
     </div>

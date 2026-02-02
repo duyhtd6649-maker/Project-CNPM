@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status
 from apps import cv_services
-from ..serializers.cv_serializers import CVScanSerializer,CVSerializer
+from ..serializers.cv_serializers import CVScanSerializer,CVSerializer, CVListSerializer,AnalysisSerializer
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.exceptions import *
@@ -83,3 +83,44 @@ def Upload_Cv(request):
             return Response(serializer.data, status= status.HTTP_201_CREATED)
         except Exception as e:
             return Response({"error":f"{str(e)}"},status=status.HTTP_400_BAD_REQUEST)
+        
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def cv_detail(request, id):
+    try:
+        cv = cv_services.cv_detail(cv_id = id)
+        serializer = CVSerializer(cv)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except NotFound as e:
+        return Response({f"{e}"}, status=status.HTTP_404_NOT_FOUND)
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def cv_list(request):
+    try:
+        cv = cv_services.cv_list(user = request.user)
+        serializer = CVListSerializer(cv, many = True)
+        return Response(serializer.data, status= status.HTTP_302_FOUND)
+    except PermissionError as e:
+        return Response({f"{e}"},status=status.HTTP_403_FORBIDDEN)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def cv_analysis_detail(request, id):
+    try:
+        anaylysis_result = cv_services.analysis_detail(analysis_id = id)
+        return Response(anaylysis_result, status= status.HTTP_200_OK)
+    except NotFound as e:
+        return Response({f"{e}"},status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({f"{e}"},status=status.HTTP_400_BAD_REQUEST)
+        
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def cv_analysis_list(request, id):
+    try:
+        analysis_list = cv_services.analysis_list(user = request.user, cv_id = id)
+        serializer = AnalysisSerializer(analysis_list, many = True)
+        return Response(serializer.data, status=status.HTTP_302_FOUND)
+    except PermissionError as e:
+        return Response({f"{e}"},status=status.HTTP_403_FORBIDDEN)

@@ -1,102 +1,117 @@
+/* Reset body để không bị khoảng trắng */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
 .register-container {
   min-height: 100vh;
-  width: 100%;
+  width: 100vw;
   background: linear-gradient(135deg, #2b1fd4 0%, #7e87ff 100%);
   display: flex;
   justify-content: center;
-  align-items: flex-start; 
-  padding: 40px 20px;
-  font-family: Arial, sans-serif;
+  align-items: center;
+  padding: 20px;
+  font-family: 'Inter', sans-serif;
   box-sizing: border-box;
-  overflow-y: auto; 
 }
+
 .register-card {
   width: 100%;
-  max-width: 950px;
-  text-align: center;
-  margin: auto;
+  max-width: 1100px; /* Tăng chiều rộng để giống mẫu */
+  background: transparent; /* Giống trong ảnh mẫu */
+  padding: 40px;
+  border-radius: 30px;
 }
 
 .register-card h1 {
-  color: #000;
-  font-size: 2.2rem;
+  color: #fff;
+  font-size: 2.5rem;
   font-weight: 800;
-  margin-bottom: 40px;
+  margin-bottom: 50px;
+  text-align: center;
   text-transform: uppercase;
+  letter-spacing: 2px;
 }
 
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px 50px;
-  text-align: left;
+  gap: 20px 80px; /* Khoảng cách rộng giữa 2 cột */
 }
 
 .form-group {
-  display: flex;
-  flex-direction: column;
+  margin-bottom: 25px;
 }
 
 .form-group label {
-  color: #000;
-  font-weight: 600;
-  margin-bottom: 8px;
-  font-size: 1rem;
+  display: block;
+  color: #fff;
+  margin-bottom: 12px;
+  font-weight: 500;
+  font-size: 1.1rem;
 }
 
-
-.form-group input,
+/* CHỈNH INPUT BO TRÒN TRẮNG TINH */
+.form-group input, 
 .form-select {
-  padding: 0 20px; 
-  border-radius: 15px;
+  padding: 18px 25px;
+  border-radius: 35px !important; /* Bo tròn viên thuốc giống ảnh */
   border: none;
   background-color: #ffffff;
   font-size: 1rem;
   outline: none;
   width: 100%;
   box-sizing: border-box;
-  height: 50px;
-  line-height: 50px;
   color: #333;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
+.form-group input:focus {
+  transform: scale(1.02);
+}
 
 .form-select {
   appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  cursor: pointer;
   background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
   background-repeat: no-repeat;
-  background-position: right 15px center;
+  background-position: right 20px center;
   background-size: 16px;
 }
 
 .btn-register {
-  margin-top: 50px;
-  padding: 12px 60px;
-  border-radius: 15px;
+  display: block;
+  width: 250px; /* Thu nhỏ nút giống mẫu */
+  margin: 50px auto 0;
+  padding: 16px;
+  border-radius: 20px;
   border: none;
-  background-color: #7b7dff;
+  background: #747bff; /* Màu nút giống mẫu */
   color: white;
   font-size: 1.2rem;
-  font-weight: bold;
+  font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-  transition: background 0.3s ease;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
 }
 
 .btn-register:hover {
-  background-color: #6164ff;
+  background: #5a52e6;
+  transform: translateY(-3px);
 }
 
 .back-to-login {
-  margin-top: 20px;
+  margin-top: 30px;
+  text-align: center;
 }
 
 .login-link {
   color: #fff;
   text-decoration: none;
+  font-weight: 500;
   font-size: 1rem;
 }
 
@@ -104,9 +119,8 @@
   text-decoration: underline;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 850px) {
   .form-grid {
     grid-template-columns: 1fr;
-    gap: 15px;
   }
 }

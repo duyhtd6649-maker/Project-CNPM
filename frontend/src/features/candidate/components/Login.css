@@ -1,155 +1,237 @@
-/* Container chính bao phủ toàn màn hình */
+/* ========== GLOBAL RESET (GIỮ NGUYÊN) ========== */
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+}
+
+.login-wrapper,
+.login-wrapper * {
+  box-sizing: border-box;
+}
+
+/* ========== WRAPPER CHÍNH ========== */
 .login-wrapper {
   display: flex;
-  height: 100vh;
   width: 100vw;
-  background: white;
+  height: 100vh;
   overflow: hidden;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #fff;
 }
 
+/* ========== LEFT SIDE (PHẦN FORM) ========== */
 .login-left {
-  flex: 1.2;
-  position: relative;
-  padding: 60px 80px;
+  flex: 1.2; /* Tăng tỉ lệ để form rộng rãi giống mẫu */
+  padding: 40px 60px;
   display: flex;
   flex-direction: column;
+  justify-content: center; 
+  align-items: center;     
+  position: relative;
+  background: #fff;
 }
 
-/* Nút ADMIN kiểu cũ: Viền tím, chữ tím, góc phải */
+/* LOGO UTH WORKPLACE (MỚI THÊM THEO ẢNH) */
+.logo-section {
+  position: absolute;
+  top: 40px;
+  left: 60px;
+  text-align: left;
+}
+.uth-text { 
+  margin: 0; 
+  font-size: 24px; 
+  font-weight: 900; 
+  color: #000; 
+  line-height: 1;
+}
+.workplace-text { 
+  margin: 0; 
+  font-size: 24px; 
+  font-weight: 900; 
+  color: #7b7dff; /* Màu tím thương hiệu */
+}
+
+/* ADMIN LINK */
 .admin-login-link {
   position: absolute;
-  top: 30px;
-  right: 40px;
-  padding: 8px 18px;
-  border: 1.2px solid #7678ff;
-  border-radius: 20px;
-  color: #7678ff;
+  top: 40px;
+  right: 60px;
+  color: #333;
   text-decoration: none;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
-  transition: all 0.3s ease;
 }
 
-.admin-login-link:hover {
-  background: #7678ff;
-  color: white;
-}
-
-/* Logo UTH WORKPLACE */
-.brand-logo-container {
-  margin-bottom: 60px; /* Giãn cách logo với tiêu đề Login */
-  display: flex;
-  flex-direction: column;
-}
-
-.text-uth { color: #0044cc; font-weight: 900; font-size: 26px; line-height: 1.1; }
-.text-workplace { color: #008800; font-weight: 900; font-size: 26px; line-height: 1.1; }
-
-/* Vùng nội dung chính */
-.login-form-content {
-  max-width: 380px;
-  margin: 0 auto;
+/* NỘI DUNG CHÍNH */
+.login-content-box {
   width: 100%;
+  max-width: 380px;
   text-align: center;
 }
 
-.login-title { font-size: 36px; font-weight: 800; margin-bottom: 8px; }
-.login-subtitle { color: #666; margin-bottom: 40px; font-weight: 500; }
-
-/* Ô nhập liệu bo tròn */
-.custom-input-group {
-  background: #f0f2f8;
-  border-radius: 15px;
-  padding: 14px 20px;
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
+.login-header {
+  margin-bottom: 35px;
 }
 
-.custom-input-group input {
-  border: none;
-  background: transparent;
-  outline: none;
-  margin-left: 10px;
+.welcome-text {
+  font-size: 32px;
+  font-weight: 800;
+  color: #000;
+  margin: 0;
+}
+
+.sub-text {
+  color: #666;
+  margin-top: 8px;
+  font-size: 16px;
+}
+
+/* FORM VÀ INPUT (CHỈNH THEO ẢNH MẪU) */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.input-group {
+  position: relative;
   width: 100%;
-  font-size: 15px;
+}
+
+/* Icon bên trong input */
+.input-icon-inner {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+  font-size: 16px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 15px 15px 15px 50px; /* Chừa khoảng trống cho icon */
+  border: 1px solid #e5e5e5;
+  border-radius: 15px; /* Bo tròn mạnh giống ảnh mẫu */
+  outline: none;
+  font-size: 14px;
+  background-color: #f9f9f9;
+  transition: 0.3s;
+}
+
+.input-group input:focus {
+  border-color: #7b7dff;
+  background-color: #fff;
 }
 
 .forgot-link-container {
   text-align: left;
-  margin-bottom: 35px; /* Giãn cách link quên mật khẩu với nút bấm */
+  margin: 5px 0 15px 5px;
 }
 
-.forgot-link-container a { color: #7678ff; text-decoration: none; font-size: 13px; }
-
-/* GIẢI QUYẾT LỖI DÍNH (HÌNH 2) */
-.login-action-area {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 25px; /* Tạo khoảng trống 25px giữa nút và text đăng ký */
-  margin-bottom: 50px; /* Tách biệt form với phần MXH bên dưới */
+.forgot-link-container a {
+  font-size: 13px;
+  color: #7b7dff;
+  text-decoration: none;
+  font-weight: 500;
 }
 
+/* NÚT LOGIN (DẠNG VIÊN THUỐC) */
 .login-btn-purple {
-  background: #7678ff;
-  color: white;
+  width: 160px; /* Thu nhỏ chiều ngang giống ảnh */
+  margin: 0 auto;
+  padding: 12px;
+  background: #7b7dff;
+  color: #fff;
   border: none;
-  padding: 14px 60px;
-  border-radius: 30px;
-  font-weight: 700;
+  border-radius: 25px; /* Bo tròn hoàn toàn */
   font-size: 16px;
+  font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(118, 120, 255, 0.3);
+  transition: 0.3s;
 }
 
-.reg-hint { font-size: 14px; color: #555; }
-.reg-hint a { color: #7678ff; font-weight: 700; text-decoration: none; }
+.login-btn-purple:hover {
+  background: #6264f0;
+  transform: translateY(-1px);
+}
 
-/* Phần MXH */
-.social-section-wrapper { margin-top: 10px; }
+.reg-hint {
+  margin-top: 15px;
+  font-size: 14px;
+  color: #888;
+}
+
+.reg-hint a {
+  color: #7b7dff;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+/* SOCIAL SECTION (GIỮ NGUYÊN CODE CỦA BẠN) */
+.social-section-wrapper {
+  margin-top: 40px;
+}
 
 .social-divider {
-  margin-bottom: 30px;
-  border-top: 1px solid #eee;
-  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #ccc;
+  margin-bottom: 25px;
 }
 
-.social-divider span {
-  position: absolute;
-  top: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: white;
-  padding: 0 15px;
-  color: #999;
-  font-size: 12px;
+.social-divider::before,
+.social-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #eee;
 }
 
 .social-icons-row {
   display: flex;
   justify-content: center;
-  gap: 25px; /* Giãn cách giữa các hình tròn MXH */
+  gap: 20px;
 }
 
 .s-circle {
-  width: 44px;
-  height: 44px;
+  width: 45px;
+  height: 45px;
   border-radius: 50%;
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  font-size: 20px;
   cursor: pointer;
+  transition: 0.3s;
 }
 
-.s-red { background: #ea4335; }
-.s-black { background: #000; }
-.s-gmail { background: #4285f4; }
+/* Màu sắc icon social theo chuẩn ảnh mẫu */
+.s-red { background-color: #ea4335; color: white; }
+.s-black { background-color: #000; color: white; }
+.s-gmail { background-color: #fbbc05; color: white; }
 
-/* Cột phải Gradient xanh tím */
+/* ========== RIGHT SIDE (GRADIENT TÍM THEO ẢNH) ========== */
 .login-right-side {
   flex: 1;
-  background: linear-gradient(135deg, #18196b 0%, #3e3ca0 100%);
+  background: linear-gradient(180deg, #1d12b1 0%, #a2a7ff 100%);
+  /* Không cần image nếu dùng gradient giống ảnh mẫu của bạn */
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .login-right-side { display: none; }
+  .login-left { flex: 1; padding: 20px; }
+  .logo-section { left: 30px; }
 }

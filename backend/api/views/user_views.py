@@ -115,13 +115,31 @@ def update_profile(request, id):
     serializer = UserProfileSerializer(data=request.data, partial=True)
     if serializer.is_valid():
         try:
-            user_instance = UserService.update_profile(user_id=id, validated_data=serializer.validated_data)
+            user_instance = UserService.update_profile(user_id=request.user.id, validated_data=serializer.validated_data)
             return Response(UserProfileSerializer(user_instance).data, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error": f"{str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
+@swagger_auto_schema(
+    method='put',
+    operation_description="update Profile",
+    request_body=CandidateSerializer,
+    responses={200: CandidateSerializer}
+)
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+@parser_classes([MultiPartParser, FormParser, JSONParser])
+def update_candidate_profile(request):
+    serializer = CandidateSerializer(data = request.data, partial = True)
+    serializer.is_valid(raise_exception=True)
+    try:
+        instance = UserService.update_candidate_profile(user=request.user, validated_data=serializer.validated_data)
+        serializer = CandidateSerializer(instance)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except NotFound as e:
+        return Response({f"e"}, status= status.HTTP_404_NOT_FOUND)
+    
 @swagger_auto_schema(
     method='post',
     operation_description="Upload avatar",
@@ -133,10 +151,7 @@ def update_profile(request, id):
 @permission_classes([IsAuthenticated])
 @parser_classes([MultiPartParser, FormParser])
 def upload_avatar(request):
-    
-    
     file_obj = request.FILES.get('avatar')
-    
     if not file_obj:
         return Response({"error": "No avatar file selected"}, status=status.HTTP_400_BAD_REQUEST)
         
@@ -181,12 +196,43 @@ def company_create(request):
             return Response({"error":f"{str(e)}"},status=status.HTTP_403_FORBIDDEN)
     return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
-#view company
+
+@swagger_auto_schema(
+    method='get',
+    manual_parameters=[
+        openapi.Parameter(
+            'name',
+            openapi.IN_QUERY,
+            description="Từ khóa tìm kiếm",
+            type=openapi.TYPE_STRING,
+            required=False
+        ),
+        openapi.Parameter(
+            'address',
+            openapi.IN_QUERY,
+            description="Địa điểm",
+            type=openapi.TYPE_STRING,
+            required=False
+        ),
+    ],
+    responses={200: CompanySerializer(many=True)}
+)
 @api_view(['GET'])
-def view_companies(request):
-    companies = CompanyService.Get_all_company()
-    serializer = CompanySerializer(companies, many=True)
-    return Response(serializer.data)
+@permission_classes([IsAuthenticated])
+def search_company(request):
+    companies = CompanyService.search_company(filters = request.query_params)
+    serializer = CompanySerializer(companies, many = True)
+    return Response(serializer.data, status=status.HTTP_302_FOUND)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def company_detail(request,id):
+    try:
+        company = CompanyService.company_detail(company_id = id)
+        serializer = CompanySerializer(company)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except NotFound as e:
+        return Response({f"{e}"}, status=status.HTTP_400_BAD_REQUEST)
 
 #delete company
 @swagger_auto_schema(
@@ -495,18 +541,29 @@ def update_interview(request, interview_id):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @swagger_auto_schema(
-    method = 'get'
+    method='get',
+    operation_description="View my profile",
+    responses={200: UserSerializer}
 )
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def find_job_by_id(request, job_id):
+def view_my_profile(request):
     try:
-        job = UserService.find_job_by_id(job_id)
-        serializer = JobSerializer(job)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    except NotFound as e:
-        return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
+        instance = UserService.view_my_profile(request.user)
 
+        if request.user.role == 'candidate':
+            serializer = CandidateSerializer(instance)
+        elif request.user.role == 'recruiter':
+            serializer = RecruiterSerializer(instance)
+        else:
+            serializer = UserSerializer(instance)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+        
+    except NotFound as e:
+        return Response(e.detail, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 
