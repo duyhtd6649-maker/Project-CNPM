@@ -95,6 +95,8 @@ class JobService:
             job_list = job_list.filter(description__icontains=filters.get('description'))
         if filters.get('location') is not None:
             job_list = job_list.filter(location__icontains=filters.get('location'))
+        if filters.get('company') is not None:
+            job_list = job_list.filter(company_name__icontains=filters.get('company'))
         if filters.get('category') is not None:
             try:
                 category = Categories.objects.get(name=filters.get('category'))

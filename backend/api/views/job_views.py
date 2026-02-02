@@ -113,6 +113,13 @@ def view_job(request):
             collectionFormat='multi',
             required=False
         ),
+        openapi.Parameter(
+            'Company',
+            openapi.IN_QUERY,
+            description="Công ty",
+            type=openapi.TYPE_STRING,
+            required=False
+        ),
     ],
     responses={200: JobSerializer(many=True)}
 )
