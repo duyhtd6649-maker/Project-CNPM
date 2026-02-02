@@ -20,12 +20,13 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axiosClient.post('/auth/jwt/login/', loginData);
+      // Đảm bảo endpoint khớp với BE (bỏ /api/ nếu baseURL đã có)
+      const response = await axiosClient.post('auth/jwt/login/', loginData);
       localStorage.setItem('access_token', response.data.access);
       localStorage.setItem('role', response.data.role);
       navigate('/homepage'); 
     } catch (error) {
-      alert("Đăng nhập thất bại!");
+      alert("Đăng nhập thất bại! Vui lòng kiểm tra lại.");
     } finally {
       setLoading(false);
     }
@@ -33,64 +34,85 @@ const Login = () => {
 
   return (
     <div className="login-wrapper">
+      {/* PHẦN BÊN TRÁI: CHIẾM 1.2 PHẦN MÀN HÌNH */}
       <div className="login-left">
-        {/* Nút Admin Only kiểu cũ - nằm cố định ở góc phải */}
-        <Link to="/admin-login" className="admin-login-link">
-           for ADMIN
-        </Link>
-
-        {/* Logo Phần đầu trang */}
+        {/* Nút ADMIN góc phải */}
+        <Link to="/admin-login" className="admin-login-link">ADMIN</Link>
+        
+        {/* Logo hệ thống */}
         <div className="brand-logo-container">
-          <span className="text-uth">UTH</span>
-          <span className="text-workplace">WORKPLACE</span>
+          <h2 style={{ color: '#7678ff', fontWeight: '800', margin: 0 }}>UTH WORKPLACE</h2>
         </div>
 
-        {/* Nội dung trung tâm */}
-        <div className="login-form-content">
-          <h1 className="login-title">LOGIN</h1>
-          <p className="login-subtitle">Let's get started !!!</p>
+        {/* Khối chứa Form trung tâm */}
+        <div className="login-box">
+          <div className="login-header">
+            <h1>Hello Again!</h1>
+            <p>Welcome back, you've been missed!</p>
+          </div>
 
-          <form onSubmit={handleLogin} className="form-actual">
-            <div className="custom-input-group">
+          <form onSubmit={handleLogin}>
+            <div className="input-group">
               <span className="input-icon">👤</span>
-              <input type="text" name="username" placeholder="Username" onChange={handleChange} required />
+              <input 
+                type="text" 
+                name="username" 
+                placeholder="Enter username" 
+                onChange={handleChange} 
+                required 
+              />
             </div>
-            
-            <div className="custom-input-group">
+
+            <div className="input-group">
               <span className="input-icon">🔒</span>
-              <input type="password" name="password" placeholder="Password" onChange={handleChange} required />
+              <input 
+                type="password" 
+                name="password" 
+                placeholder="Password" 
+                onChange={handleChange} 
+                required 
+              />
             </div>
 
             <div className="forgot-link-container">
-              <Link to="/forgot">Forgot password</Link>
+              <Link to="/forgot">Recovery Password</Link>
             </div>
 
-            {/* Vùng nút Login và Register - Được giãn cách ra */}
             <div className="login-action-area">
               <button type="submit" className="login-btn-purple" disabled={loading}>
-                {loading ? "..." : "Login"}
+                {loading ? "Signing In..." : "Sign In"}
               </button>
               <div className="reg-hint">
-                Not a member ? <Link to="/register">Register now</Link>
+                Not a member? <Link to="/register">Register now</Link>
               </div>
             </div>
           </form>
 
-          {/* Vùng mạng xã hội - Tách biệt rõ ràng */}
+          {/* Phần icons mạng xã hội */}
           <div className="social-section-wrapper">
             <div className="social-divider">
               <span>Or continue with</span>
             </div>
 
             <div className="social-icons-row">
-              <button type="button" className="s-circle s-red"><FontAwesomeIcon icon={faGoogle} /></button>
-              <button type="button" className="s-circle s-black"><FontAwesomeIcon icon={faShieldAlt} /></button>
-              <button type="button" className="s-circle s-gmail"><FontAwesomeIcon icon={faEnvelope} /></button>
+              <button type="button" className="s-circle s-red">
+                <FontAwesomeIcon icon={faGoogle} />
+              </button>
+              <button type="button" className="s-circle s-black">
+                <FontAwesomeIcon icon={faShieldAlt} />
+              </button>
+              <button type="button" className="s-circle s-gmail">
+                <FontAwesomeIcon icon={faEnvelope} />
+              </button>
             </div>
           </div>
         </div>
       </div>
-      <div className="login-right-side"></div>
+
+      {/* PHẦN BÊN PHẢI: MÀNG MÀU XANH TÍM (Kích hoạt .login-right-side trong CSS) */}
+      <div className="login-right-side">
+        {/* Phần này để trống, CSS sẽ lo phần màu sắc và bo góc */}
+      </div>
     </div>
   );
 };

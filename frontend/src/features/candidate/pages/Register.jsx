@@ -19,36 +19,30 @@ const Register = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
     if (formData.password !== formData.repeatPassword) {
-      alert("Mật khẩu nhập lại không khớp!");
+      alert("Mật khẩu không khớp!");
       return;
     }
     setLoading(true);
-
-    // FIX: Mapping đúng trường 'password1' và 'password2' theo yêu cầu của BE trong ảnh lỗi
     const payload = {
       username: formData.email,
       email: formData.email,
-      password1: formData.password,    // BE yêu cầu trường này
-      password2: formData.repeatPassword, // BE yêu cầu trường này
+      password1: formData.password,
+      password2: formData.repeatPassword,
       first_name: formData.name,
       role: formData.role.toLowerCase(),
+      phone_number: formData.phone,
+      gender: formData.gender,
+      country: formData.country,
+      date_of_birth: formData.dob,
+      job_title: formData.jobs
     };
 
     try {
-      const response = await axiosClient.post('/auth/registration/', payload);
-      if (response.status === 201 || response.status === 200) {
-        alert("Đăng ký thành công!");
-        navigate('/login');
-      }
+      await axiosClient.post('auth/registration/', payload);
+      alert("Đăng ký thành công!");
+      navigate('/login');
     } catch (error) {
-      const serverErrors = error.response?.data;
-      let msg = "Đăng ký thất bại: ";
-      if (serverErrors) {
-        msg += Object.entries(serverErrors).map(([k, v]) => `${k}: ${v}`).join(" | ");
-      } else {
-        msg += "Không thể kết nối đến Server.";
-      }
-      alert(msg);
+      alert("Lỗi đăng ký: " + JSON.stringify(error.response?.data));
     } finally {
       setLoading(false);
     }
@@ -57,35 +51,35 @@ const Register = () => {
   return (
     <div className="register-container">
       <div className="register-card">
-        <h1>Create Account</h1>
+        <h1>Register</h1>
         <form onSubmit={handleRegister}>
           <div className="form-grid">
             <div className="form-group">
               <label>Full Name</label>
-              <input type="text" name="name" onChange={handleChange} required />
+              <input type="text" name="name" placeholder="Name" onChange={handleChange} required />
             </div>
             <div className="form-group">
               <label>Phone Number</label>
-              <input type="text" name="phone" onChange={handleChange} required />
+              <input type="text" name="phone" placeholder="Phone" onChange={handleChange} required />
             </div>
             <div className="form-group">
               <label>Password</label>
-              <input type="password" name="password" onChange={handleChange} required />
+              <input type="password" name="password" placeholder="Password" onChange={handleChange} required />
+            </div>
+            <div className="form-group">
+              <label>Repeat Password</label>
+              <input type="password" name="repeatPassword" placeholder="Repeat" onChange={handleChange} required />
             </div>
             <div className="form-group">
               <label>Gender</label>
-              <select name="gender" onChange={handleChange} className="form-select">
+              <select name="gender" className="form-select" onChange={handleChange}>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
               </select>
             </div>
             <div className="form-group">
-              <label>Repeat Password</label>
-              <input type="password" name="repeatPassword" onChange={handleChange} required />
-            </div>
-            <div className="form-group">
               <label>Country</label>
-              <input type="text" name="country" onChange={handleChange} required />
+              <input type="text" name="country" placeholder="Vietnam" onChange={handleChange} required />
             </div>
             <div className="form-group">
               <label>Date of Birth</label>
@@ -93,23 +87,25 @@ const Register = () => {
             </div>
             <div className="form-group">
               <label>Jobs</label>
-              <input type="text" name="jobs" onChange={handleChange} required />
+              <input type="text" name="jobs" placeholder="Job title" onChange={handleChange} required />
             </div>
             <div className="form-group">
               <label>Enter your email</label>
-              <input type="email" name="email" onChange={handleChange} required />
+              <input type="email" name="email" placeholder="Email" onChange={handleChange} required />
             </div>
             <div className="form-group">
               <label>Roles</label>
-              <select name="role" onChange={handleChange} className="form-select">
+              <select name="role" className="form-select" onChange={handleChange}>
                 <option value="Candidate">Candidate</option>
                 <option value="Recruiter">Recruiter</option>
               </select>
             </div>
           </div>
+          
           <button type="submit" className="btn-register" disabled={loading}>
             {loading ? "Đang xử lý..." : "Register"}
           </button>
+          
           <div className="back-to-login">
             <Link to="/login" className="login-link">Already have an account? Login</Link>
           </div>
@@ -120,4 +116,3 @@ const Register = () => {
 };
 
 export default Register;
-
