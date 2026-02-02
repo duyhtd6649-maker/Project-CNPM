@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axiosClient from "/src/infrastructure/http/axiosClient"; 
+import axiosClient from "../../../infrastructure/http/axiosClient"; 
+import { useAuth } from '../../../app/AppProviders';
 import '../components/Register.css';
 
 const Register = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
+
   const [formData, setFormData] = useState({
     name: '', 
     phone: '', 
@@ -17,6 +20,7 @@ const Register = () => {
     email: '', 
     role: 'Candidate'
   });
+
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -45,8 +49,9 @@ const Register = () => {
       phone_number: formData.phone,
       gender: formData.gender,
       country: formData.country,
-      date_of_birth: formData.dob,
-      job_title: formData.jobs
+      jobs: formData.jobs,
+      role: formData.role.toLowerCase(),
+      dob: formData.dob,
     };
 
     try {
@@ -89,22 +94,47 @@ const Register = () => {
         <h1>REGISTER</h1>
         <form onSubmit={handleRegister}>
           <div className="form-grid">
+
             <div className="form-group">
               <label>Full Name</label>
               <input type="text" name="name" placeholder="Enter your name" onChange={handleChange} required />
             </div>
+
             <div className="form-group">
               <label>Phone Number</label>
               <input type="text" name="phone" placeholder="Enter phone number" onChange={handleChange} required />
             </div>
+
+            <div className="form-group">
+              <label>Last Name</label>
+              <input name="lastName" onChange={handleChange} required />
+            </div>
+
+            <div className="form-group">
+              <label>First Name</label>
+              <input name="firstName" onChange={handleChange} required />
+            </div>
+
+            <div className="form-group">
+              <label>Phone</label>
+              <input name="phone" onChange={handleChange} required />
+            </div>
+
+            <div className="form-group">
+              <label>Date of Birth</label>
+              <input type="date" name="dob" onChange={handleChange} required />
+            </div>
+
             <div className="form-group">
               <label>Password</label>
-              <input type="password" name="password" placeholder="Password" onChange={handleChange} required />
+              <input type="password" name="password" onChange={handleChange} required />
             </div>
+
             <div className="form-group">
               <label>Repeat Password</label>
               <input type="password" name="repeatPassword" placeholder="Repeat Password" onChange={handleChange} required />
             </div>
+
             <div className="form-group">
               <label>Gender</label>
               <select name="gender" className="form-select" onChange={handleChange}>
@@ -113,38 +143,37 @@ const Register = () => {
                 <option value="Other">Other</option>
               </select>
             </div>
+
             <div className="form-group">
               <label>Country</label>
-              <input type="text" name="country" placeholder="Vietnam" onChange={handleChange} required />
+              <input name="country" onChange={handleChange} required />
             </div>
+
             <div className="form-group">
-              <label>Date of Birth</label>
-              <input type="date" name="dob" onChange={handleChange} required />
+              <label>Job</label>
+              <input name="jobs" onChange={handleChange} required />
             </div>
+
             <div className="form-group">
-              <label>Jobs</label>
-              <input type="text" name="jobs" placeholder="Job title" onChange={handleChange} required />
-            </div>
-            <div className="form-group">
-              <label>Enter your email</label>
-              <input type="email" name="email" placeholder="Email" onChange={handleChange} required />
-            </div>
-            <div className="form-group">
-              <label>Roles</label>
+              <label>Role</label>
               <select name="role" className="form-select" onChange={handleChange}>
                 <option value="Candidate">Candidate</option>
                 <option value="Recruiter">Recruiter</option>
               </select>
             </div>
+
           </div>
-          
+
           <button type="submit" className="btn-register" disabled={loading}>
-            {loading ? "Đang xử lý..." : "Register"}
+            {loading ? "Processing..." : "Register"}
           </button>
-          
+
           <div className="back-to-login">
-            <Link to="/login" className="login-link">Already have an account? Login</Link>
+            <Link to="/login" className="login-link">
+              Already have an account? Login
+            </Link>
           </div>
+
         </form>
       </div>
     </div>
