@@ -3,11 +3,12 @@ from database.models.CV import Cvs, Cvanalysisresult
 
 
 class CVSerializer(serializers.ModelSerializer):
-    file = serializers.FileField(required=True,source='file_url')
+    file = serializers.FileField(required=True, source='file_url', write_only=True)
+    file_url = serializers.FileField(read_only=True)
     class Meta:
         model = Cvs
-        fields = ['id', 'file', 'created_by', 'file_name', 'file_size']
-        read_only_fields = ['id', 'created_by', 'file_name', 'file_size','file']
+        fields = ['id', 'file', 'file_url', 'created_by', 'file_name', 'file_size']
+        read_only_fields = ['id', 'created_by', 'file_name', 'file_size', 'file_url']
 
     def validate_file(self, value):
         if not value.name.lower().endswith('.pdf'):

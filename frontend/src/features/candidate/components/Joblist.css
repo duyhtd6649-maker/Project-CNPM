@@ -325,8 +325,7 @@ body.dark-mode .top-header {
 }
 
 .header-inner {
-    max-width: 1400px;
-    margin: 0 auto;
+    width: 100%;
     padding: 1.25rem 2.5rem;
     display: flex;
     flex-direction: column;
@@ -400,7 +399,7 @@ body.dark-mode .top-header {
     overflow-x: auto;
     padding-bottom: 0.25rem;
     scrollbar-width: none;
-    
+
 }
 
 .filters-row::-webkit-scrollbar {
@@ -467,8 +466,7 @@ body.dark-mode .filter-divider {
 }
 
 .jobs-container {
-    max-width: 1400px;
-    margin: 0 auto;
+    width: 100%;
     padding-bottom: 5rem;
 }
 

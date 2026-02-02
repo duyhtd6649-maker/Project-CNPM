@@ -1,5 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import CandidateNavbar from '../components/CandidateNavbar';
+import '../components/HomepageCandidates.css';
 import '../components/notificationunderdevelopment.css';
 
 const NotificationSystem = () => {
@@ -19,7 +21,7 @@ const NotificationSystem = () => {
         </div>
       </header>
 
-      
+
       <main className="ns-main">
         <div className="ns-card">
           <div className="ns-card-icon-wrapper">
@@ -43,11 +45,11 @@ const NotificationSystem = () => {
           </div>
 
           <div className="ns-actions">
-            <a className="ns-btn ns-btn-primary" onClick={() => navigate('/home')} style={{cursor: 'pointer'}}>
+            <a className="ns-btn ns-btn-primary" onClick={() => navigate('/homepage')} style={{ cursor: 'pointer' }}>
               <span className="material-icons-outlined">dashboard</span>
               Back to Dashboard
             </a>
-            
+
             <a className="ns-btn ns-btn-outline" href="#">
               <span className="material-icons-outlined">notifications_active</span>
               Notify Me When Ready
@@ -61,20 +63,6 @@ const NotificationSystem = () => {
           </div>
         </div>
       </main>
-
-     
-      <footer className="ns-footer">
-        <div className="ns-footer-container">
-          <div className="ns-copyright">
-            © 2024 UTH Workplace. All rights reserved.
-          </div>
-          <div className="ns-footer-links">
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms of Service</a>
-            <a href="#">Help Center</a>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 };

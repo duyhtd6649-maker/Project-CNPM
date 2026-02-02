@@ -1,22 +1,231 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import '../components/HomepageCandidates.css';
 import '../components/Chatbot.css';
 import CandidateNavbar from '../components/CandidateNavbar';
 
 const Chatbot = () => {
+    const navigate = useNavigate();
+    const [messages, setMessages] = useState([
+        {
+            role: 'ai',
+            content: `Hello! I'm LinPJ, your personal career assistant at UTH. 👋
+
+I can help you with:
+• Reviewing your CV and Cover Letter (upload PDF file)
+• Mock interviews for specific job roles
+• Searching for jobs matching your skills
+• Career advice and guidance
+
+How can I assist you today?`
+        }
+    ]);
+    const [inputValue, setInputValue] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const messagesEndRef = useRef(null);
+    const textareaRef = useRef(null);
+    const fileInputRef = useRef(null);
+
+    // Auto scroll to bottom when new messages arrive
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [messages]);
+
     const handleInput = (e) => {
         e.target.style.height = '';
         e.target.style.height = e.target.scrollHeight + 'px';
+        setInputValue(e.target.value);
+    };
+
+    // Handle file selection
+    const handleFileSelect = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            // Accept PDF and common document formats
+            const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+            if (allowedTypes.includes(file.type) || file.name.endsWith('.pdf') || file.name.endsWith('.doc') || file.name.endsWith('.docx')) {
+                setSelectedFile(file);
+            } else {
+                setMessages(prev => [...prev, {
+                    role: 'ai',
+                    content: '⚠️ Please upload a PDF or Word document (.pdf, .doc, .docx)'
+                }]);
+            }
+        }
+    };
+
+    // Remove selected file
+    const removeSelectedFile = () => {
+        setSelectedFile(null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    };
+
+    // Open file picker
+    const openFilePicker = () => {
+        fileInputRef.current?.click();
+    };
+
+    const sendMessage = async () => {
+        if ((!inputValue.trim() && !selectedFile) || isLoading) return;
+
+        const userMessage = inputValue.trim();
+        const fileToSend = selectedFile;
+        setInputValue('');
+        setSelectedFile(null);
+        if (fileInputRef.current) fileInputRef.current.value = '';
+
+        // Reset textarea height
+        if (textareaRef.current) {
+            textareaRef.current.style.height = '';
+        }
+
+        // Add user message to chat
+        const userContent = fileToSend
+            ? `${userMessage ? userMessage + '\n\n' : ''}📎 Attached: ${fileToSend.name}`
+            : userMessage;
+        setMessages(prev => [...prev, { role: 'user', content: userContent }]);
+        setIsLoading(true);
+
+        try {
+            const token = localStorage.getItem('access_token');
+
+            // If file is attached, use CV analyzer API
+            if (fileToSend) {
+                const formData = new FormData();
+                formData.append('file', fileToSend);
+                formData.append('targetjob', userMessage || 'General Career');
+
+                const response = await fetch('http://127.0.0.1:8000/api/cv/analyzer/', {
+                    method: 'POST',
+                    headers: {
+                        ...(token && { 'Authorization': `Bearer ${token}` })
+                    },
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+
+                    // Format CV analysis response
+                    let aiResponse = '📄 **CV Analysis Complete!**\n\n';
+
+                    if (data.score !== undefined) {
+                        aiResponse += `🎯 **Overall Score:** ${data.score}/100\n\n`;
+                    }
+
+                    if (data.strengths && data.strengths.length > 0) {
+                        aiResponse += '💪 **Strengths:**\n' + data.strengths.map(s => `• ${s}`).join('\n') + '\n\n';
+                    }
+
+                    if (data.weaknesses && data.weaknesses.length > 0) {
+                        aiResponse += '⚠️ **Areas to Improve:**\n' + data.weaknesses.map(w => `• ${w}`).join('\n') + '\n\n';
+                    }
+
+                    if (data.suggestions && data.suggestions.length > 0) {
+                        aiResponse += '💡 **Suggestions:**\n' + data.suggestions.map(s => `• ${s}`).join('\n') + '\n\n';
+                    }
+
+                    if (data.skills && data.skills.length > 0) {
+                        aiResponse += '🛠️ **Skills Detected:**\n' + data.skills.map(s => `• ${s}`).join('\n');
+                    }
+
+                    // If no structured data, show raw response
+                    if (aiResponse === '📄 **CV Analysis Complete!**\n\n') {
+                        aiResponse = '📄 **CV Analysis Result:**\n\n' + (typeof data === 'string' ? data : JSON.stringify(data, null, 2));
+                    }
+
+                    setMessages(prev => [...prev, { role: 'ai', content: aiResponse }]);
+                } else {
+                    const errorData = await response.json().catch(() => ({}));
+                    setMessages(prev => [...prev, {
+                        role: 'ai',
+                        content: `❌ Error analyzing CV. Please try again.\n\nError: ${errorData.error || errorData.detail || response.statusText}`
+                    }]);
+                }
+            } else {
+                // Regular chat message - use career coach API
+                const response = await fetch('http://127.0.0.1:8000/api/ai/career/coach', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(token && { 'Authorization': `Bearer ${token}` })
+                    },
+                    body: JSON.stringify({ question: userMessage })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+
+                    // Format AI response
+                    let aiResponse = '';
+
+                    if (data.overview && data.overview.length > 0) {
+                        aiResponse += '📋 **Overview:**\n' + data.overview.join('\n') + '\n\n';
+                    }
+
+                    if (data.expectedCareer && data.expectedCareer.length > 0) {
+                        aiResponse += '🎯 **Career Paths:**\n' + data.expectedCareer.map(c => `• ${c}`).join('\n') + '\n\n';
+                    }
+
+                    if (data.skills && data.skills.length > 0) {
+                        aiResponse += '💡 **Key Skills:**\n' + data.skills.map(s => `• ${s}`).join('\n') + '\n\n';
+                    }
+
+                    if (data.learningPaths && data.learningPaths.length > 0) {
+                        aiResponse += '📚 **Learning Paths:**\n' + data.learningPaths.map(l => `• ${l}`).join('\n');
+                    }
+
+                    // If no structured data, use raw response
+                    if (!aiResponse.trim()) {
+                        aiResponse = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+                    }
+
+                    setMessages(prev => [...prev, { role: 'ai', content: aiResponse }]);
+                } else {
+                    const errorData = await response.json().catch(() => ({}));
+                    setMessages(prev => [...prev, {
+                        role: 'ai',
+                        content: `❌ Sorry, there was an error processing your request. Please try again.\n\nError: ${errorData.detail || response.statusText}`
+                    }]);
+                }
+            }
+        } catch (error) {
+            console.error('Chatbot API Error:', error);
+            setMessages(prev => [...prev, {
+                role: 'ai',
+                content: `❌ Connection error. Please check if the server is running and try again.`
+            }]);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    };
+
+    const clearChat = () => {
+        setMessages([{
+            role: 'ai',
+            content: `Chat cleared! 🧹\n\nHow can I assist you today?`
+        }]);
     };
 
     return (
-        <div className="chatbot-page-container">
+        <div className="hp-container">
             <CandidateNavbar />
 
             <div className="chatbot-main-layout">
                 <aside className="chatbot-sidebar">
                     <div className="sidebar-header">
                         <h2 className="sidebar-title">History</h2>
-                        <button className="icon-btn" title="Start new chat">
+                        <button className="icon-btn" title="Start new chat" onClick={clearChat}>
                             <span className="material-icons-outlined">add_comment</span>
                         </button>
                     </div>
@@ -37,27 +246,8 @@ const Chatbot = () => {
                                 <span className="material-icons-outlined">chat_bubble_outline</span>
                             </div>
                             <div className="history-info">
-                                <h3 className="history-title">CV Optimization</h3>
-                                <p className="history-preview">I can analyze your current summary...</p>
-                            </div>
-                        </button>
-                        <button className="history-item">
-                            <div className="history-icon">
-                                <span className="material-icons-outlined">chat_bubble_outline</span>
-                            </div>
-                            <div className="history-info">
-                                <h3 className="history-title">Interview Prep: Java</h3>
-                                <p className="history-preview">What are the common questions for...</p>
-                            </div>
-                        </button>
-                        <div className="history-section-title">Yesterday</div>
-                        <button className="history-item">
-                            <div className="history-icon">
-                                <span className="material-icons-outlined">chat_bubble_outline</span>
-                            </div>
-                            <div className="history-info">
-                                <h3 className="history-title">Salary Trends 2024</h3>
-                                <p className="history-preview">Can you show me the graph for...</p>
+                                <h3 className="history-title">Current Chat</h3>
+                                <p className="history-preview">{messages.length} messages</p>
                             </div>
                         </button>
                     </div>
@@ -68,104 +258,148 @@ const Chatbot = () => {
                         </button>
                     </div>
                 </aside>
+
                 <section className="chatbot-area">
                     <div className="chat-header">
                         <div className="chat-header-info">
                             <div className="bot-avatar-header">
-                                <span className="material-icons-round">smart_toy</span>
+                                <img src="/assets/chatbot-avatar.jpg" alt="LinPJ" className="bot-avatar-img" />
                                 <div className="status-dot"></div>
                             </div>
                             <div>
                                 <h1 className="bot-name">LinPJ</h1>
-                                <span className="bot-role">UTH AI Assistant</span>
+                                <span className="bot-role">UTH AI Career Coach</span>
                             </div>
                         </div>
                         <div className="chat-header-actions">
-                            <button className="icon-btn" title="Clear Chat">
+                            <button className="icon-btn" title="Clear Chat" onClick={clearChat}>
                                 <span className="material-icons-outlined">delete_outline</span>
                             </button>
                             <button className="icon-btn" title="Export">
                                 <span className="material-icons-outlined">download</span>
                             </button>
-                            <button className="icon-btn" title="More options">
-                                <span className="material-icons-outlined">more_vert</span>
-                            </button>
                         </div>
                     </div>
 
                     <div className="chat-messages custom-scrollbar">
-                        <div className="time-divider">
-                            <span>Today, 9:41 AM</span>
-                        </div>
-                        <div className="message-row ai">
-                            <div className="avatar-small">
-                                <span className="material-icons-round">smart_toy</span>
+                        {messages.map((msg, index) => (
+                            <div key={index} className={`message-row ${msg.role}`}>
+                                {msg.role === 'ai' ? (
+                                    <>
+                                        <div className="avatar-small">
+                                            <img src="/assets/chatbot-avatar.jpg" alt="LinPJ" className="bot-avatar-img" />
+                                        </div>
+                                        <div className="message-content-wrapper">
+                                            <span className="sender-name">LinPJ</span>
+                                            <div className="message-bubble ai-bubble">
+                                                <p style={{ whiteSpace: 'pre-wrap' }}>{msg.content}</p>
+                                            </div>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <div className="message-content-wrapper end">
+                                            <div className="message-bubble user-bubble">
+                                                <p>{msg.content}</p>
+                                            </div>
+                                        </div>
+                                        <div className="avatar-small user-avatar">
+                                            <span className="material-icons-round">person</span>
+                                        </div>
+                                    </>
+                                )}
                             </div>
-                            <div className="message-content-wrapper">
-                                <span className="sender-name">LinPJ</span>
-                                <div className="message-bubble ai-bubble">
-                                    <p>Hello! I'm LinPJ, your personal career assistant at UTH. 👋</p>
-                                    <p className="mt-2">I can help you with:</p>
-                                    <ul className="message-list">
-                                        <li>Reviewing your CV and Cover Letter</li>
-                                        <li>Mock interviews for specific job roles</li>
-                                        <li>Searching for jobs matching your skills</li>
-                                    </ul>
-                                    <p className="mt-2">How can I assist you today?</p>
+                        ))}
+
+                        {isLoading && (
+                            <div className="message-row ai">
+                                <div className="avatar-small">
+                                    <img src="/assets/chatbot-avatar.jpg" alt="LinPJ" className="bot-avatar-img" />
+                                </div>
+                                <div className="message-content-wrapper">
+                                    <span className="sender-name">LinPJ</span>
+                                    <div className="message-bubble ai-bubble typing-indicator">
+                                        <span></span>
+                                        <span></span>
+                                        <span></span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div className="message-row user">
-                            <div className="message-content-wrapper end">
-                                <div className="message-bubble user-bubble">
-                                    <p>Can you help me improve my CV summary? I'm applying for a Frontend Developer role.</p>
-                                </div>
-                                <span className="read-receipt">Read 9:43 AM</span>
-                            </div>
-                            <div className="avatar-small user-avatar">
-                                <img alt="User" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzYWTJfajfpZ9kytsjNGkD5qmtx-S1MYbhWVkN0Cv5iUhvqKkbZS2mmuCGS7JLXJ3pslm4lFTGwz039ewINB9YiZap4hmWuLj_Nx-ApGwbD7O3auqT9EHXAqn17tdV-dnmnAK3n6MnlCgaKpPkXf9ujy9BwYVFYCGYLLhOAs_1Yr931aATyP4swdffPn1XfK9xVLVDjXleokShhKO0Dx1b4v3pP1olzwa7SDYa4tGfIZ7BQUKymdBlVR0a7g-eATIq8tVFOcrFu1xG" />
-                            </div>
-                        </div>
-                        <div className="message-row ai">
-                            <div className="avatar-small">
-                                <span className="material-icons-round">smart_toy</span>
-                            </div>
-                            <div className="message-content-wrapper">
-                                <span className="sender-name">LinPJ</span>
-                                <div className="message-bubble ai-bubble">
-                                    <p>Certainly! To create a compelling summary for a Frontend Developer role, we should focus on your key technologies (like React, Vue, or Angular), your experience level, and a notable achievement.</p>
-                                    <p className="mt-3">Please paste your current summary below, or upload your CV PDF, and I'll suggest improvements tailored to the UTH job market standards.</p>
-                                </div>
-                                <div className="suggestion-chips">
-                                    <button className="chip">Upload CV</button>
-                                    <button className="chip">Use a Template</button>
-                                </div>
-                            </div>
-                        </div>
+                        )}
+
+                        <div ref={messagesEndRef} />
                     </div>
+
                     <div className="chat-input-area">
-                        <div className="input-container">
+                        {/* Hidden file input */}
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleFileSelect}
+                            accept=".pdf,.doc,.docx"
+                            style={{ display: 'none' }}
+                        />
+
+                        {/* Selected file preview */}
+                        {selectedFile && (
+                            <div className="selected-file-preview" style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                padding: '8px 12px',
+                                backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                                borderRadius: '8px 8px 0 0',
+                                borderBottom: '1px solid rgba(99, 102, 241, 0.2)'
+                            }}>
+                                <span className="material-icons-outlined" style={{ color: '#6366f1', fontSize: '20px' }}>description</span>
+                                <span style={{ flex: 1, fontSize: '0.9rem', color: 'var(--text-main)' }}>{selectedFile.name}</span>
+                                <button
+                                    onClick={removeSelectedFile}
+                                    style={{
+                                        background: 'none',
+                                        border: 'none',
+                                        cursor: 'pointer',
+                                        padding: '4px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        color: '#dc2626'
+                                    }}
+                                    title="Remove file"
+                                >
+                                    <span className="material-icons-outlined" style={{ fontSize: '18px' }}>close</span>
+                                </button>
+                            </div>
+                        )}
+
+                        <div className="input-container" style={{ borderRadius: selectedFile ? '0 0 12px 12px' : '12px' }}>
                             <textarea
+                                ref={textareaRef}
                                 className="chat-textarea"
                                 onInput={handleInput}
-                                placeholder="Message LinPJ..."
+                                onKeyPress={handleKeyPress}
+                                placeholder={selectedFile ? "Add a message (optional) or describe target job..." : "Ask me about careers, CV tips, interview prep..."}
                                 rows="1"
+                                value={inputValue}
+                                disabled={isLoading}
                             ></textarea>
                             <div className="input-actions-row">
                                 <div className="left-actions">
-                                    <button className="icon-btn-small" title="Upload file">
+                                    <button
+                                        className="icon-btn-small"
+                                        title="Upload CV (PDF, DOC)"
+                                        onClick={openFilePicker}
+                                        style={{ color: selectedFile ? '#6366f1' : undefined }}
+                                    >
                                         <span className="material-icons-outlined">attach_file</span>
-                                    </button>
-                                    <button className="icon-btn-small" title="Voice input">
-                                        <span className="material-icons-outlined">mic_none</span>
-                                    </button>
-                                    <button className="icon-btn-small" title="Insert Emoji">
-                                        <span className="material-icons-outlined">sentiment_satisfied</span>
                                     </button>
                                 </div>
                                 <div className="right-actions">
                                     <span className="enter-hint">Press Enter to send</span>
-                                    <button className="send-btn">
+                                    <button
+                                        className="send-btn"
+                                        onClick={sendMessage}
+                                        disabled={isLoading || (!inputValue.trim() && !selectedFile)}
+                                    >
                                         <span className="material-icons-round">send</span>
                                     </button>
                                 </div>

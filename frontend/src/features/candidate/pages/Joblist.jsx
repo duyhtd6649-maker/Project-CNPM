@@ -5,73 +5,58 @@ import {
     ArrowRight, Briefcase, LogOut, MoreHorizontal, Bell, FileText, User
 } from 'lucide-react';
 import CandidateNavbar from '../components/CandidateNavbar';
+import axiosClient from '../../../infrastructure/http/axiosClient';
+import '../components/HomepageCandidates.css';
 import '../components/Joblist.css';
 
 const JobBrowsing = () => {
     const navigate = useNavigate();
     const [isDarkMode, setIsDarkMode] = useState(false);
-    const allJobs = [
-        {
-            id: 1, role: "Senior UI Designer", company: "Stripe", location: "San Francisco, CA",
-            logo: "https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg",
-            tags: ["Remote", "Full-time", "Senior Level"], salary: "$120k - $150k"
-        },
-        {
-            id: 2, role: "Product Manager", company: "Airbnb", location: "New York, NY",
-            logo: "https://upload.wikimedia.org/wikipedia/commons/6/69/Airbnb_Logo_B%C3%A9lo.svg",
-            tags: ["On-site", "Full-time"], salary: "$140k - $180k"
-        },
-        {
-            id: 3, role: "Frontend Developer", company: "Spotify", location: "Austin, TX",
-            logo: "https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg",
-            tags: ["Remote", "Contract"], salary: "$110k - $135k"
-        },
-        {
-            id: 4, role: "Machine Learning Engineer", company: "Anthropic", location: "San Francisco, CA",
-            isAiLogo: true, tags: ["Hybrid", "Full-time"], salary: "$220k - $280k"
-        },
-        {
-            id: 5, role: "Content Strategist", company: "Netflix", location: "Los Angeles, CA",
-            logo: "https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg",
-            tags: ["On-site", "Full-time"], salary: "$130k - $160k"
-        },
-        {
-            id: 6, role: "UX Researcher", company: "Slack", location: "Denver, CO",
-            logo: "https://upload.wikimedia.org/wikipedia/commons/d/d5/Slack_icon_2019.svg",
-            tags: ["Remote", "Full-time"], salary: "$115k - $145k"
-        },
-        // Page 2 Data
-        {
-            id: 7, role: "Senior Backend Engineer", company: "Google", location: "Mountain View, CA",
-            logo: "https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg",
-            tags: ["Hybrid", "Full-time"], salary: "$180k - $240k"
-        },
-        {
-            id: 8, role: "Data Scientist", company: "Meta", location: "Menlo Park, CA",
-            logo: "https://upload.wikimedia.org/wikipedia/commons/7/7b/Meta_Platforms_Inc._logo.svg",
-            tags: ["On-site", "Full-time"], salary: "$160k - $210k"
-        },
-        {
-            id: 9, role: "DevOps Engineer", company: "Amazon", location: "Seattle, WA",
-            logo: "https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg",
-            tags: ["Remote", "Full-time"], salary: "$140k - $190k"
-        },
-        {
-            id: 10, role: "Mobile Developer (iOS)", company: "Apple", location: "Cupertino, CA",
-            logo: "https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg",
-            tags: ["On-site", "Contract"], salary: "$150k - $200k"
-        },
-        {
-            id: 11, role: "Cybersecurity Analyst", company: "Microsoft", location: "Redmond, WA",
-            logo: "https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg",
-            tags: ["Hybrid", "Full-time"], salary: "$130k - $170k"
-        },
-        {
-            id: 12, role: "Cloud Architect", company: "IBM", location: "Armonk, NY",
-            logo: "https://upload.wikimedia.org/wikipedia/commons/5/51/IBM_logo.svg",
-            tags: ["Remote", "Full-time"], salary: "$160k - $220k"
-        }
-    ];
+    const [allJobs, setAllJobs] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    // Format salary từ số thành string hiển thị
+    const formatSalary = (min, max) => {
+        if (!min && !max) return 'Negotiable';
+        const formatNum = (num) => {
+            if (num >= 1000000) return `$${(num / 1000000).toFixed(1)}M`;
+            if (num >= 1000) return `$${(num / 1000).toFixed(0)}k`;
+            return `$${num}`;
+        };
+        if (min && max) return `${formatNum(min)} - ${formatNum(max)}`;
+        if (min) return `From ${formatNum(min)}`;
+        return `Up to ${formatNum(max)}`;
+    };
+
+    // Fetch jobs từ API
+    useEffect(() => {
+        const fetchJobs = async () => {
+            setIsLoading(true);
+            setError(null);
+            try {
+                const response = await axiosClient.get('/api/search/job/');
+                // Transform data từ API sang format hiển thị
+                const formattedJobs = response.data.map(job => ({
+                    id: job.id,
+                    role: job.title,
+                    company: job.company || 'Unknown Company',
+                    location: job.location || 'Remote',
+                    logo: `https://ui-avatars.com/api/?name=${encodeURIComponent(job.company || 'C')}&background=6366f1&color=fff&size=100`,
+                    tags: job.skill || [],
+                    salary: formatSalary(job.salary_min, job.salary_max),
+                    description: job.description
+                }));
+                setAllJobs(formattedJobs);
+            } catch (err) {
+                console.error('Error fetching jobs:', err);
+                setError('Không thể tải danh sách công việc. Vui lòng thử lại sau.');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchJobs();
+    }, []);
 
     const ITEMS_PER_PAGE = 6;
     const [currentPage, setCurrentPage] = useState(1);
@@ -96,7 +81,7 @@ const JobBrowsing = () => {
     }, [isDarkMode]);
 
     return (
-        <div className="app-container" style={{ flexDirection: 'column' }}>
+        <div className="hp-container">
             <CandidateNavbar />
             <div className="bg-mesh">
                 <div className="blob blob-1"></div>
@@ -140,7 +125,7 @@ const JobBrowsing = () => {
                         <div className="header-inner">
                             <div className="header-top">
                                 <div className="header-title">
-                                    <h1>Explore 1,240+ Opportunities</h1>
+                                    <h1>Explore {allJobs.length}+ Opportunities</h1>
                                 </div>
                                 <label className="search-bar">
                                     <Search size={20} className="search-icon" />
@@ -162,45 +147,64 @@ const JobBrowsing = () => {
 
                     <div className="content-scroll">
                         <div className="jobs-container">
-                            <div className="jobs-grid">
-                                {currentJobs.map((job) => (
-                                    <div key={job.id} className="job-card group">
-                                        <div className="card-hover-line"></div>
-                                        <div className="card-header">
-                                            <div className="company-logo-box">
-                                                {job.isAiLogo ? (
-                                                    <div className="ai-logo">AI</div>
-                                                ) : (
-                                                    <img src={job.logo} alt={`${job.company} Logo`} />
-                                                )}
+                            {isLoading && (
+                                <div className="loading-state" style={{ textAlign: 'center', padding: '60px 20px' }}>
+                                    <div className="loading-spinner" style={{ width: '48px', height: '48px', border: '4px solid #e5e7eb', borderTop: '4px solid #6366f1', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto 16px' }}></div>
+                                    <p style={{ color: 'var(--text-secondary)' }}>Đang tải danh sách công việc...</p>
+                                </div>
+                            )}
+                            {error && (
+                                <div className="error-state" style={{ textAlign: 'center', padding: '60px 20px', color: '#dc2626' }}>
+                                    <p>{error}</p>
+                                    <button onClick={() => window.location.reload()} style={{ marginTop: '16px', padding: '8px 16px', backgroundColor: '#6366f1', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>Thử lại</button>
+                                </div>
+                            )}
+                            {!isLoading && !error && allJobs.length === 0 && (
+                                <div className="empty-state" style={{ textAlign: 'center', padding: '60px 20px' }}>
+                                    <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem' }}>Chưa có công việc nào được đăng.</p>
+                                </div>
+                            )}
+                            {!isLoading && !error && allJobs.length > 0 && (
+                                <div className="jobs-grid">
+                                    {currentJobs.map((job) => (
+                                        <div key={job.id} className="job-card group">
+                                            <div className="card-hover-line"></div>
+                                            <div className="card-header">
+                                                <div className="company-logo-box">
+                                                    {job.isAiLogo ? (
+                                                        <div className="ai-logo">AI</div>
+                                                    ) : (
+                                                        <img src={job.logo} alt={`${job.company} Logo`} />
+                                                    )}
+                                                </div>
+                                                <button className="bookmark-btn">
+                                                    <Bookmark size={20} />
+                                                </button>
                                             </div>
-                                            <button className="bookmark-btn">
-                                                <Bookmark size={20} />
-                                            </button>
-                                        </div>
 
-                                        <div className="card-body">
-                                            <h3>{job.role}</h3>
-                                            <p className="company-location">{job.company} • {job.location}</p>
-                                            <div className="tags-list">
-                                                {job.tags.map((tag, index) => (
-                                                    <span key={index} className="tag">{tag}</span>
-                                                ))}
+                                            <div className="card-body">
+                                                <h3>{job.role}</h3>
+                                                <p className="company-location">{job.company} • {job.location}</p>
+                                                <div className="tags-list">
+                                                    {job.tags.map((tag, index) => (
+                                                        <span key={index} className="tag">{tag}</span>
+                                                    ))}
+                                                </div>
+                                            </div>
+
+                                            <div className="card-footer">
+                                                <p className="salary">{job.salary} <span>/ year</span></p>
+                                                <button
+                                                    className="details-btn"
+                                                    onClick={() => navigate(`/view-job/${job.id}`)}
+                                                >
+                                                    Details <ArrowRight size={18} />
+                                                </button>
                                             </div>
                                         </div>
-
-                                        <div className="card-footer">
-                                            <p className="salary">{job.salary} <span>/ year</span></p>
-                                            <button
-                                                className="details-btn"
-                                                onClick={() => navigate('/view-job', { state: { job } })}
-                                            >
-                                                Details <ArrowRight size={18} />
-                                            </button>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
+                                    ))}
+                                </div>
+                            )}
 
                             <div className="pagination-wrapper">
                                 <nav className="pagination">

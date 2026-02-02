@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
+import CandidateNavbar from '../components/CandidateNavbar';
+import "../components/HomepageCandidates.css";
 import "../components/PremiumPage.css";
 
 
@@ -17,32 +19,36 @@ const PremiumPage = () => {
   ];
 
   return (
-    <div className="premium-page-container">
-      <div className="billing-toggle">
-        <span>Month</span>
-        <label className="switch">
-          <input type="checkbox" onChange={() => setIsYearly(!isYearly)} />
-          <span className="slider round"></span>
-        </label>
-        <span>Year</span>
-      </div>
+    <div className="hp-container">
+      <CandidateNavbar />
 
-      <div className="plans-grid">
-        {plans.map((plan) => (
-          <div key={plan.name} className="plan-card">
-            <h3>{plan.name}</h3>
-            <div className="price-tag">
-              <span className="currency">$</span>
-              <span className="amount">{isYearly ? plan.price * 10 : plan.price}</span>
-              <span className="period">/mon</span>
+      <div className="premium-content">
+        <div className="billing-toggle">
+          <span>Month</span>
+          <label className="switch">
+            <input type="checkbox" onChange={() => setIsYearly(!isYearly)} />
+            <span className="slider round"></span>
+          </label>
+          <span>Year</span>
+        </div>
+
+        <div className="plans-grid">
+          {plans.map((plan) => (
+            <div key={plan.name} className="plan-card">
+              <h3>{plan.name}</h3>
+              <div className="price-tag">
+                <span className="currency">$</span>
+                <span className="amount">{isYearly ? plan.price * 10 : plan.price}</span>
+                <span className="period">/mon</span>
+              </div>
+              <button className="plan-button">{plan.button}</button>
             </div>
-            <button className="plan-button">{plan.button}</button>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
 
-      <div className="back-to-menu" onClick={() => navigate('/home')}>
-        <ArrowLeft size={18} /> Back to menu
+        <div className="back-to-menu" onClick={() => navigate('/homepage')}>
+          <ArrowLeft size={18} /> Back to menu
+        </div>
       </div>
     </div>
   );

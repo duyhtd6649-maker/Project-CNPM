@@ -194,14 +194,11 @@ button {
 
 
 .main-layout {
-    max-width: var(--max-width);
-    margin: 0 auto;
-    padding: 1.5rem 1rem;
+    width: 100%;
+    padding: 1.5rem 2rem;
     display: grid;
     grid-template-columns: 300px 1fr;
-    
     gap: 1.5rem;
-    width: 100%;
 }
 
 
@@ -212,7 +209,7 @@ button {
 
     .sidebar {
         display: none;
-        
+
     }
 
     .header-search {

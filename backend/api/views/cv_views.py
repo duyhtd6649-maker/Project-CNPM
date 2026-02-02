@@ -79,10 +79,14 @@ def Upload_Cv(request):
     if serializer.is_valid():
         try:
             new_cv = cv_services.upload_cv(user=request.user, validated_data= serializer.validated_data)
-            serializer = CVSerializer(new_cv)
-            return Response(serializer.data, status= status.HTTP_201_CREATED)
+            response_serializer = CVSerializer(new_cv)
+            return Response(response_serializer.data, status= status.HTTP_201_CREATED)
+        except ValueError as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({"error":f"{str(e)}"},status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

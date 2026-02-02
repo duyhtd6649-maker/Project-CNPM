@@ -1,29 +1,29 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  --primary: #3730a3;     
-  --primary-hover: #312e81; 
-  --bg-body: #f8faff;     
+  --primary: #3730a3;
+  --primary-hover: #312e81;
+  --bg-body: #f8faff;
   --card-white: #ffffff;
-  --text-main: #1f2937;   
-  --text-sub: #6b7280;    
-  
- 
+  --text-main: #1f2937;
+  --text-sub: #6b7280;
+
+
   --header-text: #ffffff;
-  --header-text-sub: #c7d2fe; 
-  --header-icon: #a5b4fc;     
-  
-
-  --logo-cyan: #06b6d4; 
+  --header-text-sub: #c7d2fe;
+  --header-icon: #a5b4fc;
 
 
-  --icon-circle-bg: #eef2ff;  
+  --logo-cyan: #06b6d4;
+
+
+  --icon-circle-bg: #eef2ff;
   --icon-engineering: #3730a3;
-  --icon-build: #eab308;      
-  --icon-code: #818cf8;       
-  --progress-track: #e5e7eb;  
-  --btn-outline-border: #d1d5db; 
-  --btn-outline-hover: #f9fafb;  
+  --icon-build: #eab308;
+  --icon-code: #818cf8;
+  --progress-track: #e5e7eb;
+  --btn-outline-border: #d1d5db;
+  --btn-outline-hover: #f9fafb;
   --card-border-light: #f3f4f6;
 }
 
@@ -41,7 +41,7 @@
 
 
 .ns-header {
-  background-color: var(--primary); 
+  background-color: var(--primary);
   color: var(--header-text);
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
   position: sticky;
@@ -50,17 +50,19 @@
 }
 
 .ns-header-container {
-  max-width: 80rem; 
+  max-width: 80rem;
   margin: 0 auto;
   padding: 0 1rem;
-  height: 4rem; 
+  height: 4rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
 @media (min-width: 640px) {
-  .ns-header-container { padding: 0 1.5rem; }
+  .ns-header-container {
+    padding: 0 1.5rem;
+  }
 }
 
 .ns-header-left {
@@ -74,27 +76,55 @@
 .ns-logo {
   display: flex;
   flex-direction: column;
-  line-height: 1; 
+  line-height: 1;
   cursor: pointer;
   user-select: none;
 }
 
 .ns-logo-main {
-  font-weight: 800; 
+  font-weight: 800;
   font-size: 1.25rem;
   letter-spacing: 0.02em;
-  color: var(--logo-cyan); 
+  color: var(--logo-cyan);
 }
 
 .ns-logo-sub {
-  font-size: 0.75rem; 
-  font-weight: 700;  
+  font-size: 0.75rem;
+  font-weight: 700;
   letter-spacing: 0.05em;
-  color: var(--logo-cyan); 
+  color: var(--logo-cyan);
   text-transform: uppercase;
   margin-top: 2px;
 }
 
+.ns-main-fullwidth {
+  flex-grow: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 3rem 2rem;
+  width: 100%;
+  background-color: var(--bg-body);
+}
+
+.ns-content-card {
+  width: 100%;
+  max-width: 50rem;
+  background-color: var(--card-white);
+  border-radius: 1rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+  border: none;
+  padding: 2.5rem 2rem;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .ns-content-card {
+    padding: 4rem 3rem;
+  }
+}
+
+/* Keep old styles for backwards compatibility */
 .ns-main {
   flex-grow: 1;
   display: flex;
@@ -109,13 +139,21 @@
   background-color: var(--card-white);
   border-radius: 1rem;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
-  border: none; 
+  border: none;
   padding: 2.5rem 2rem;
   text-align: center;
 }
 
 @media (min-width: 768px) {
-  .ns-card { padding: 4rem 3rem; }
+  .ns-card {
+    padding: 4rem 3rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .ns-card {
+    padding: 4rem 3rem;
+  }
 }
 
 
@@ -124,7 +162,7 @@
   position: relative;
   display: flex;
   justify-content: center;
-  height: 11rem; 
+  height: 11rem;
   align-items: center;
 }
 
@@ -146,7 +184,7 @@
   background-color: var(--icon-circle-bg);
   padding: 2rem;
   border-radius: 50%;
-  height: 8rem; 
+  height: 8rem;
   width: 8rem;
   display: flex;
   align-items: center;
@@ -192,14 +230,16 @@
 }
 
 @media (min-width: 768px) {
-  .ns-title { font-size: 2rem; }
+  .ns-title {
+    font-size: 2rem;
+  }
 }
 
 .ns-description {
   font-size: 1rem;
   color: var(--text-sub);
   margin-bottom: 2.5rem;
-  max-width: 34rem; 
+  max-width: 34rem;
   margin-left: auto;
   margin-right: auto;
   line-height: 1.6;
@@ -208,11 +248,11 @@
 
 .ns-progress-bar-bg {
   width: 100%;
-  max-width: 18rem; 
+  max-width: 18rem;
   margin: 0 auto 3rem auto;
   background-color: var(--progress-track);
   border-radius: 9999px;
-  height: 0.5rem; 
+  height: 0.5rem;
   overflow: hidden;
 }
 
@@ -233,15 +273,18 @@
 }
 
 @media (min-width: 640px) {
-  .ns-actions { flex-direction: row; gap: 1.5rem; }
+  .ns-actions {
+    flex-direction: row;
+    gap: 1.5rem;
+  }
 }
 
 .ns-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.875rem 2rem; 
-  font-size: 0.9375rem; 
+  padding: 0.875rem 2rem;
+  font-size: 0.9375rem;
   font-weight: 600;
   border-radius: 0.5rem;
   text-decoration: none;
@@ -251,12 +294,15 @@
 }
 
 @media (min-width: 640px) {
-  .ns-btn { width: auto; min-width: 160px; }
+  .ns-btn {
+    width: auto;
+    min-width: 160px;
+  }
 }
 
-.ns-btn span.material-icons-outlined { 
-    margin-right: 0.75rem;
-    font-size: 1.25rem;
+.ns-btn span.material-icons-outlined {
+  margin-right: 0.75rem;
+  font-size: 1.25rem;
 }
 
 .ns-btn-primary {
@@ -323,17 +369,17 @@
   margin: 0 auto;
   padding: 0 1.5rem;
   display: flex;
-  flex-direction: column-reverse; 
+  flex-direction: column-reverse;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.8125rem; 
+  font-size: 0.8125rem;
   color: var(--text-sub);
   gap: 1rem;
 }
 
 @media (min-width: 768px) {
   .ns-footer-container {
-    flex-direction: row; 
+    flex-direction: row;
     padding: 0 2rem;
     gap: 0;
   }
@@ -356,14 +402,26 @@
 
 
 @keyframes pulse-soft {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.8; transform: scale(1.05); }
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
 }
 
 @keyframes float {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0) rotate(var(--tw-rotate, 0));
   }
+
   50% {
     transform: translateY(-10px) rotate(var(--tw-rotate, 0));
   }

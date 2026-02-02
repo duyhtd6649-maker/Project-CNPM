@@ -24,7 +24,7 @@ const CandidateNavbar = () => {
     return (
         <header className="hp-header">
             <div className="header-left-section">
-                <div className="logo-vertical" onClick={() => navigate('/home')} style={{ cursor: 'pointer' }}>
+                <div className="logo-vertical" onClick={() => navigate('/homepage')} style={{ cursor: 'pointer' }}>
                     <div className="logo-line">UTH</div>
                     <div className="logo-line">WORKPLACE</div>
                 </div>
@@ -35,7 +35,7 @@ const CandidateNavbar = () => {
             </div>
 
             <nav className="header-nav">
-                <div className={`nav-item ${isActive('/home') ? 'active' : ''}`} onClick={() => navigate('/home')}>
+                <div className={`nav-item ${isActive('/homepage') ? 'active' : ''}`} onClick={() => navigate('/homepage')}>
                     <Home size={18} /> <span>Home</span>
                 </div>
                 <div className="nav-item" onClick={() => handleNavigation('feature-locked')}>
