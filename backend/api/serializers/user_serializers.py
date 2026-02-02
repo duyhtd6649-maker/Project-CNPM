@@ -10,7 +10,7 @@ class UserSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     username = serializers.CharField(read_only = True)
     email = serializers.CharField(read_only = True)
-    avatar = serializers.ImageField(required = False)
+    avatar = serializers.ImageField(required = False, source = 'avatar_url')
     class Meta:
         model = Users
         fields = ['username','email','phone','first_name','last_name','avatar']
@@ -38,14 +38,6 @@ class CandidateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Candidates
         fields = ['username','email','phone','first_name','last_name','avatar','description','address','date_of_birth']
-        
-    def validate_avatar(self, value):
-        if not value.name.lower().endswith(('.png', '.jpeg', '.jpg')):
-            raise serializers.ValidationError("Chỉ chấp nhận file định dạng png/jpeg.")
-        if value.size > 5 * 1024 * 1024:
-            raise serializers.ValidationError("File quá lớn. Vui lòng upload file dưới 5MB.")
-        return value
-
     def validate_avatar(self, value):
         if not value.name.lower().endswith(('.png', '.jpeg', '.jpg')):
             raise serializers.ValidationError("Chỉ chấp nhận file định dạng png/jpeg.")

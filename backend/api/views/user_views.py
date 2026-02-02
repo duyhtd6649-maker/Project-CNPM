@@ -151,15 +151,18 @@ def update_candidate_profile(request):
 @permission_classes([IsAuthenticated])
 @parser_classes([MultiPartParser, FormParser])
 def upload_avatar(request):
-    file_obj = request.FILES.get('avatar')
+    serializer = UserProfileSerializer(data = request.data)
+    serializer.is_valid(raise_exception=True)
+    file_obj = serializer.validated_data.get('avatar_url')
     if not file_obj:
         return Response({"error": "No avatar file selected"}, status=status.HTTP_400_BAD_REQUEST)
         
     try:
         updated_user = UserService.upload_avatar(request.user, file_obj)
+        serializer = UserProfileSerializer(updated_user)
         return Response({
             "message": "Avatar uploaded successfully", 
-            "avatar_url": updated_user.avatar_url
+            "avatar_url": serializer.data.get('avatar')
         }, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({"error": f"{str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
