@@ -66,7 +66,8 @@ class CompanySerializer(serializers.ModelSerializer):  # Serializer cho Company
     logo = serializers.ImageField(required = False)
     class Meta:
         model = Companies                        
-        fields = ["id", "name", "description", "website", "logo", "address", "tax_code", "note"]
+        fields = ["id", "name", "description", "website", "logo", "address", "tax_code"]
+        
     def validate_logo(self, value):
         if not value.name.lower().endswith(('.png', '.jpeg', '.jpg')):
             raise serializers.ValidationError("Chỉ chấp nhận file định dạng png/jpeg.")

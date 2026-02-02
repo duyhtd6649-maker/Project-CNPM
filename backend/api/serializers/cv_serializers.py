@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from database.models.CV import Cvs
+from database.models.CV import Cvs, Cvanalysisresult
 
 
 class CVSerializer(serializers.ModelSerializer):
@@ -7,7 +7,7 @@ class CVSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cvs
         fields = ['id', 'file', 'created_by', 'file_name', 'file_size']
-        read_only_fields = ['id', 'created_by', 'file_name', 'file_size']
+        read_only_fields = ['id', 'created_by', 'file_name', 'file_size','file']
 
     def validate_file(self, value):
         if not value.name.lower().endswith('.pdf'):
@@ -20,3 +20,13 @@ class CVScanSerializer(CVSerializer):
     targetjob = serializers.CharField(max_length=255)
     class Meta(CVSerializer.Meta):
         fields = CVSerializer.Meta.fields + ['targetjob']
+
+class CVListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cvs
+        fields = ['id','file_name']
+
+class AnalysisSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cvanalysisresult
+        fields = ['id','cv','target_job','overall_score','content_score','format_score']

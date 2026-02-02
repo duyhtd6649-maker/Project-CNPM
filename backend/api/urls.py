@@ -11,8 +11,6 @@ from api.views.ai_views import mock_interview
 
 urlpatterns = [
     # ===== USER =====
-    path('user/',user_views.GetUserInfor),
-    path('user/<str:username>/',user_views.GetUserbyUsername),
     path('user/candidate/<uuid:id>/', user_views.GetCandidateProfile),
     path('user/<uuid:id>/', user_views.GetUserInforById),
     path('candidate/profile', user_views.update_candidate_profile), #update profile cho candidate
@@ -20,17 +18,22 @@ urlpatterns = [
     path('cv/analyzer/',cv_views.Analyze_Cv), #upload và phân tích cv
     path('cv/upload/', cv_views.Upload_Cv), #phân tích cv
     path('cv/<uuid:id>/delete/',cv_views.Delete_Cv), #xóa cv
+    path('cv/<uuid:id>/',cv_views.cv_detail), #xem chi tiet cv
+    path('cv/list/',cv_views.cv_list), #Xem danh sách cv của mình
+    path('cv/analysisresult/<uuid:id>/',cv_views.cv_analysis_detail), #Xem chi tiết 1 bản phân tích của 1 cv
+    path('cv/<uuid:id>/analysisresult',cv_views.cv_analysis_list), #Xem danh sách các bản phân tích của cv
+    
     # ===== JOB =====
-    path('job/viewjobs/', job_views.view_job),
     path('job/create', job_views.create_job), #tạo job
     path('job/<uuid:id>/update', job_views.update_job), #update job
     path('job/<uuid:id>/apply/', application_views.apply_job), #apply job
-    path('job/search/', job_views.search_jobs), #tìm job có filter
+    path('search/job/', job_views.search_jobs), #tìm job có filter
     path('job/<uuid:id>/delete/', job_views.delete_job), #xóa job
     path('job/recommended/', job_views.recommended_jobs), #recommendation job
-    path('job/<uuid:id>/', job_views.close_job), #đóng job
+    path('job/<uuid:id>/close/', job_views.close_job), #đóng job
     # ===== COMPANY =====
-    path('company/viewcompanies/', user_views.view_companies),
+    path('company/<uuid:id>/', user_views.company_detail), #lấy detail của 1 company
+    path('search/company/',user_views.search_company), #search company có filter
     path('company/<uuid:id>/delete/', user_views.delete_companies), #xóa company 
     path('company/create/', user_views.company_create), #tạo company
     path('company/update/logo/', user_views.upload_company_logo), #update logo của company
@@ -48,9 +51,6 @@ urlpatterns = [
     path('user/profile/<uuid:id>', user_views.profile_view),
     path('user/profile/update/<uuid:id>', user_views.update_profile), #update profile cho admin, recruiter
     path('user/upload_avatar/', user_views.upload_avatar), #update avatar
-    path('views/viewjobs/', job_views.view_job),
-    path('views/viewcompanies/', user_views.view_companies),
-    path('user/<str:username>/',user_views.GetUserbyUsername),
     # ===== RECRUITER =====
     path('recruiter/delete_recruiter_from_company/<uuid:recruiter_id>/', user_views.delete_recruiter_from_company), #xóa 1 recruiter khỏi company
     path('recruiter/recruiters_of_company/',user_views.list_recruiters_company), #xem tất cả recruiter của company đó
