@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
-import { faEnvelope, faShieldAlt } from '@fortawesome/free-solid-svg-icons'; 
+import { faEnvelope, faShieldAlt } from '@fortawesome/free-solid-svg-icons';
 import axiosClient from "../../../infrastructure/http/axiosClient";
 import { useAuth } from '../../../app/AppProviders';
 import '../components/Login.css';
@@ -22,20 +22,26 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axiosClient.post('/api/auth/jwt/login/', {
-        username: loginData.username,
-        password: loginData.password
-      });
-      
-      login(response.data);
-      
-      if (response.data.role === 'admin') {
-        navigate('/admin');
-      } else {
-        navigate('/home'); 
-      }
+      const response = await axiosClient.post('auth/jwt/login/', loginData);
+      localStorage.setItem('access_token', response.data.access);
+      localStorage.setItem('role', response.data.role);
+      navigate('/homepage');
     } catch (error) {
-      alert("Đăng nhập thất bại! Vui lòng kiểm tra lại tài khoản hoặc mật khẩu.");
+      alert("Đăng nhập thất bại! Vui lòng kiểm tra lại.");
+      try {
+        const response = await axiosClient.post('/api/auth/jwt/login/', {
+          username: loginData.username,
+          password: loginData.password
+        });
+        login(response.data);
+        if (response.data.role === 'admin') {
+          navigate('/admin');
+        } else {
+          navigate('/home');
+        }
+      } catch (retryError) {
+        alert("Đăng nhập thất bại! Vui lòng kiểm tra lại tài khoản hoặc mật khẩu.");
+      }
     } finally {
       setLoading(false);
     }
@@ -45,77 +51,64 @@ const Login = () => {
     <div className="login-wrapper">
       <div className="login-left">
         <Link to="/admin-login" className="admin-login-link">
-           for ADMIN
+          for ADMIN
         </Link>
 
         <div className="brand-logo-container">
-          <span className="text-uth">UTH</span>
-          <span className="text-workplace">WORKPLACE</span>
+          <h2 className="brand-text">
+            <span className="uth-blue">UTH</span> <span className="workplace-green">WORKPLACE</span>
+          </h2>
         </div>
 
-        <div className="login-form-content">
-          <h1 className="login-title">LOGIN</h1>
-          <p className="login-subtitle">Let's get started !!!</p>
+        <div className="login-box">
+          <div className="login-form-content">
+            <h1 className="login-title">LOGIN</h1>
+            <p className="login-subtitle">Let's get started !!!</p>
 
-          <form onSubmit={handleLogin} className="form-actual">
-            <div className="custom-input-group">
-              <span className="input-icon">👤</span>
-              <input 
-                type="text" 
-                name="username" 
-                placeholder="Username" 
-                value={loginData.username}
-                onChange={handleChange} 
-                required 
-              />
-            </div>
-            
-            <div className="custom-input-group">
-              <span className="input-icon">🔒</span>
-              <input 
-                type="password" 
-                name="password" 
-                placeholder="Password" 
-                value={loginData.password}
-                onChange={handleChange} 
-                required 
-              />
-            </div>
-
-            <div className="forgot-link-container">
-              <Link to="/forgot-password">Forgot password</Link>
-            </div>
-
-            <div className="login-action-area">
-              <button type="submit" className="login-btn-purple" disabled={loading}>
-                {loading ? "..." : "Login"}
-              </button>
-              <div className="reg-hint">
-                Not a member ? <Link to="/register">Register now</Link>
+            <form onSubmit={handleLogin}>
+              <div className="custom-input-group">
+                <span className="input-icon">👤</span>
+                <input
+                  type="text"
+                  name="username"
+                  placeholder="Username"
+                  value={loginData.username}
+                  onChange={handleChange}
+                  required
+                />
               </div>
-            </div>
-          </form>
 
-          <div className="social-section-wrapper">
-            <div className="social-divider">
-              <span>Or continue with</span>
-            </div>
+              <div className="custom-input-group">
+                <span className="input-icon">🔒</span>
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="Password"
+                  value={loginData.password}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
 
-            <div className="social-icons-row">
-              <button type="button" className="s-circle s-red">
-                <FontAwesomeIcon icon={faGoogle} />
-              </button>
-              <button type="button" className="s-circle s-black">
-                <FontAwesomeIcon icon={faShieldAlt} />
-              </button>
-              <button type="button" className="s-circle s-gmail">
-                <FontAwesomeIcon icon={faEnvelope} />
-              </button>
-            </div>
+              <div className="forgot-link-container">
+                <Link to="/forgot-password">Forgot password</Link>
+              </div>
+
+              <div className="login-action-area">
+                <button type="submit" className="login-btn-purple" disabled={loading}>
+                  {loading ? "Signing In..." : "Login"}
+                </button>
+                <div className="reg-hint">
+                  Not a member ? <Link to="/register">Register now</Link>
+                </div>
+              </div>
+            </form>
           </div>
         </div>
       </div>
-      <div className="login-right-side"></div>
+
+      <div className="login-right-side">
+      </div>
     </div>
   );
 };

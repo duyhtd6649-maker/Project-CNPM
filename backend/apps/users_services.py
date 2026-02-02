@@ -38,7 +38,6 @@ class UserService:
             user.phone = validated_data.get('phone', user.phone)
             user.first_name = validated_data.get('first_name', user.first_name)
             user.last_name = validated_data.get('last_name', user.last_name)
-            user.address = validated_data.get('address', user.address)
 
             if 'avatar' in validated_data:
                 user.avatar = validated_data['avatar']
@@ -48,6 +47,23 @@ class UserService:
             
         except Users.DoesNotExist:
             raise NotFound({"error": "User not found"})
+        
+    @staticmethod
+    def update_candidate_profile(user, validated_data):
+        try:
+            candidate = Candidates.objects.get(user = user, isdeleted = False)
+            user_data = validated_data.pop('user', {})
+            instance = UserService.update_profile(user_id=user.id, validated_data=user_data)
+            candidate.description = validated_data.get('description')
+            candidate.address = validated_data.get('address')
+            candidate.date_of_birth = validated_data.get('date_of_birth')
+            candidate.save()
+            return candidate
+        except Candidates.DoesNotExist:
+            raise NotFound({"error":"candidate not found"})
+        except NotFound as e:
+            raise NotFound({f"{e}"})
+            
         
     def upload_avatar(user, file_data):
         try:
@@ -66,10 +82,20 @@ class UserService:
     @staticmethod
     def Get_user_profile_by_id(user_id):
         try:
-            return Users.objects.get(user_id = user_id)
+            instance = Users.objects.get(id = user_id)
+            role = instance.role
+            if role == 'candidate':
+                return role, Candidates.objects.get(user_id = user_id)
+            elif role == 'recruiter':
+                return role, Recruiters.objects.get(user_id = user_id)
+            else:
+                return role,instance
         except Users.DoesNotExist:
             raise NotFound({"error":"User not found"})
-
+        except Candidates.DoesNotExist:
+            raise NotFound({"error":"Candidate not found"})
+        except Recruiters.DoesNotExist:
+            raise NotFound({"error":"Recruiter not found"})
     @staticmethod
     def Get_user_profile_by_username(username):
         try:
@@ -121,6 +147,28 @@ class UserService:
         except Exception as e:
             raise NotFound({"error":"CV not found"})
     
+    def get_candidate_profile_by_id(candidate_id, user):
+        try:
+            candidate = Candidates.objects.get(id = candidate_id, user = user)
+            return candidate
+        except Candidates.DoesNotExist:
+            raise NotFound({"error":"Candidate not found"})
+    
+    def get_user_profile(user):
+        try:
+            if user.role == 'candidate':
+                return Candidates.objects.get(user = user)
+            elif user.role == 'recruiter':
+                return Recruiters.objects.get(user = user)
+            else:
+                return Users.objects.get(id = user.id)
+            
+        except Users.DoesNotExist:
+            raise NotFound({"error":"User not found"})
+        except Candidates.DoesNotExist:
+            raise NotFound({"error":"Candidate not found"})
+        except Recruiters.DoesNotExist:
+            raise NotFound({"error":"Recruiter not found"})
 
 class AdminService:
     @staticmethod    

@@ -1,155 +1,201 @@
-/* Container chính bao phủ toàn màn hình */
 .login-wrapper {
   display: flex;
   height: 100vh;
   width: 100vw;
   background: white;
   overflow: hidden;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .login-left {
-  flex: 1.2;
-  position: relative;
-  padding: 60px 80px;
+  flex: 1;
   display: flex;
   flex-direction: column;
+  padding: 40px 60px;
+  position: relative;
+  justify-content: flex-start;
 }
 
-/* Nút ADMIN kiểu cũ: Viền tím, chữ tím, góc phải */
+
 .admin-login-link {
   position: absolute;
   top: 30px;
   right: 40px;
-  padding: 8px 18px;
-  border: 1.2px solid #7678ff;
+  padding: 8px 16px;
+  border: 1.5px solid #6c63ff;
   border-radius: 20px;
-  color: #7678ff;
+  color: #6c63ff;
   text-decoration: none;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   transition: all 0.3s ease;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
 .admin-login-link:hover {
-  background: #7678ff;
+  background: #6c63ff;
   color: white;
+  box-shadow: 0 4px 10px rgba(108, 99, 255, 0.3);
+  transform: translateY(-1px);
 }
 
-/* Logo UTH WORKPLACE */
+
 .brand-logo-container {
-  margin-bottom: 60px; /* Giãn cách logo với tiêu đề Login */
-  display: flex;
-  flex-direction: column;
+  margin-bottom: 20px;
 }
 
-.text-uth { color: #0044cc; font-weight: 900; font-size: 26px; line-height: 1.1; }
-.text-workplace { color: #008800; font-weight: 900; font-size: 26px; line-height: 1.1; }
+.brand-text {
+  font-size: 28px;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
 
-/* Vùng nội dung chính */
-.login-form-content {
-  max-width: 380px;
-  margin: 0 auto;
+.uth-blue {
+  color: #3f6ad8;
+
+}
+
+.workplace-green {
+  color: #1a9e53;
+  margin-left: 5px;
+}
+
+.login-box {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
   width: 100%;
+}
+
+.login-form-content {
+  width: 100%;
+  max-width: 400px;
   text-align: center;
 }
 
-.login-title { font-size: 36px; font-weight: 800; margin-bottom: 8px; }
-.login-subtitle { color: #666; margin-bottom: 40px; font-weight: 500; }
+.login-title {
+  font-size: 48px;
+  font-family: 'Times New Roman', Times, serif;
+  font-weight: 900;
+  margin-bottom: 5px;
+  color: #000;
+  letter-spacing: 1px;
+}
 
-/* Ô nhập liệu bo tròn */
+.login-subtitle {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 40px;
+  font-weight: 500;
+}
+
 .custom-input-group {
-  background: #f0f2f8;
-  border-radius: 15px;
-  padding: 14px 20px;
+  background: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 12px 15px;
   margin-bottom: 20px;
   display: flex;
   align-items: center;
+  transition: all 0.2s;
+}
+
+.custom-input-group:focus-within {
+  background: #fff;
+  border-color: #8c8eff;
+  box-shadow: 0 2px 10px rgba(118, 120, 255, 0.1);
+}
+
+.input-icon {
+  font-size: 18px;
+  color: #888;
+  margin-right: 12px;
+  min-width: 20px;
 }
 
 .custom-input-group input {
   border: none;
   background: transparent;
-  outline: none;
-  margin-left: 10px;
   width: 100%;
   font-size: 15px;
+  color: #333;
+  outline: none;
 }
 
+.custom-input-group input::placeholder {
+  color: #aaa;
+}
+
+/* FORGOT PASSWORD */
 .forgot-link-container {
   text-align: left;
-  margin-bottom: 35px; /* Giãn cách link quên mật khẩu với nút bấm */
+  margin-bottom: 30px;
 }
 
-.forgot-link-container a { color: #7678ff; text-decoration: none; font-size: 13px; }
+.forgot-link-container a {
+  color: #7b7dff;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+}
 
-/* GIẢI QUYẾT LỖI DÍNH (HÌNH 2) */
+.forgot-link-container a:hover {
+  text-decoration: underline;
+}
+
+/* BUTTON AREA */
 .login-action-area {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 25px; /* Tạo khoảng trống 25px giữa nút và text đăng ký */
-  margin-bottom: 50px; /* Tách biệt form với phần MXH bên dưới */
+  gap: 15px;
 }
 
 .login-btn-purple {
-  background: #7678ff;
+  background: #6c63ff;
   color: white;
   border: none;
-  padding: 14px 60px;
-  border-radius: 30px;
-  font-weight: 700;
+  padding: 12px 0;
+  width: 150px;
+  border-radius: 25px;
   font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(118, 120, 255, 0.3);
+  transition: all 0.3s;
+  box-shadow: 0 4px 15px rgba(108, 99, 255, 0.3);
 }
 
-.reg-hint { font-size: 14px; color: #555; }
-.reg-hint a { color: #7678ff; font-weight: 700; text-decoration: none; }
-
-/* Phần MXH */
-.social-section-wrapper { margin-top: 10px; }
-
-.social-divider {
-  margin-bottom: 30px;
-  border-top: 1px solid #eee;
-  position: relative;
+.login-btn-purple:hover {
+  background: #5a52e0;
+  transform: translateY(-2px);
 }
 
-.social-divider span {
-  position: absolute;
-  top: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: white;
-  padding: 0 15px;
-  color: #999;
-  font-size: 12px;
+.login-btn-purple:disabled {
+  background: #ccc;
+  cursor: not-allowed;
 }
 
-.social-icons-row {
-  display: flex;
-  justify-content: center;
-  gap: 25px; /* Giãn cách giữa các hình tròn MXH */
+/* REGISTER HINT */
+.reg-hint {
+  font-size: 13px;
+  color: #aaa;
 }
 
-.s-circle {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  cursor: pointer;
+.reg-hint a {
+  color: #7b7dff;
+  font-weight: 700;
+  text-decoration: none;
+  margin-left: 5px;
 }
 
-.s-red { background: #ea4335; }
-.s-black { background: #000; }
-.s-gmail { background: #4285f4; }
-
-/* Cột phải Gradient xanh tím */
+/* RIGHT SIDE COLOR */
 .login-right-side {
   flex: 1;
-  background: linear-gradient(135deg, #18196b 0%, #3e3ca0 100%);
+  background: linear-gradient(135deg, #3d34a8 0%, #6c63ff 100%);
 }

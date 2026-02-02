@@ -8,8 +8,9 @@ export const AppProviders = ({ children }) => {
 
   useEffect(() => {
     const accessToken = localStorage.getItem('access_token');
+    const role = localStorage.getItem('role');
     if (accessToken) {
-      setUser({ loggedIn: true });
+      setUser({ loggedIn: true, role });
     }
     setLoading(false);
   }, []);
@@ -17,6 +18,7 @@ export const AppProviders = ({ children }) => {
   const login = (data) => {
     localStorage.setItem('access_token', data.access);
     localStorage.setItem('refresh_token', data.refresh);
+    localStorage.setItem('role', data.role);
     setUser({ loggedIn: true, ...data });
   };
 
@@ -27,7 +29,7 @@ export const AppProviders = ({ children }) => {
 
   return (
     <AuthContext.Provider value={{ user, login, logout, loading }}>
-      {!loading && children}
+      {!loading ? children : <div>Loading...</div>}
     </AuthContext.Provider>
   );
 };
