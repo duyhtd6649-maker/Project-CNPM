@@ -1,5 +1,6 @@
+
 from database.models.users import Users, Candidates, Companies, Recruiters
-from database.models.jobs import Jobs
+from database.models.jobs import Jobs, Applications
 from database.models.services import Interviews
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
@@ -350,22 +351,63 @@ class CompanyService:
 
 class interviewService:
     @staticmethod
-    def create_interview(recruiter, data):
-        job_id = data.get('job_id')
-
-        if not Jobs.objects.filter(id=job_id, recruiter__user=recruiter).exists():
-            raise PermissionDenied("You don't have permission to create interview for this job")
+    def get_approved_candidates(recruiter_user):
+        if not recruiter_user.role == 'recruiter':
+            raise PermissionDenied("User is not a recruiter")
         
+        apps = Applications.objects.filter(
+            job__recruiter__user=recruiter_user,
+            system_status='approved'
+        ).select_related('candidate__user', 'job')
+        return apps
+
+    def create_interview(recruiter_user, application_id, interview_date, location, note=''):
+        if getattr(recruiter_user, 'role', '') != 'recruiter':
+            raise PermissionDenied("User is not a recruiter")
+        try:
+            application = Applications.objects.get(
+                id=application_id, 
+                job__company=recruiter_user.company 
+            )
+        except Applications.DoesNotExist:
+            raise NotFound("Application not found or you don't have permission")
         interview = Interviews.objects.create(
-            job_id=job_id,
-            candidate_id=data.get('candidate_id'),
-            scheduled_time=data.get('scheduled_time'),
-            location=data.get('location'),
-            mode=data.get('mode'),
-            notes=data.get('notes', ''),
-            status=data.get('status', 'pending')
+            recruiter=recruiter_user,
+            candidate=application.candidate,
+            job=application.job,
+            scheduled_time=interview_date, 
+            location=location,             
+            note=note,              
+            status='scheduled'
         )
+
+        application.system_status = 'interviewing'
+        application.save()
+
         return interview
+    
+    @staticmethod
+    def update_interview(recruiter_user, interview_id, interview_date=None, location=None, note=None):
+        try:
+            interview = Interviews.objects.get(
+                id=interview_id,
+                recruiter=recruiter_user 
+            )
+        except Interviews.DoesNotExist:
+            raise NotFound("Interview not found or you don't have permission")
+
+        if interview_date:
+            interview.scheduled_time = interview_date
+        if location:
+            interview.location = location
+
+        if note is not None:
+            interview.notes = note 
+
+        interview.save()
+        return interview
+    
+    
     
           
 

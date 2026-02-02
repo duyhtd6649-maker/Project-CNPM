@@ -55,3 +55,47 @@ class CompanySerializer(serializers.ModelSerializer):  # Serializer cho Company
         if value.size > 5 * 1024 * 1024:
             raise serializers.ValidationError("File quá lớn. Vui lòng upload file dưới 5MB.")
         return value
+
+class applicationListSerializer(serializers.Serializer):
+    id = serializers.UUIDField(read_only=True)
+    status = serializers.CharField(source="job_status", read_only=True)
+    candidate_name = serializers.CharField(source="candidate.user.username", read_only=True)
+    job_title = serializers.CharField(source="job.title", read_only=True)
+    
+    class Meta:
+        fields = ['id', 'candidate_name', 'job_title', 'status', 'applied_at']
+
+class InterviewSerializer(serializers.Serializer):
+    application_id = serializers.UUIDField(required=True)
+    interview_date = serializers.DateTimeField(required=True)
+    location = serializers.CharField(required=True, max_length=255)
+    notes = serializers.CharField(required=False, allow_blank=True, max_length=1000)
+    interviewer = serializers.CharField(required=True, max_length=255)
+
+    def validate_interview_date(self, value):
+        from django.utils import timezone
+        if value <= timezone.now():
+            raise serializers.ValidationError("The interview date must be a future date.")
+        return value
+    def validate_location(self, value):
+        if not value.strip():
+            raise serializers.ValidationError("The location field cannot be left blank.")
+        return value
+    def validate_interviewer(self, value):
+        if not value.strip():
+            raise serializers.ValidationError("The interviewer field cannot be left blank.")
+        return value
+    def validate_notes(self, value):
+        return value.strip()
+
+class InterviewUpdateSerializer(serializers.Serializer):
+    interview_date = serializers.DateTimeField(required=False)
+    location = serializers.CharField(required=False, max_length=255)
+    notes = serializers.CharField(required=False, allow_blank=True)
+
+    def validate_interview_date(self, value):
+        from django.utils import timezone
+        if value <= timezone.now():
+            raise serializers.ValidationError("The new interview date must be a future date.")
+        return value
+    

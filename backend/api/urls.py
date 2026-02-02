@@ -51,6 +51,9 @@ urlpatterns = [
     path('recruiter/delete_recruiter_from_company/<uuid:recruiter_id>/', user_views.delete_recruiter_from_company),
     path('recruiter/recruiters_of_company/',user_views.list_recruiters_company),
     path('recruiter/add_recruiter_to_company/<uuid:recruiter_id>/',user_views.add_recruiter_to_company),
+    path('recruiter/approved_candidates/', user_views.list_approved_candidates),
+    path('recruiter/create_interview/', user_views.create_interview),
+    path('recruiter/interviews/update/<uuid:interview_id>/', user_views.update_interview),
     # ===== ADMIN =====
     path('banuser/',user_views.BanUser),
     path('unbanuser/',user_views.UnBanUser),

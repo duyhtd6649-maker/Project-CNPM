@@ -2,20 +2,30 @@ from rest_framework.decorators import api_view, permission_classes,parser_classe
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
-from apps.users_services import UserService, RecruiterService, AdminService, CompanyService
+from apps.users_services import UserService, RecruiterService, AdminService, CompanyService, interviewService
 from database.models.users import Companies, Recruiters, Users
-from ..serializers.user_serializers import UserSerializer, UserProfileSerializer, CandidateSerializer, UserNameSerializer,RecruiterSerializer, CompanySerializer
+from ..serializers.user_serializers import InterviewSerializer, InterviewUpdateSerializer, UserSerializer, UserProfileSerializer, CandidateSerializer, UserNameSerializer,RecruiterSerializer, CompanySerializer, applicationListSerializer
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.exceptions import *
 from drf_yasg import openapi
 
+@swagger_auto_schema(
+    method='get',
+    operation_description="Get all users' information",
+    responses={200: UserSerializer(many=True)}
+)
 @api_view(['GET'])
 def GetUserInfor(request):
     user = UserService.Get_All_User()
     serializer = UserSerializer(user, many = True)
     return Response(serializer.data)
 
+@swagger_auto_schema(
+    method='get',
+    operation_description="Get user information by username",
+    responses={200: UserSerializer}
+)
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def GetUserbyUsername(request,username):
@@ -350,11 +360,91 @@ def GetRecruitersInfor(request):
     return Response(serializer.data)
 
 
+############interview recruiter##############
+@swagger_auto_schema(
+    method='get',
+    operation_description="List approved candidates for recruiter's jobs",
+    responses={200: applicationListSerializer(many=True)}
+)
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def list_approved_candidates(request):
+    try:
+        approved_applications = interviewService.get_approved_candidates(recruiter_user=request.user)
+        serializer = applicationListSerializer(approved_applications, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except PermissionDenied:
+        return Response({"error": "User is not a recruiter"}, status=status.HTTP_403_FORBIDDEN)
+    except Exception as e:
+        return Response({"error": f"{str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@swagger_auto_schema(
+    method='post',
+    operation_description="Create an interview for an approved candidate",
+    request_body=InterviewSerializer,
+    responses={201: 'Interview created successfully', 403: 'Forbidden', 404: 'Not Found', 400: 'Bad Request'}
+)
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_interview(request):
-    try:
-        interview = UserService.create_interview(request.user, request.data)
-        return Response({"detail":"Interview created successfully"}, status=status.HTTP_201_CREATED)
-    except Exception as e:
-        return Response({"error": f"{str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
+    serializer = InterviewSerializer(data=request.data)
+    if serializer.is_valid():
+        application_id = serializer.validated_data['application_id']
+        interview_date = serializer.validated_data['interview_date']
+        location = serializer.validated_data['location']
+        note = serializer.validated_data.get('notes', '')
+        try:
+            interviewService.create_interview(
+                recruiter_user=request.user,
+                application_id=application_id,
+                interview_date=interview_date,
+                location=location, 
+                note=note,
+            )
+            return Response({"message": "Interview created successfully"}, status=status.HTTP_201_CREATED)
+        except PermissionDenied:
+            return Response({"error": "User is not a recruiter"}, status=status.HTTP_403_FORBIDDEN)
+        except NotFound as e:
+            return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"error": f"{str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
+
+@swagger_auto_schema(
+    method='put',
+    operation_description="Edit an existing interview",
+    request_body=InterviewUpdateSerializer, 
+    responses={200: 'Interview updated successfully'}
+)
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def update_interview(request, interview_id):
+    serializer = InterviewUpdateSerializer(data=request.data)
+    
+    if serializer.is_valid():
+        interview_date = serializer.validated_data.get('interview_date')
+        location = serializer.validated_data.get('location')
+        note = serializer.validated_data.get('notes')
+
+        try:
+            interviewService.update_interview(
+                recruiter_user=request.user,
+                interview_id=interview_id,
+                interview_date=interview_date,
+                location=location,
+                note=note,
+            )
+            return Response({"message": "Interview updated successfully"}, status=status.HTTP_200_OK)
+            
+        except PermissionDenied:
+            return Response({"error": "User is not a recruiter"}, status=status.HTTP_403_FORBIDDEN)
+        except NotFound as e:
+            return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+
+
