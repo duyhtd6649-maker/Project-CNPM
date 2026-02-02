@@ -22,7 +22,7 @@ class Jobs(AuditableModel):
     title = models.CharField(db_column='Title', max_length=255)  # Field name made lowercase.
     description = models.TextField(db_column='Description', blank=True, null=True)  # Field name made lowercase.
     location = models.CharField(db_column='location',max_length=255,blank= True,null= False)
-    skill = models.JSONField(db_column='Skills', null= True)
+    skill = models.JSONField(db_column='Skills', null= True, default=list)
     salary_min = models.BigIntegerField(db_column= 'SalaryMin',null=True, blank=True) 
     salary_max = models.BigIntegerField(db_column= 'SalaryMax',null=True, blank=True)
     status = models.CharField(db_column='Status', max_length=50, blank=True, null=True)  
