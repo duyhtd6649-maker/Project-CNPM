@@ -62,6 +62,7 @@ class Interviews(AuditableModel):
     job = models.ForeignKey('Jobs', on_delete=models.CASCADE, db_column='JobId', blank=True, related_name='interviews')  # Field name made lowercase.
     scheduled_time = models.DateTimeField(db_column='ScheduledTime', blank=True, null=True)  # Field name made lowercase.
     location = models.CharField(db_column='Location', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    application = models.ForeignKey('Applications', on_delete=models.CASCADE, db_column='ApplicationId', blank=True, null=True, related_name='interviews')
     notes = models.TextField(db_column='Notes', blank=True, null=True)  #
     at = models.CharField(db_column='At', max_length=255, blank=True, null=True)  # Field name made lowercase.
     status = models.CharField(db_column='Status', max_length=50, blank=True, null=True)  # Field name made lowercase.

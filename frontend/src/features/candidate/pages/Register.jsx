@@ -1,22 +1,24 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import axiosClient from "../../../infrastructure/http/axiosClient"; 
-import { useAuth } from '../../../app/AppProviders';
-import '../components/Register.css';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axiosClient from "../../../infrastructure/http/axiosClient";
+import { useAuth } from "../../../app/AppProviders";
+import "../components/Register.css";
 
 const Register = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
 
   const [formData, setFormData] = useState({
-    name: '', 
-    phone: '', 
-    password: '', 
-    repeatPassword: '',
-    gender: 'Male',
-    country: '',
-    jobs: '',
-    role: 'Candidate'
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    password: "",
+    repeatPassword: "",
+    gender: "Male",
+    country: "",
+    jobs: "",
+    role: "Candidate",
   });
 
   const [loading, setLoading] = useState(false);
@@ -34,25 +36,25 @@ const Register = () => {
     }
 
     const payload = {
-      username: formData.email, 
-      email: formData.email,
-      password1: formData.password,    
-      password2: formData.repeatPassword, 
-      first_name: formData.name,
-      role: formData.role.toLowerCase(), // 'candidate' hoặc 'recruiter'
+      username: formData.email, // Backend dùng email làm username
+      email: formData.email, // Phải có email nếu không sẽ báo lỗi blank
+      password1: formData.password,
+      password2: formData.repeatPassword,
+      first_name: formData.firstName,
+      last_name: formData.lastName,
+      role: formData.role.toLowerCase(),
       phone_number: formData.phone,
       gender: formData.gender,
       country: formData.country,
       jobs: formData.jobs,
-      role: formData.role.toLowerCase(),
       dob: formData.dob,
     };
 
     try {
       setLoading(true);
-      const res = await axiosClient.post('/api/auth/registration/', payload);
+      const res = await axiosClient.post("/api/auth/registration/", payload);
       alert("Đăng ký thành công!");
-      navigate('/login');
+      navigate("/login");
     } catch (err) {
       alert("Lỗi đăng ký: " + JSON.stringify(err.response?.data));
     } finally {
@@ -66,7 +68,7 @@ const Register = () => {
         <h1>REGISTER</h1>
         <form onSubmit={handleRegister}>
           <div className="form-grid">
-
+            {/* THÊM TRƯỜNG EMAIL - CỰC KỲ QUAN TRỌNG */}
             <div className="form-group">
               <label>Username</label>
               <input name="username" onChange={handleChange} required />
@@ -74,7 +76,12 @@ const Register = () => {
 
             <div className="form-group">
               <label>Email</label>
-              <input type="email" name="email" onChange={handleChange} required />
+              <input
+                type="email"
+                name="email"
+                onChange={handleChange}
+                required
+              />
             </div>
 
             <div className="form-group">
@@ -99,20 +106,33 @@ const Register = () => {
 
             <div className="form-group">
               <label>Password</label>
-              <input type="password" name="password" onChange={handleChange} required />
+              <input
+                type="password"
+                name="password"
+                onChange={handleChange}
+                required
+              />
             </div>
 
             <div className="form-group">
               <label>Repeat Password</label>
-              <input type="password" name="repeatPassword" onChange={handleChange} required />
+              <input
+                type="password"
+                name="repeatPassword"
+                onChange={handleChange}
+                required
+              />
             </div>
 
             <div className="form-group">
               <label>Gender</label>
-              <select name="gender" className="form-select" onChange={handleChange}>
+              <select
+                name="gender"
+                className="form-select"
+                onChange={handleChange}
+              >
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
-                <option value="Other">Other</option>
               </select>
             </div>
 
@@ -128,12 +148,15 @@ const Register = () => {
 
             <div className="form-group">
               <label>Role</label>
-              <select name="role" className="form-select" onChange={handleChange}>
+              <select
+                name="role"
+                className="form-select"
+                onChange={handleChange}
+              >
                 <option value="Candidate">Candidate</option>
                 <option value="Recruiter">Recruiter</option>
               </select>
             </div>
-
           </div>
 
           <button type="submit" className="btn-register" disabled={loading}>
@@ -145,7 +168,6 @@ const Register = () => {
               Already have an account? Login
             </Link>
           </div>
-
         </form>
       </div>
     </div>

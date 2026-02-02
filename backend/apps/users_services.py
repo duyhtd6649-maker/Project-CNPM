@@ -169,6 +169,22 @@ class UserService:
             raise NotFound({"error":"Candidate not found"})
         except Recruiters.DoesNotExist:
             raise NotFound({"error":"Recruiter not found"})
+    
+    def view_my_profile(user):
+        try:
+            if user.role == 'candidate':
+                return Candidates.objects.get(user=user) 
+            elif user.role == 'recruiter':
+                return Recruiters.objects.get(user=user)
+            else:
+                return user
+                
+        except Users.DoesNotExist:
+            raise NotFound({"error":"User not found"})
+        except Candidates.DoesNotExist:
+            raise NotFound({"error":"Candidate not found"})
+        except Recruiters.DoesNotExist:
+            raise NotFound({"error":"Recruiter not found"})
 
 class AdminService:
     @staticmethod    
@@ -470,8 +486,3 @@ class interviewService:
 
         interview.save()
         return interview
-    
-    
-    
-          
-

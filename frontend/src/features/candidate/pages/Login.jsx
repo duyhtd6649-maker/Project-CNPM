@@ -9,8 +9,8 @@ import '../components/Login.css';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { setUser } = useAuth(); // Lấy setUser từ Context
-  const [loginData, setLoginData] = useState({ username: '', password: '' });
+  const { setUser } = useAuth();
+  const [loginData, setLoginData] = useState({ username: "", password: "" });
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -24,15 +24,15 @@ const Login = () => {
     try {
       const response = await axiosClient.post('/api/auth/jwt/login/', {
         username: loginData.username,
-        password: loginData.password
+        password: loginData.password,
       });
-      
+
       login(response.data);
-      
-      if (response.data.role === 'admin') {
-        navigate('/admin');
+
+      if (response.data.role === "admin") {
+        navigate("/admin");
       } else {
-        navigate('/home'); 
+        navigate("/home");
       }
     } catch (error) {
       alert("Đăng nhập thất bại! Vui lòng kiểm tra lại tài khoản hoặc mật khẩu.");
@@ -44,8 +44,15 @@ const Login = () => {
   return (
     <div className="login-wrapper">
       <div className="login-left">
+        {/* LOGO SECTION - THEO ẢNH MẪU */}
+        <div className="logo-section">
+          <div className="uth-text">UTH</div>
+          <div className="workplace-text">WORKPLACE</div>
+        </div>
+
+        {/* ADMIN LINK */}
         <Link to="/admin-login" className="admin-login-link">
-           for ADMIN
+          for ADMIN
         </Link>
 
         <div className="brand-logo-container">
@@ -60,25 +67,25 @@ const Login = () => {
           <form onSubmit={handleLogin} className="form-actual">
             <div className="custom-input-group">
               <span className="input-icon">👤</span>
-              <input 
-                type="text" 
-                name="username" 
-                placeholder="Username" 
+              <input
+                type="text"
+                name="username"
+                placeholder="Username"
                 value={loginData.username}
-                onChange={handleChange} 
-                required 
+                onChange={handleChange}
+                required
               />
             </div>
-            
+
             <div className="custom-input-group">
               <span className="input-icon">🔒</span>
-              <input 
-                type="password" 
-                name="password" 
-                placeholder="Password" 
+              <input
+                type="password"
+                name="password"
+                placeholder="Password"
                 value={loginData.password}
-                onChange={handleChange} 
-                required 
+                onChange={handleChange}
+                required
               />
             </div>
 
@@ -87,7 +94,11 @@ const Login = () => {
             </div>
 
             <div className="login-action-area">
-              <button type="submit" className="login-btn-purple" disabled={loading}>
+              <button
+                type="submit"
+                className="login-btn-purple"
+                disabled={loading}
+              >
                 {loading ? "..." : "Login"}
               </button>
               <div className="reg-hint">

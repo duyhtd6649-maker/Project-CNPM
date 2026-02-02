@@ -20,7 +20,8 @@ body {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #fff;
 }
 
 /* LEFT SIDE */
@@ -36,12 +37,9 @@ body {
 /* ADMIN LINK */
 .admin-login-link {
   position: absolute;
-  top: 30px;
-  right: 40px;
-  padding: 8px 16px;
-  border: 1.5px solid #6c63ff;
-  border-radius: 20px;
-  color: #6c63ff;
+  top: 40px;
+  right: 60px;
+  color: #333;
   text-decoration: none;
   font-size: 13px;
   font-weight: 700;
@@ -84,12 +82,14 @@ body {
 /* TITLES */
 .login-title {
   font-size: 48px;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: "Times New Roman", Times, serif;
   font-weight: 900;
   margin-bottom: 5px;
 }
 
-.login-subtitle {
+.sub-text {
+  color: #666;
+  margin-top: 8px;
   font-size: 16px;
   color: #333;
   margin-bottom: 35px;
@@ -142,7 +142,6 @@ body {
 .login-action-area {
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 15px;
 }
 
@@ -154,14 +153,54 @@ body {
   background: #6c63ff;
   color: #fff;
   font-size: 16px;
-  font-weight: 600;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 15px 15px 15px 50px; /* Chừa khoảng trống cho icon */
+  border: 1px solid #e5e5e5;
+  border-radius: 15px; /* Bo tròn mạnh giống ảnh mẫu */
+  outline: none;
+  font-size: 14px;
+  background-color: #f9f9f9;
+  transition: 0.3s;
+}
+
+.input-group input:focus {
+  border-color: #7b7dff;
+  background-color: #fff;
+}
+
+.forgot-link-container {
+  text-align: left;
+  margin: 5px 0 15px 5px;
+}
+
+.forgot-link-container a {
+  font-size: 13px;
+  color: #7b7dff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+/* NÚT LOGIN (DẠNG VIÊN THUỐC) */
+.login-btn-purple {
+  width: 160px; /* Thu nhỏ chiều ngang giống ảnh */
+  margin: 0 auto;
+  padding: 12px;
+  background: #7b7dff;
+  color: #fff;
+  border: none;
+  border-radius: 25px; /* Bo tròn hoàn toàn */
+  font-size: 16px;
+  font-weight: 700;
   cursor: pointer;
   transition: 0.3s;
 }
 
 .login-btn-purple:hover {
-  background: #5a52e0;
-  transform: translateY(-2px);
+  background: #6264f0;
+  transform: translateY(-1px);
 }
 
 .login-btn-purple:disabled {
@@ -170,8 +209,9 @@ body {
 }
 
 .reg-hint {
-  font-size: 13px;
-  color: #aaa;
+  margin-top: 15px;
+  font-size: 14px;
+  color: #888;
 }
 
 .reg-hint a {
@@ -221,9 +261,18 @@ body {
   transition: 0.3s;
 }
 
-.s-red { background: #db4437; color: #fff; }
-.s-black { background: #333; color: #fff; }
-.s-gmail { background: #1a73e8; color: #fff; }
+.s-red {
+  background: #db4437;
+  color: #fff;
+}
+.s-black {
+  background: #333;
+  color: #fff;
+}
+.s-gmail {
+  background: #1a73e8;
+  color: #fff;
+}
 
 .s-circle:hover {
   transform: translateY(-2px);

@@ -1,31 +1,36 @@
+/* Reset body để không bị khoảng trắng */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
 .register-container {
   min-height: 100vh;
-  width: 100%;
+  width: 100vw;
   background: linear-gradient(135deg, #2b1fd4 0%, #7e87ff 100%);
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 40px 20px;
+  padding: 20px;
   font-family: 'Inter', sans-serif;
   box-sizing: border-box;
 }
 
 .register-card {
   width: 100%;
-  max-width: 900px;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(12px);
-  padding: 50px;
+  max-width: 1100px; /* Tăng chiều rộng để giống mẫu */
+  background: transparent; /* Giống trong ảnh mẫu */
+  padding: 40px;
   border-radius: 30px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
 }
 
 .register-card h1 {
   color: #fff;
-  font-size: 2.2rem;
+  font-size: 2.5rem;
   font-weight: 800;
-  margin-bottom: 40px;
+  margin-bottom: 50px;
   text-align: center;
   text-transform: uppercase;
   letter-spacing: 2px;
@@ -34,27 +39,27 @@
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 25px 40px;
+  gap: 20px 80px; /* Khoảng cách rộng giữa 2 cột */
 }
 
 .form-group {
-  display: flex;
-  flex-direction: column;
+  margin-bottom: 25px;
 }
 
 .form-group label {
+  display: block;
   color: #fff;
-  font-weight: 600;
-  margin-bottom: 8px;
-  font-size: 0.9rem;
+  margin-bottom: 12px;
+  font-weight: 500;
+  font-size: 1.1rem;
 }
 
-.form-group input,
+/* CHỈNH INPUT BO TRÒN TRẮNG TINH */
+.form-group input, 
 .form-select {
-  height: 50px;
-  padding: 0 20px;
-  border-radius: 15px;
-  border: 1.5px solid transparent;
+  padding: 18px 25px;
+  border-radius: 35px !important; /* Bo tròn viên thuốc giống ảnh */
+  border: none;
   background-color: #ffffff;
   font-size: 1rem;
   outline: none;
@@ -62,16 +67,15 @@
   box-sizing: border-box;
   color: #333;
   transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .form-group input:focus {
-  border-color: #2b1fd4;
-  background-color: #fff;
+  transform: scale(1.02);
 }
 
 .form-select {
   appearance: none;
-  cursor: pointer;
   background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
   background-repeat: no-repeat;
   background-position: right 20px center;
@@ -79,43 +83,44 @@
 }
 
 .btn-register {
-  width: 100%;
-  margin-top: 50px;
+  display: block;
+  width: 250px; /* Thu nhỏ nút giống mẫu */
+  margin: 50px auto 0;
   padding: 16px;
-  border-radius: 18px;
+  border-radius: 20px;
   border: none;
-  background-color: #fff;
-  color: #2b1fd4;
+  background: #747bff; /* Màu nút giống mẫu */
+  color: white;
   font-size: 1.2rem;
-  font-weight: bold;
+  font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 8px 15px rgba(0,0,0,0.1);
   transition: all 0.3s ease;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
 }
 
 .btn-register:hover {
-  background-color: #f0f0f0;
-  transform: translateY(-2px);
-  box-shadow: 0 12px 20px rgba(0,0,0,0.2);
+  background: #5a52e6;
+  transform: translateY(-3px);
 }
 
 .back-to-login {
-  margin-top: 25px;
+  margin-top: 30px;
   text-align: center;
 }
 
 .login-link {
   color: #fff;
   text-decoration: none;
-  font-size: 0.95rem;
-  opacity: 0.8;
+  font-weight: 500;
+  font-size: 1rem;
 }
 
 .login-link:hover {
-  opacity: 1;
   text-decoration: underline;
 }
 
-@media (max-width: 768px) {
-  .form-grid { grid-template-columns: 1fr; }
+@media (max-width: 850px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
 }
