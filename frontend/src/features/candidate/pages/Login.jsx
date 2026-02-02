@@ -3,13 +3,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
 import { faEnvelope, faShieldAlt } from '@fortawesome/free-solid-svg-icons'; 
-import axiosClient from "../../../infrastructure/http/axiosClient";
-import { useAuth } from '../../../app/AppProviders';
+import axiosClient from "/src/infrastructure/http/axiosClient";
+import { useAuth } from '../../../app/AppProviders'; // Đã sửa đường dẫn lùi 3 cấp
 import '../components/Login.css';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { setUser } = useAuth(); // Lấy setUser từ Context
   const [loginData, setLoginData] = useState({ username: '', password: '' });
   const [loading, setLoading] = useState(false);
 
@@ -22,27 +22,48 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      // Đảm bảo endpoint khớp với BE (bỏ /api/ nếu baseURL đã có)
-      const response = await axiosClient.post('auth/jwt/login/', loginData);
-      localStorage.setItem('access_token', response.data.access);
-      localStorage.setItem('role', response.data.role);
-      navigate('/homepage'); 
-    } catch (error) {
-      alert("Đăng nhập thất bại! Vui lòng kiểm tra lại.");
-      const response = await axiosClient.post('/api/auth/jwt/login/', {
-        username: loginData.username,
-        password: loginData.password
-      });
+      // 1. Gọi API đăng nhập
+      const response = await axiosClient.post('/api/auth/jwt/login/', loginData);
       
-      login(response.data);
+      // 2. Lấy dữ liệu từ Backend
+      const { access, role, username } = response.data;
       
-      if (response.data.role === 'admin') {
-        navigate('/admin');
+      // 3. Lưu vào localStorage
+      localStorage.setItem('access_token', access);
+      localStorage.setItem('role', role);
+
+      // 4. Cập nhật AuthContext (BẮT BUỘC để qua được ProtectedRoute)
+      setUser({ username: username || loginData.username, role: role });
+
+      // Chuyển role về chữ thường để so sánh
+      const userRole = role ? role.toLowerCase() : '';
+      
+      console.log("Logged in with role:", userRole);
+
+      // 5. Điều hướng dựa trên Role và router.jsx
+      if (userRole === 'recruiter') {
+        alert(`Chào mừng Nhà tuyển dụng ${username || ''}!`);
+        navigate('/recruiter-dashboard');
+      } else if (userRole === 'candidate') {
+        alert(`Chào mừng Ứng viên ${username || ''}!`);
+        
+        // Chuyển hướng đến đường dẫn 'homepage' khai báo trong router.jsx
+        navigate('/homepage');
+
+        // PHƯƠNG ÁN DỰ PHÒNG: Nếu sau 300ms vẫn ở trang Login, ép trình duyệt nhảy trang
+        setTimeout(() => {
+          if (window.location.pathname.includes('login')) {
+            window.location.href = '/homepage';
+          }
+        }, 300);
       } else {
-        navigate('/home'); 
+        navigate('/');
       }
+
     } catch (error) {
-      alert("Đăng nhập thất bại! Vui lòng kiểm tra lại tài khoản hoặc mật khẩu.");
+      console.error("Login Error:", error);
+      const errorMsg = error.response?.data?.detail || "Đăng nhập thất bại! Vui lòng kiểm tra lại tài khoản và mật khẩu.";
+      alert(errorMsg);
     } finally {
       setLoading(false);
     }
@@ -50,45 +71,30 @@ const Login = () => {
 
   return (
     <div className="login-wrapper">
-      {/* PHẦN BÊN TRÁI: CHIẾM 1.2 PHẦN MÀN HÌNH */}
       <div className="login-left">
-        {/* Nút ADMIN góc phải */}
-        <Link to="/admin-login" className="admin-login-link">ADMIN</Link>
-        
-        {/* Logo hệ thống */}
-        <Link to="/admin-login" className="admin-login-link">
-           for ADMIN
-        </Link>
-
         <div className="brand-logo-container">
-          <h2 style={{ color: '#7678ff', fontWeight: '800', margin: 0 }}>UTH WORKPLACE</h2>
+          <span className="text-uth" style={{color: '#2e5bff', fontWeight: '800', fontSize: '24px'}}>UTH</span>
+          <span className="text-workplace" style={{color: '#05cd99', fontWeight: '800', fontSize: '24px'}}>WORKPLACE</span>
         </div>
 
-        {/* Khối chứa Form trung tâm */}
-        <div className="login-box">
-          <div className="login-header">
-            <h1>Hello Again!</h1>
-            <p>Welcome back, you've been missed!</p>
-          </div>
         <div className="login-form-content">
           <h1 className="login-title">LOGIN</h1>
           <p className="login-subtitle">Let's get started !!!</p>
 
-          <form onSubmit={handleLogin}>
-            <div className="input-group">
+          <form onSubmit={handleLogin} className="form-actual">
+            <div className="custom-input-group">
               <span className="input-icon">👤</span>
               <input 
                 type="text" 
                 name="username" 
-                placeholder="Enter username" 
                 placeholder="Username" 
                 value={loginData.username}
                 onChange={handleChange} 
                 required 
               />
             </div>
-
-            <div className="input-group">
+            
+            <div className="custom-input-group">
               <span className="input-icon">🔒</span>
               <input 
                 type="password" 
@@ -101,21 +107,19 @@ const Login = () => {
             </div>
 
             <div className="forgot-link-container">
-              <Link to="/forgot">Recovery Password</Link>
-              <Link to="/forgot-password">Forgot password</Link>
+              <Link to="/forgot">Forgot password</Link>
             </div>
 
             <div className="login-action-area">
               <button type="submit" className="login-btn-purple" disabled={loading}>
-                {loading ? "Signing In..." : "Sign In"}
+                {loading ? "Logging in..." : "Login"}
               </button>
               <div className="reg-hint">
-                Not a member? <Link to="/register">Register now</Link>
+                Not a member ? <Link to="/register">Register now</Link>
               </div>
             </div>
           </form>
 
-          {/* Phần icons mạng xã hội */}
           <div className="social-section-wrapper">
             <div className="social-divider">
               <span>Or continue with</span>
@@ -136,10 +140,7 @@ const Login = () => {
         </div>
       </div>
 
-      {/* PHẦN BÊN PHẢI: MÀNG MÀU XANH TÍM (Kích hoạt .login-right-side trong CSS) */}
-      <div className="login-right-side">
-        {/* Phần này để trống, CSS sẽ lo phần màu sắc và bo góc */}
-      </div>
+      <div className="login-right-side"></div>
     </div>
   );
 };
