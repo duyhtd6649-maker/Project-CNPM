@@ -22,14 +22,12 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      // Đảm bảo endpoint khớp với BE (bỏ /api/ nếu baseURL đã có)
       const response = await axiosClient.post('auth/jwt/login/', loginData);
       localStorage.setItem('access_token', response.data.access);
       localStorage.setItem('role', response.data.role);
       navigate('/homepage');
     } catch (error) {
       alert("Đăng nhập thất bại! Vui lòng kiểm tra lại.");
-      // Logic retry với path khác nếu cần thiết (hoặc bỏ đi nếu dư thừa)
       try {
         const response = await axiosClient.post('/api/auth/jwt/login/', {
           username: loginData.username,
@@ -51,9 +49,7 @@ const Login = () => {
 
   return (
     <div className="login-wrapper">
-      {/* PHẦN BÊN TRÁI: CHIẾM 1.2 PHẦN MÀN HÌNH */}
       <div className="login-left">
-        {/* Logo hệ thống */}
         <Link to="/admin-login" className="admin-login-link">
           for ADMIN
         </Link>
@@ -64,7 +60,6 @@ const Login = () => {
           </h2>
         </div>
 
-        {/* Khối chứa Form trung tâm */}
         <div className="login-box">
           <div className="login-form-content">
             <h1 className="login-title">LOGIN</h1>
@@ -112,9 +107,7 @@ const Login = () => {
         </div>
       </div>
 
-      {/* PHẦN BÊN PHẢI: MÀNG MÀU XANH TÍM (Kích hoạt .login-right-side trong CSS) */}
       <div className="login-right-side">
-        {/* Phần này để trống, CSS sẽ lo phần màu sắc và bo góc */}
       </div>
     </div>
   );
