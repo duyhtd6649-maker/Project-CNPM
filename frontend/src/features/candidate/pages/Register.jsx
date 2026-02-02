@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axiosClient from "../../../infrastructure/http/axiosClient";
+import axiosClient from "../../../infrastructure/http/axiosClient"; 
+import { useAuth } from '../../../app/AppProviders';
 import '../components/Register.css';
 
 const Register = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const [formData, setFormData] = useState({
     username: '',
@@ -18,25 +20,22 @@ const Register = () => {
     gender: 'Male',
     country: '',
     jobs: '',
-    role: 'Candidate',
+    role: 'Candidate'
   });
 
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleRegister = async (e) => {
     e.preventDefault();
-
     if (formData.password !== formData.repeatPassword) {
       alert("Mật khẩu không khớp!");
       return;
     }
-
-    setLoading(true);
 
     const payload = {
       username: formData.username,
@@ -54,11 +53,12 @@ const Register = () => {
     };
 
     try {
-      await axiosClient.post('/api/auth/registration/', payload);
+      setLoading(true);
+      const res = await axiosClient.post('/api/auth/registration/', payload);
       alert("Đăng ký thành công!");
       navigate('/login');
-    } catch (error) {
-      alert("Lỗi đăng ký:\n" + JSON.stringify(error.response?.data, null, 2));
+    } catch (err) {
+      alert("Lỗi đăng ký: " + JSON.stringify(err.response?.data));
     } finally {
       setLoading(false);
     }
@@ -74,87 +74,47 @@ const Register = () => {
 
             <div className="form-group">
               <label>Username</label>
-              <input
-                type="text"
-                name="username"
-                onChange={handleChange}
-                required
-              />
+              <input name="username" onChange={handleChange} required />
             </div>
 
             <div className="form-group">
               <label>Email</label>
-              <input
-                type="email"
-                name="email"
-                onChange={handleChange}
-                required
-              />
+              <input type="email" name="email" onChange={handleChange} required />
             </div>
 
             <div className="form-group">
               <label>Last Name</label>
-              <input
-                type="text"
-                name="lastName"
-                onChange={handleChange}
-                required
-              />
+              <input name="lastName" onChange={handleChange} required />
             </div>
 
             <div className="form-group">
               <label>First Name</label>
-              <input
-                type="text"
-                name="firstName"
-                onChange={handleChange}
-                required
-              />
+              <input name="firstName" onChange={handleChange} required />
             </div>
 
             <div className="form-group">
-              <label>Phone Number</label>
-              <input
-                type="text"
-                name="phone"
-                onChange={handleChange}
-                required
-              />
+              <label>Phone</label>
+              <input name="phone" onChange={handleChange} required />
             </div>
 
             <div className="form-group">
               <label>Date of Birth</label>
-              <input
-                type="date"
-                name="dob"
-                onChange={handleChange}
-                required
-              />
+              <input type="date" name="dob" onChange={handleChange} required />
             </div>
 
             <div className="form-group">
               <label>Password</label>
-              <input
-                type="password"
-                name="password"
-                onChange={handleChange}
-                required
-              />
+              <input type="password" name="password" onChange={handleChange} required />
             </div>
 
             <div className="form-group">
               <label>Repeat Password</label>
-              <input
-                type="password"
-                name="repeatPassword"
-                onChange={handleChange}
-                required
-              />
+              <input type="password" name="repeatPassword" onChange={handleChange} required />
             </div>
 
             <div className="form-group">
               <label>Gender</label>
-              <select name="gender" onChange={handleChange}>
+              <select name="gender" className="form-select" onChange={handleChange}>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
               </select>
@@ -162,27 +122,17 @@ const Register = () => {
 
             <div className="form-group">
               <label>Country</label>
-              <input
-                type="text"
-                name="country"
-                onChange={handleChange}
-                required
-              />
+              <input name="country" onChange={handleChange} required />
             </div>
 
             <div className="form-group">
-              <label>Current Job</label>
-              <input
-                type="text"
-                name="jobs"
-                onChange={handleChange}
-                required
-              />
+              <label>Job</label>
+              <input name="jobs" onChange={handleChange} required />
             </div>
 
             <div className="form-group">
               <label>Role</label>
-              <select name="role" onChange={handleChange}>
+              <select name="role" className="form-select" onChange={handleChange}>
                 <option value="Candidate">Candidate</option>
                 <option value="Recruiter">Recruiter</option>
               </select>
@@ -190,13 +140,16 @@ const Register = () => {
 
           </div>
 
-          <button type="submit" disabled={loading} className="btn-register">
+          <button type="submit" className="btn-register" disabled={loading}>
             {loading ? "Processing..." : "Register"}
           </button>
 
           <div className="back-to-login">
-            <Link to="/login">Already have an account? Login</Link>
+            <Link to="/login" className="login-link">
+              Already have an account? Login
+            </Link>
           </div>
+
         </form>
       </div>
     </div>
