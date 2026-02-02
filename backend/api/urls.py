@@ -13,6 +13,8 @@ urlpatterns = [
     # ===== USER =====
     path('user/',user_views.GetUserInfor),
     path('user/<str:username>/',user_views.GetUserbyUsername),
+    path('user/candidate/<uuid:id>/', user_views.GetCandidateProfile),
+    path('user/<uuid:id>/', user_views.GetUserInforById),
     # ===== CV =====
     path('cv/analyzer/',cv_views.Analyze_Cv),
     path('cv/upload/', cv_views.Upload_Cv),

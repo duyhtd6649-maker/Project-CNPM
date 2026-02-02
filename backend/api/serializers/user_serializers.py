@@ -30,10 +30,14 @@ class UserNameSerializer(serializers.Serializer):
 class CandidateSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source="user.username", read_only=True)
     email = serializers.EmailField(source="user.email", read_only=True)
+    phone = serializers.CharField(source="user.phone", read_only=True)
+    fullname = serializers.CharField(source="user.fullname", read_only=True)
+    avatar = serializers.ImageField(source="user.avatar_url", read_only=True)
+
 
     class Meta:
         model = Candidates
-        fields = ['id', 'description', 'user', 'username', 'email']
+        fields = ['id', 'description', 'username', 'email', 'phone', 'fullname', 'avatar', 'address', 'date_of_birth']
 
 class RecruiterSerializer(serializers.ModelSerializer):
     company = serializers.CharField(source="user.company.name", read_only=True)
@@ -98,4 +102,6 @@ class InterviewUpdateSerializer(serializers.Serializer):
         if value <= timezone.now():
             raise serializers.ValidationError("The new interview date must be a future date.")
         return value
+    
+
     
