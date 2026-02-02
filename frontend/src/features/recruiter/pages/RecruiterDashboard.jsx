@@ -1,218 +1,297 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom';
+import axios from 'axios';
 import { 
-  Menu, Search, Bell, User, LayoutDashboard, 
-  LogOut, TrendingUp, TrendingDown, Users, 
-  Briefcase, ListTodo, Building2, Target, Plus, Eye, Edit, Trash2, Moon, Info, CheckCircle
+  LayoutDashboard, 
+  Briefcase, 
+  Users, 
+  Plus, 
+  Search, 
+  Bell, 
+  Moon, 
+  User, 
+  LogOut,
+  TrendingUp,
+  CheckCircle,
+  Clock,
+  MoreHorizontal
 } from 'lucide-react';
 import { 
-  XAxis, YAxis, CartesianGrid, Tooltip, 
-  ResponsiveContainer, AreaChart, Area, 
-  PieChart, Pie, Cell 
+  ResponsiveContainer, 
+  AreaChart, 
+  Area, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip 
 } from 'recharts';
 
+// Import CSS
 import '../components/RecruiterDashboard.css';
+// Import component CreateJobPost
+import CreateJobPost from './CreateJobPost';
 
 const RecruiterDashboard = () => {
-  const [isSidebarOpen, setSidebarOpen] = useState(true);
-  const [activeTab, setActiveTab] = useState('dashboard'); 
-  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const [showModal, setShowModal] = useState(false);
+  const [isSidebarClosed, setSidebarClosed] = useState(false);
+  
+  // --- LOGIC BACKEND: State lưu danh sách jobs ---
+  const [jobs, setJobs] = useState([]);
 
-  const handleLogout = () => {
-    localStorage.clear();
-    navigate('/login');
+  // --- LOGIC BACKEND: Hàm lấy danh sách job ---
+  const fetchJobs = async () => {
+    try {
+      const token = localStorage.getItem('access_token');
+      // Gọi đến API view: job_list trong job_views.py
+      const response = await axios.get('http://127.0.0.1:8000/api/cv/list/', { // Lưu ý: Chỉnh lại URL đúng endpoint job list của bạn nếu cần
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      setJobs(response.data);
+    } catch (error) {
+      console.error("Lỗi khi lấy danh sách job:", error);
+    }
   };
 
-  const lineData = [
-    { name: 'Seg', val1: 400, val2: 240 }, { name: 'Ter', val1: 300, val2: 139 },
-    { name: 'Qua', val1: 600, val2: 980 }, { name: 'Qui', val1: 278, val2: 390 },
-    { name: 'Sex', val1: 189, val2: 480 }, { name: 'Sab', val1: 239, val2: 380 },
-  ];
+  useEffect(() => {
+    fetchJobs();
+  }, []);
 
-  const pieData = [
-    { name: 'Tech', value: 400, color: '#4318FF' },
-    { name: 'Design', value: 300, color: '#6AD2FF' },
-    { name: 'Marketing', value: 300, color: '#EFF4FB' },
+  // Logic Log Out
+  const handleLogout = () => {
+    localStorage.clear();
+    sessionStorage.clear();
+    window.location.href = '/login'; 
+  };
+
+  const chartData = [
+    { name: 'Sep', apps: 350 },
+    { name: 'Oct', apps: 450 },
+    { name: 'Nov', apps: 300 },
+    { name: 'Dec', apps: 800 },
+    { name: 'Jan', apps: 500 },
+    { name: 'Feb', apps: 700 },
   ];
 
   return (
-    <div className={`dashboard-wrapper ${!isSidebarOpen ? 'sidebar-closed' : ''}`}>
-      {/* SIDEBAR CHI TIẾT */}
+    <div className={`dashboard-wrapper ${isSidebarClosed ? 'sidebar-closed' : ''}`}>
+      
+      {/* --- SIDEBAR --- */}
       <aside className="dashboard-sidebar">
         <div className="sidebar-header-custom">
-          <span className="logo-uth">UTH</span>
-          <span className="logo-workplace"> WORKPLACE</span>
+          UTH <span className="logo-workplace">Workplace</span>
         </div>
         <div className="sidebar-divider"></div>
         
         <nav className="sidebar-menu">
-          <div className={`menu-item ${activeTab === 'dashboard' ? 'active' : ''}`} onClick={() => setActiveTab('dashboard')}>
-            <LayoutDashboard size={20} />
-            <span className="menu-text">Main Dashboard</span>
+          <div 
+            className={`menu-item ${activeTab === 'dashboard' ? 'active' : ''}`} 
+            onClick={() => setActiveTab('dashboard')}
+          >
+            <LayoutDashboard size={22} />
+            <span className="menu-text">Dashboard</span>
           </div>
           
-          <div className={`menu-item ${activeTab === 'jobs' ? 'active' : ''}`} onClick={() => setActiveTab('jobs')}>
-            <Briefcase size={20} />
-            <span className="menu-text">Manage Jobs</span>
+          <div 
+            className={`menu-item ${activeTab === 'jobs' ? 'active' : ''}`} 
+            onClick={() => setActiveTab('jobs')}
+          >
+            <Briefcase size={22} />
+            <span className="menu-text">My Jobs</span>
           </div>
 
           <div className="menu-item">
-            <Users size={20} />
+            <Users size={22} />
             <span className="menu-text">Candidates</span>
-          </div>
-
-          <div className="menu-item">
-            <ListTodo size={20} />
-            <span className="menu-text">Interviews</span>
-          </div>
-
-          <div className="menu-item">
-            <Building2 size={20} />
-            <span className="menu-text">Company Profile</span>
-          </div>
-
-          <div className="menu-item">
-            <Target size={20} />
-            <span className="menu-text">Analytics</span>
           </div>
         </nav>
 
-        <div className="sidebar-footer" onClick={handleLogout}>
-          <LogOut size={20} />
-          <span className="menu-text">Log Out</span>
+        {/* Nút Log Out nằm ở cuối sidebar */}
+        <div className="sidebar-footer" style={{ padding: '20px' }}>
+          <div className="menu-item logout" onClick={handleLogout} style={{ cursor: 'pointer' }}>
+            <LogOut size={22} />
+            <span className="menu-text">Log Out</span>
+          </div>
         </div>
       </aside>
 
-      {/* NỘI DUNG CHÍNH */}
+      {/* --- MAIN CONTENT --- */}
       <div className="main-container-right">
+        
+        {/* HEADER */}
         <header className="dashboard-header">
-          <div className="header-left">
-            <Menu className="toggle-btn" size={24} onClick={() => setSidebarOpen(!isSidebarOpen)} />
-            <div className="header-titles">
-              <p className="breadcrumb">Pages / {activeTab === 'dashboard' ? 'Dashboard' : 'Manage Jobs'}</p>
-              <h1 className="page-title">{activeTab === 'dashboard' ? 'Main Dashboard' : 'Job Listings'}</h1>
-            </div>
+          <div className="header-titles">
+            <p className="breadcrumb">Pages / {activeTab === 'dashboard' ? 'Dashboard' : 'My Jobs'}</p>
+            <h2 className="page-title">{activeTab === 'dashboard' ? 'Main Dashboard' : 'Job Management'}</h2>
           </div>
 
           <div className="header-right-tools">
-            <div className="header-search">
-              <Search size={18} />
+            <div className="search-container-custom">
+              <Search size={18} color="#A3AED0" />
               <input type="text" placeholder="Search..." />
             </div>
-            <Bell size={20} className="icon-btn" />
-            <Moon size={20} className="icon-btn" />
-            <Info size={20} className="icon-btn" />
-            <div className="avatar-circle">
+            
+            <button className="btn-create" onClick={() => setShowModal(true)}>
+              <Plus size={20} />
+              <span>Create Job</span>
+            </button>
+
+            <Bell size={20} color="#A3AED0" style={{ cursor: 'pointer' }} />
+            <Moon size={20} color="#A3AED0" style={{ cursor: 'pointer' }} />
+            <div className="avatar-circle" style={{ 
+              width: '40px', height: '40px', borderRadius: '50%', 
+              background: '#F4F7FE', display: 'flex', alignItems: 'center', 
+              justifyContent: 'center', color: '#2b3674' 
+            }}>
               <User size={20} />
             </div>
           </div>
         </header>
 
+        {/* CONTENT BODY */}
         <main className="dashboard-content">
           {activeTab === 'dashboard' ? (
-            /* TAB 1: DASHBOARD MẶC ĐỊNH */
             <>
+              {/* STATS GRID */}
               <div className="stats-grid">
                 <div className="stat-card">
-                  <span className="stat-label">Earnings</span>
-                  <div className="stat-value">$350.4</div>
-                  <span className="trend-up"><TrendingUp size={12}/> +12%</span>
+                  <div className="stat-icon-box"><Briefcase size={24} /></div>
+                  <div className="stat-info">
+                    <p className="stat-label">Total Jobs</p>
+                    <h3 className="stat-value">{jobs.length || 124}</h3>
+                  </div>
                 </div>
+                
                 <div className="stat-card">
-                  <span className="stat-label">Spend this month</span>
-                  <div className="stat-value">$642.39</div>
+                  <div className="stat-icon-box" style={{ color: '#05cd99' }}><Users size={24} /></div>
+                  <div className="stat-info">
+                    <p className="stat-label">Applicants</p>
+                    <h3 className="stat-value">1,482</h3>
+                  </div>
                 </div>
+
                 <div className="stat-card">
-                  <span className="stat-label">Sales</span>
-                  <div className="stat-value">$574.34</div>
-                  <span className="trend-up"><TrendingUp size={12}/> +23%</span>
+                  <div className="stat-icon-box" style={{ color: '#ffb547' }}><Clock size={24} /></div>
+                  <div className="stat-info">
+                    <p className="stat-label">Interviews</p>
+                    <h3 className="stat-value">45</h3>
+                  </div>
                 </div>
+
                 <div className="stat-card">
-                  <span className="stat-label">Your Balance</span>
-                  <div className="stat-value">$1,000</div>
+                  <div className="stat-icon-box" style={{ color: '#ee5d50' }}><CheckCircle size={24} /></div>
+                  <div className="stat-info">
+                    <p className="stat-label">Hired</p>
+                    <h3 className="stat-value">12</h3>
+                  </div>
                 </div>
               </div>
 
+              {/* CHART & STATISTICS */}
               <div className="bottom-grid">
                 <div className="chart-container">
-                  <div className="chart-header">
-                    <h4>Check Table</h4>
+                  <div className="chart-header" style={{ marginBottom: '20px' }}>
+                    <h4 style={{ color: '#2b3674', fontSize: '20px' }}>Application Trends</h4>
                   </div>
                   <ResponsiveContainer width="100%" height={300}>
-                    <AreaChart data={lineData}>
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                      <XAxis dataKey="name" axisLine={false} tickLine={false} />
-                      <YAxis axisLine={false} tickLine={false} />
+                    <AreaChart data={chartData}>
+                      <defs>
+                        <linearGradient id="colorApps" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#4318FF" stopOpacity={0.1}/>
+                          <stop offset="95%" stopColor="#4318FF" stopOpacity={0}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F4F7FE" />
+                      <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#A3AED0', fontSize: 12}} />
+                      <YAxis axisLine={false} tickLine={false} tick={{fill: '#A3AED0', fontSize: 12}} />
                       <Tooltip />
-                      <Area type="monotone" dataKey="val1" stroke="#4318FF" fill="#4318FF" fillOpacity={0.1} strokeWidth={3} />
+                      <Area type="monotone" dataKey="apps" stroke="#4318FF" strokeWidth={3} fillOpacity={1} fill="url(#colorApps)" />
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
+
                 <div className="chart-container">
-                  <h4>Daily Traffic</h4>
-                  <ResponsiveContainer width="100%" height={200}>
-                    <PieChart>
-                      <Pie data={pieData} innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
-                        {pieData.map((entry, index) => <Cell key={index} fill={entry.color} />)}
-                      </Pie>
-                      <Tooltip />
-                    </PieChart>
-                  </ResponsiveContainer>
+                  <h4 style={{ color: '#2b3674', fontSize: '20px', marginBottom: '20px' }}>Daily Statistics</h4>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                    <p style={{ color: '#A3AED0' }}>Dữ liệu tổng hợp theo ngày sẽ hiển thị tại đây.</p>
+                  </div>
                 </div>
               </div>
             </>
           ) : (
-            /* TAB 2: QUẢN LÝ CÔNG VIỆC */
-            <div className="manage-jobs-container">
-              <div className="section-header">
-                <h3>Complex Table</h3>
-                <button className="btn-create">
-                  <Plus size={18} /> Add New Job
-                </button>
+            /* TAB MY JOBS - Phần bảng chi tiết */
+            <div className="table-card">
+              <div className="table-header">
+                <h3>Active Job Listings</h3>
+                <MoreHorizontal style={{ color: '#A3AED0', cursor: 'pointer' }} />
               </div>
-              <div className="table-responsive">
-                <table className="jobs-table">
-                  <thead>
-                    <tr>
-                      <th>NAME</th>
-                      <th>STATUS</th>
-                      <th>DATE</th>
-                      <th>PROGRESS</th>
-                      <th>ACTIONS</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td><span className="job-name-text">Senior React Developer</span></td>
+              <table className="jobs-table">
+                <thead>
+                  <tr>
+                    <th>Job Name</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Progress</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {/* Map dữ liệu từ Database */}
+                  {jobs.map((job) => (
+                    <tr key={job.id}>
+                      <td><span className="job-name-text">{job.title}</span></td>
                       <td>
-                        <div className="status-badge active"><CheckCircle size={14} /> Active</div>
+                        <div className="status-badge pending">
+                          <Clock size={14}/> Pending
+                        </div>
                       </td>
-                      <td>12.Jan.2024</td>
-                      <td><div className="progress-container"><div className="progress-bar" style={{width: '75.5%'}}></div></div></td>
-                      <td className="actions-cell">
-                        <button className="icon-btn-action"><Edit size={16}/></button>
-                        <button className="icon-btn-action delete"><Trash2 size={16}/></button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><span className="job-name-text">UI/UX Designer</span></td>
+                      <td>{new Date().toLocaleDateString('en-GB')}</td>
                       <td>
-                        <div className="status-badge pending"><Info size={14} /> Pending</div>
-                      </td>
-                      <td>15.Feb.2024</td>
-                      <td><div className="progress-container"><div className="progress-bar" style={{width: '25.5%'}}></div></div></td>
-                      <td className="actions-cell">
-                        <button className="icon-btn-action"><Edit size={16}/></button>
-                        <button className="icon-btn-action delete"><Trash2 size={16}/></button>
+                        <div className="progress-container">
+                          <div className="progress-bar" style={{ width: '10%' }}></div>
+                        </div>
                       </td>
                     </tr>
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+
+                  {/* Giữ nguyên các hàng mẫu của bạn bên dưới */}
+                  <tr>
+                    <td><span className="job-name-text">Senior React Developer</span></td>
+                    <td><div className="status-badge active"><CheckCircle size={14}/> Approved</div></td>
+                    <td>12.Jan.2026</td>
+                    <td>
+                      <div className="progress-container">
+                        <div className="progress-bar" style={{ width: '70%' }}></div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><span className="job-name-text">UI/UX Designer</span></td>
+                    <td><div className="status-badge active"><CheckCircle size={14}/> Approved</div></td>
+                    <td>08.Jan.2026</td>
+                    <td>
+                      <div className="progress-container">
+                        <div className="progress-bar" style={{ width: '45%' }}></div>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           )}
         </main>
       </div>
+
+      {/* PORTAL CHO MODAL */}
+      {showModal && ReactDOM.createPortal(
+        <CreateJobPost 
+          onClose={() => setShowModal(false)} 
+          onSuccess={() => {
+            setShowModal(false);
+            fetchJobs(); // Load lại bảng ngay sau khi tạo thành công
+          }} 
+        />,
+        document.body
+      )}
     </div>
   );
 };

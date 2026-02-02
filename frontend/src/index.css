@@ -14,13 +14,14 @@
 }
 
 
-/* ⭐ CỰC KỲ QUAN TRỌNG */
+/* ⭐ CỰC KỲ QUAN TRỌNG - GIỮ NGUYÊN */
 html,
 body,
 #root {
   margin: 0;
   padding: 0;
   height: 100%;
+  width: 100%; /* Thêm để đảm bảo không bị bó hẹp */
 }
 
 /* BODY PHẢI FLEX */
@@ -29,6 +30,7 @@ body {
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
+  align-items: stretch; /* Thêm để nội dung bung rộng ra */
 }
 
 /* ROOT FILL */
@@ -38,7 +40,7 @@ body {
   flex-direction: column;
 }
 
-/* CÁC STYLE KHÁC GIỮ NGUYÊN */
+/* TẤT CẢ CÁC STYLE DƯỚI ĐÂY GIỮ NGUYÊN 100% THEO CODE CỦA BẠN */
 a {
   font-weight: 500;
   color: #646cff;
@@ -70,4 +72,17 @@ button:hover {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
 }
