@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
-import { faEnvelope, faShieldAlt } from '@fortawesome/free-solid-svg-icons'; 
+import { faEnvelope, faShieldAlt, faUser, faLock } from '@fortawesome/free-solid-svg-icons'; 
 import axiosClient from "/src/infrastructure/http/axiosClient";
-import { useAuth } from '../../../app/AppProviders'; // Đã sửa đường dẫn lùi 3 cấp
+import { useAuth } from '../../../app/AppProviders'; 
 import '../components/Login.css';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { setUser } = useAuth(); // Lấy setUser từ Context
+  const { setUser } = useAuth(); 
   const [loginData, setLoginData] = useState({ username: '', password: '' });
   const [loading, setLoading] = useState(false);
 
@@ -22,48 +22,40 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      // 1. Gọi API đăng nhập
+      // Gọi API đăng nhập
       const response = await axiosClient.post('/api/auth/jwt/login/', loginData);
       
-      // 2. Lấy dữ liệu từ Backend
-      const { access, role, username } = response.data;
+      // FIX LỖI toLowerCase: Đặt giá trị mặc định cho role là chuỗi rỗng nếu backend trả về null
+      const { access, role = '', username } = response.data;
       
-      // 3. Lưu vào localStorage
+      // 1. Lưu vào localStorage để đồng bộ với AppProviders
       localStorage.setItem('access_token', access);
-      localStorage.setItem('role', role);
-
-      // 4. Cập nhật AuthContext (BẮT BUỘC để qua được ProtectedRoute)
-      setUser({ username: username || loginData.username, role: role });
-
-      // Chuyển role về chữ thường để so sánh
-      const userRole = role ? role.toLowerCase() : '';
+      localStorage.setItem('user_role', role || ''); 
+      localStorage.setItem('username', username || '');
       
-      console.log("Logged in with role:", userRole);
+      // 2. Cập nhật State trong AppProviders
+      setUser({ username, role });
 
-      // 5. Điều hướng dựa trên Role và router.jsx
-      if (userRole === 'recruiter') {
-        alert(`Chào mừng Nhà tuyển dụng ${username || ''}!`);
-        navigate('/recruiter-dashboard');
-      } else if (userRole === 'candidate') {
-        alert(`Chào mừng Ứng viên ${username || ''}!`);
-        
-        // Chuyển hướng đến đường dẫn 'homepage' khai báo trong router.jsx
-        navigate('/homepage');
+      alert("Login successful!");
 
-        // PHƯƠNG ÁN DỰ PHÒNG: Nếu sau 300ms vẫn ở trang Login, ép trình duyệt nhảy trang
-        setTimeout(() => {
-          if (window.location.pathname.includes('login')) {
-            window.location.href = '/homepage';
-          }
-        }, 300);
+      // FIX LỖI: Sử dụng Optional Chaining (?.) để an toàn tuyệt đối
+      const userRole = role?.toLowerCase() || '';
+
+      if (userRole === 'candidate') {
+        navigate('/homepage'); 
+      } else if (userRole === 'recruiter') {
+        navigate('/recruiter-dashboard'); 
+      } else if (userRole === 'admin') {
+        navigate('/admin'); 
       } else {
-        navigate('/');
+        // Nếu role null hoặc không xác định, mặc định về homepage của candidate
+        navigate('/homepage');
       }
 
     } catch (error) {
       console.error("Login Error:", error);
-      const errorMsg = error.response?.data?.detail || "Đăng nhập thất bại! Vui lòng kiểm tra lại tài khoản và mật khẩu.";
-      alert(errorMsg);
+      const errorMsg = error.response?.data?.detail || "Invalid username or password!";
+      alert("Error: " + errorMsg);
     } finally {
       setLoading(false);
     }
@@ -72,18 +64,27 @@ const Login = () => {
   return (
     <div className="login-wrapper">
       <div className="login-left">
-        <div className="brand-logo-container">
-          <span className="text-uth" style={{color: '#2e5bff', fontWeight: '800', fontSize: '24px'}}>UTH</span>
-          <span className="text-workplace" style={{color: '#05cd99', fontWeight: '800', fontSize: '24px'}}>WORKPLACE</span>
+        {/* LOGO SECTION - THEO ẢNH MẪU */}
+        <div className="logo-section">
+          <div className="uth-text">UTH</div>
+          <div className="workplace-text">WORKPLACE</div>
         </div>
 
-        <div className="login-form-content">
-          <h1 className="login-title">LOGIN</h1>
-          <p className="login-subtitle">Let's get started !!!</p>
+        {/* ADMIN LINK */}
+        <Link to="/admin-login" className="admin-login-link">
+          for ADMIN
+        </Link>
 
-          <form onSubmit={handleLogin} className="form-actual">
-            <div className="custom-input-group">
-              <span className="input-icon">👤</span>
+        <div className="login-content-box">
+          <div className="login-header">
+            <h2 className="welcome-text">LOGIN</h2>
+            <p className="sub-text">Let's get started !!!</p>
+          </div>
+
+          <form className="login-form" onSubmit={handleLogin}>
+            <div className="input-group">
+              {/* ICON TRONG INPUT THEO ẢNH MẪU */}
+              <FontAwesomeIcon icon={faUser} className="input-icon-inner" />
               <input 
                 type="text" 
                 name="username" 
@@ -93,9 +94,10 @@ const Login = () => {
                 required 
               />
             </div>
-            
-            <div className="custom-input-group">
-              <span className="input-icon">🔒</span>
+
+            <div className="input-group">
+              {/* ICON TRONG INPUT THEO ẢNH MẪU */}
+              <FontAwesomeIcon icon={faLock} className="input-icon-inner" />
               <input 
                 type="password" 
                 name="password" 
@@ -140,6 +142,7 @@ const Login = () => {
         </div>
       </div>
 
+      {/* PHẦN MẢNG MÀU GRADIENT BÊN PHẢI THEO ẢNH MẪU */}
       <div className="login-right-side"></div>
     </div>
   );

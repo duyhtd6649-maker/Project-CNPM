@@ -1,7 +1,9 @@
-/* ========== GLOBAL RESET (RẤT QUAN TRỌNG) ========== */
+/* ========== GLOBAL RESET (GIỮ NGUYÊN) ========== */
 body {
   margin: 0;
   padding: 0;
+  width: 100%;
+  height: 100%;
 }
 
 #root {
@@ -13,165 +15,159 @@ body {
 .login-wrapper * {
   box-sizing: border-box;
 }
-/* ================================================== */
 
+/* ========== WRAPPER CHÍNH ========== */
 .login-wrapper {
   display: flex;
   width: 100vw;
   height: 100vh;
   overflow: hidden;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #fff;
 }
 
-/* LEFT SIDE */
+/* ========== LEFT SIDE (PHẦN FORM) ========== */
 .login-left {
-  flex: 1;
+  flex: 1.2; /* Tăng tỉ lệ để form rộng rãi giống mẫu */
   padding: 40px 60px;
   display: flex;
   flex-direction: column;
+  justify-content: center; 
+  align-items: center;     
   position: relative;
   background: #fff;
+}
+
+/* LOGO UTH WORKPLACE (MỚI THÊM THEO ẢNH) */
+.logo-section {
+  position: absolute;
+  top: 40px;
+  left: 60px;
+  text-align: left;
+}
+.uth-text { 
+  margin: 0; 
+  font-size: 24px; 
+  font-weight: 900; 
+  color: #000; 
+  line-height: 1;
+}
+.workplace-text { 
+  margin: 0; 
+  font-size: 24px; 
+  font-weight: 900; 
+  color: #7b7dff; /* Màu tím thương hiệu */
 }
 
 /* ADMIN LINK */
 .admin-login-link {
   position: absolute;
-  top: 30px;
-  right: 40px;
-  padding: 8px 16px;
-  border: 1.5px solid #6c63ff;
-  border-radius: 20px;
-  color: #6c63ff;
+  top: 40px;
+  right: 60px;
+  color: #333;
   text-decoration: none;
-  font-size: 13px;
-  font-weight: 700;
-  transition: 0.3s;
+  font-size: 14px;
+  font-weight: 600;
 }
 
-.admin-login-link:hover {
-  background: #6c63ff;
-  color: #fff;
-}
-
-/* BRAND */
-.brand-logo-container {
-  margin-bottom: 30px;
-  font-weight: 800;
-  font-size: 28px;
-}
-
-.text-uth {
-  color: #3f6ad8;
-}
-
-.text-workplace {
-  color: #1a9e53;
-  margin-left: 5px;
-}
-
-/* FORM WRAPPER */
-.login-form-content {
-  flex: 1;
-  max-width: 420px;
+/* NỘI DUNG CHÍNH */
+.login-content-box {
   width: 100%;
-  margin: auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  max-width: 380px;
   text-align: center;
 }
 
-/* TITLES */
-.login-title {
-  font-size: 48px;
-  font-family: 'Times New Roman', Times, serif;
-  font-weight: 900;
-  margin-bottom: 5px;
-}
-
-.login-subtitle {
-  font-size: 16px;
-  color: #333;
+.login-header {
   margin-bottom: 35px;
 }
 
-/* INPUT GROUP */
-.custom-input-group {
-  display: flex;
-  align-items: center;
-  padding: 12px 15px;
-  border-radius: 12px;
-  background: #f9f9f9;
-  border: 1px solid #eee;
-  margin-bottom: 20px;
-  transition: 0.2s;
+.welcome-text {
+  font-size: 32px;
+  font-weight: 800;
+  color: #000;
+  margin: 0;
 }
 
-.custom-input-group:focus-within {
-  background: #fff;
-  border-color: #8c8eff;
-  box-shadow: 0 2px 10px rgba(118, 120, 255, 0.1);
+.sub-text {
+  color: #666;
+  margin-top: 8px;
+  font-size: 16px;
 }
 
-.input-icon {
-  font-size: 18px;
-  margin-right: 12px;
-}
-
-.custom-input-group input {
-  border: none;
-  background: transparent;
-  outline: none;
-  width: 100%;
-  font-size: 15px;
-}
-
-/* FORGOT */
-.forgot-link-container {
-  text-align: left;
-  margin-bottom: 30px;
-}
-
-.forgot-link-container a {
-  font-size: 14px;
-  color: #7b7dff;
-  text-decoration: none;
-}
-
-/* ACTION */
-.login-action-area {
+/* FORM VÀ INPUT (CHỈNH THEO ẢNH MẪU) */
+.login-form {
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 15px;
 }
 
-.login-btn-purple {
-  width: 150px;
-  padding: 12px 0;
-  border-radius: 25px;
-  border: none;
-  background: #6c63ff;
-  color: #fff;
+.input-group {
+  position: relative;
+  width: 100%;
+}
+
+/* Icon bên trong input */
+.input-icon-inner {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
   font-size: 16px;
-  font-weight: 600;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 15px 15px 15px 50px; /* Chừa khoảng trống cho icon */
+  border: 1px solid #e5e5e5;
+  border-radius: 15px; /* Bo tròn mạnh giống ảnh mẫu */
+  outline: none;
+  font-size: 14px;
+  background-color: #f9f9f9;
+  transition: 0.3s;
+}
+
+.input-group input:focus {
+  border-color: #7b7dff;
+  background-color: #fff;
+}
+
+.forgot-link-container {
+  text-align: left;
+  margin: 5px 0 15px 5px;
+}
+
+.forgot-link-container a {
+  font-size: 13px;
+  color: #7b7dff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+/* NÚT LOGIN (DẠNG VIÊN THUỐC) */
+.login-btn-purple {
+  width: 160px; /* Thu nhỏ chiều ngang giống ảnh */
+  margin: 0 auto;
+  padding: 12px;
+  background: #7b7dff;
+  color: #fff;
+  border: none;
+  border-radius: 25px; /* Bo tròn hoàn toàn */
+  font-size: 16px;
+  font-weight: 700;
   cursor: pointer;
   transition: 0.3s;
 }
 
 .login-btn-purple:hover {
-  background: #5a52e0;
-  transform: translateY(-2px);
-}
-
-.login-btn-purple:disabled {
-  background: #ccc;
-  cursor: not-allowed;
+  background: #6264f0;
+  transform: translateY(-1px);
 }
 
 .reg-hint {
-  font-size: 13px;
-  color: #aaa;
+  margin-top: 15px;
+  font-size: 14px;
+  color: #888;
 }
 
 .reg-hint a {
@@ -180,9 +176,9 @@ body {
   text-decoration: none;
 }
 
-/* SOCIAL */
+/* SOCIAL SECTION (GIỮ NGUYÊN CODE CỦA BẠN) */
 .social-section-wrapper {
-  margin-top: 35px;
+  margin-top: 40px;
 }
 
 .social-divider {
@@ -190,8 +186,8 @@ body {
   align-items: center;
   gap: 10px;
   font-size: 13px;
-  color: #999;
-  margin-bottom: 20px;
+  color: #ccc;
+  margin-bottom: 25px;
 }
 
 .social-divider::before,
@@ -205,7 +201,7 @@ body {
 .social-icons-row {
   display: flex;
   justify-content: center;
-  gap: 15px;
+  gap: 20px;
 }
 
 .s-circle {
@@ -213,39 +209,29 @@ body {
   height: 45px;
   border-radius: 50%;
   border: none;
-  font-size: 18px;
-  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 20px;
+  cursor: pointer;
   transition: 0.3s;
 }
 
-.s-red { background: #db4437; color: #fff; }
-.s-black { background: #333; color: #fff; }
-.s-gmail { background: #1a73e8; color: #fff; }
+/* Màu sắc icon social theo chuẩn ảnh mẫu */
+.s-red { background-color: #ea4335; color: white; }
+.s-black { background-color: #000; color: white; }
+.s-gmail { background-color: #fbbc05; color: white; }
 
-.s-circle:hover {
-  transform: translateY(-2px);
-}
-
-/* RIGHT SIDE */
+/* ========== RIGHT SIDE (GRADIENT TÍM THEO ẢNH) ========== */
 .login-right-side {
   flex: 1;
-  background: linear-gradient(135deg, #3d34a8 0%, #6c63ff 100%);
+  background: linear-gradient(180deg, #1d12b1 0%, #a2a7ff 100%);
+  /* Không cần image nếu dùng gradient giống ảnh mẫu của bạn */
 }
 
 /* RESPONSIVE */
-@media (max-width: 768px) {
-  .login-wrapper {
-    flex-direction: column;
-  }
-
-  .login-right-side {
-    display: none;
-  }
-
-  .login-left {
-    padding: 30px 20px;
-  }
+@media (max-width: 900px) {
+  .login-right-side { display: none; }
+  .login-left { flex: 1; padding: 20px; }
+  .logo-section { left: 30px; }
 }
