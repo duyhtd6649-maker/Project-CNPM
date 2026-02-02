@@ -126,11 +126,11 @@ const CVAnalyzer = () => {
         return '#ef4444';
     };
 
-    const score = analysisResult?.score || 0;
-    const strengths = analysisResult?.strengths || [];
-    const weaknesses = analysisResult?.weaknesses || [];
-    const suggestions = analysisResult?.suggestions || [];
-    const skills = analysisResult?.skills || [];
+    const score = analysisResult?.overall_score || 0;
+    const strengths = analysisResult?.content_analysis?.strengths || [];
+    const weaknesses = analysisResult?.content_analysis?.weaknesses || [];
+    const suggestions = analysisResult?.content_analysis?.suggestions || [];
+    const skills = analysisResult?.content_analysis?.skills || [];
 
     return (
         <div className="hp-container analyzer-page">

@@ -35,7 +35,7 @@ const SavedCV = () => {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await axiosClient.get('/api/cv/list/');
+        const response = await axiosClient.get('cv/list/');
         setCvList(response.data || []);
       } catch (err) {
         console.error('Error fetching CVs:', err);

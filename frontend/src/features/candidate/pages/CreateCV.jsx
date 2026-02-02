@@ -78,7 +78,7 @@ const CreateCV = () => {
       const formData = new FormData();
       formData.append('file', selectedPdf);
 
-      const response = await axiosClient.post('/api/cv/upload/', formData, {
+      const response = await axiosClient.post('/cv/upload/', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
