@@ -26,16 +26,25 @@ class UserNameSerializer(serializers.Serializer):
     username = serializers.CharField(required = True)
 
 class CandidateSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(source="user.username", read_only=True)
-    email = serializers.EmailField(source="user.email", read_only=True)
-    phone = serializers.CharField(source="user.phone", read_only=True)
-    fullname = serializers.CharField(source="user.fullname", read_only=True)
-    avatar = serializers.ImageField(source="user.avatar_url", read_only=True)
-
-
+    description = serializers.CharField(required = False, allow_blank=True)
+    address = serializers.CharField(required = False, allow_blank=True)
+    date_of_birth = serializers.DateField(required = False, allow_null=True)
+    avatar = serializers.ImageField(source="user.avatar", required = False)
+    username = serializers.CharField(source="user.username", read_only = True)
+    email =serializers.EmailField(source="user.email", read_only = True)
+    phone =serializers.CharField(source="user.phone")
+    first_name =serializers.CharField(source="user.first_name")
+    last_name =serializers.CharField(source="user.last_name")
     class Meta:
         model = Candidates
-        fields = ['id', 'description', 'username', 'email', 'phone', 'fullname', 'avatar', 'address', 'date_of_birth']
+        fields = ['username','email','phone','first_name','last_name','avatar','description','address','date_of_birth']
+        
+    def validate_avatar(self, value):
+        if not value.name.lower().endswith(('.png', '.jpeg', '.jpg')):
+            raise serializers.ValidationError("Chỉ chấp nhận file định dạng png/jpeg.")
+        if value.size > 5 * 1024 * 1024:
+            raise serializers.ValidationError("File quá lớn. Vui lòng upload file dưới 5MB.")
+        return value
 
     def validate_avatar(self, value):
         if not value.name.lower().endswith(('.png', '.jpeg', '.jpg')):

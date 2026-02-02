@@ -51,8 +51,9 @@ class UserService:
     @staticmethod
     def update_candidate_profile(user, validated_data):
         try:
-            candidate = Candidates.objects.get(user = user, isdeleted = False, is_active = False)
-            instance = UserService.update_profile(user_id=user.id, validated_data=validated_data)
+            candidate = Candidates.objects.get(user = user, isdeleted = False)
+            user_data = validated_data.pop('user', {})
+            instance = UserService.update_profile(user_id=user.id, validated_data=user_data)
             candidate.description = validated_data.get('description')
             candidate.address = validated_data.get('address')
             candidate.date_of_birth = validated_data.get('date_of_birth')

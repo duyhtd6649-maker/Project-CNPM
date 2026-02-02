@@ -122,14 +122,14 @@ def update_profile(request, id):
 @swagger_auto_schema(
     method='put',
     operation_description="update Profile",
-    request_body=UserProfileSerializer,
-    responses={200: UserProfileSerializer}
+    request_body=CandidateSerializer,
+    responses={200: CandidateSerializer}
 )
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 @parser_classes([MultiPartParser, FormParser, JSONParser])
 def update_candidate_profile(request):
-    serializer = CandidateSerializer(request.data, partial = True)
+    serializer = CandidateSerializer(data = request.data, partial = True)
     serializer.is_valid(raise_exception=True)
     try:
         instance = UserService.update_candidate_profile(user=request.user, validated_data=serializer.validated_data)
