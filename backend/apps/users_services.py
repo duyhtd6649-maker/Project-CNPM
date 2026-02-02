@@ -153,6 +153,13 @@ class UserService:
             raise NotFound({"error":"Candidate not found"})
         except Recruiters.DoesNotExist:
             raise NotFound({"error":"Recruiter not found"})
+    
+    def find_job_by_id(job_id):
+        try:
+            job = Jobs.objects.get(id = job_id)
+            return job
+        except Jobs.DoesNotExist:
+            raise NotFound({"error":"Job not found"})
 
 class AdminService:
     @staticmethod    
@@ -438,8 +445,3 @@ class interviewService:
 
         interview.save()
         return interview
-    
-    
-    
-          
-

@@ -5,10 +5,12 @@ from rest_framework import status
 from apps.users_services import UserService, RecruiterService, AdminService, CompanyService, interviewService
 from database.models.users import Companies, Recruiters, Users
 from ..serializers.user_serializers import InterviewSerializer, InterviewUpdateSerializer, UserSerializer, UserProfileSerializer, CandidateSerializer, UserNameSerializer,RecruiterSerializer, CompanySerializer, applicationListSerializer
+from ..serializers.job_serializers import JobSerializer
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.exceptions import *
 from drf_yasg import openapi
+
 
 
 @api_view(['GET'])
@@ -491,7 +493,20 @@ def update_interview(request, interview_id):
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
             
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
+@swagger_auto_schema(
+    method = 'get'
+)
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def find_job_by_id(request, job_id):
+    try:
+        job = UserService.find_job_by_id(job_id)
+        serializer = JobSerializer(job)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except NotFound as e:
+        return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
+
 
 
 

@@ -22,6 +22,7 @@ urlpatterns = [
     # ===== JOB =====
     path('job/viewjobs/', job_views.view_job),
     path('job/create', job_views.create_job),
+    path('job/<uuid:id>/find/', user_views.find_job_by_id),
     path('job/<uuid:id>/update', job_views.update_job),
     path('job/<uuid:id>/apply/', application_views.apply_job),
     path('job/search/', job_views.search_jobs),
