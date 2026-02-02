@@ -16,6 +16,8 @@ class Cvs(AuditableModel):
     class Meta:
         db_table = 'cvs'
         app_label = 'database'
+        ordering = ['-created_date']
+
     def save(self, *args, **kwargs):
         if self.file_url and not self.file_size:
             self.file_size = self.file_url.size

@@ -13,7 +13,7 @@ class ApplicationService:
     @staticmethod
     def apply_job(user, job_id, cvsid):
         try:
-            job = Jobs.objects.get(id=job_id)
+            job = Jobs.objects.get(id=job_id, status = 'Open')
             candidate = Candidates.objects.get(user = user)
             if not ApplicationService.application_exists(candidate, job):
                 cv = Cvs.objects.get(id=cvsid.id, candidate=candidate)
