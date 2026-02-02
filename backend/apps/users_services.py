@@ -64,13 +64,8 @@ class UserService:
         except NotFound as e:
             raise NotFound({f"{e}"})
             
-        
+    @staticmethod   
     def upload_avatar(user, file_data):
-        try:
-            user = Users.objects.get(id=user.id)
-        except Users.DoesNotExist:
-            raise NotFound({"error":"User not found"})
-
         user.avatar_url = file_data
         user.save()
         return user

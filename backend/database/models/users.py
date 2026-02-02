@@ -28,8 +28,6 @@ class Users(AbstractUser):
     class Meta:
         db_table = 'Users'
         app_label = 'database'
-    def __str__(self):
-        return f"User: {self.username}"
     def save(self, *args, **kwargs):
         self.fullname = f"{self.last_name} {self.first_name}".strip()
         super().save(*args, **kwargs)
