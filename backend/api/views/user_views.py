@@ -138,8 +138,6 @@ def update_candidate_profile(request):
     except NotFound as e:
         return Response({f"e"}, status= status.HTTP_404_NOT_FOUND)
     
-
-
 @swagger_auto_schema(
     method='post',
     operation_description="Upload avatar",
@@ -151,10 +149,7 @@ def update_candidate_profile(request):
 @permission_classes([IsAuthenticated])
 @parser_classes([MultiPartParser, FormParser])
 def upload_avatar(request):
-    
-    
     file_obj = request.FILES.get('avatar')
-    
     if not file_obj:
         return Response({"error": "No avatar file selected"}, status=status.HTTP_400_BAD_REQUEST)
         
