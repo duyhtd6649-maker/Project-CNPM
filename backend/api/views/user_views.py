@@ -194,12 +194,43 @@ def company_create(request):
             return Response({"error":f"{str(e)}"},status=status.HTTP_403_FORBIDDEN)
     return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
-#view company
+
+@swagger_auto_schema(
+    method='get',
+    manual_parameters=[
+        openapi.Parameter(
+            'name',
+            openapi.IN_QUERY,
+            description="Từ khóa tìm kiếm",
+            type=openapi.TYPE_STRING,
+            required=False
+        ),
+        openapi.Parameter(
+            'address',
+            openapi.IN_QUERY,
+            description="Địa điểm",
+            type=openapi.TYPE_STRING,
+            required=False
+        ),
+    ],
+    responses={200: CompanySerializer(many=True)}
+)
 @api_view(['GET'])
-def view_companies(request):
-    companies = CompanyService.Get_all_company()
-    serializer = CompanySerializer(companies, many=True)
-    return Response(serializer.data)
+@permission_classes([IsAuthenticated])
+def search_company(request):
+    companies = CompanyService.search_company(filters = request.query_params)
+    serializer = CompanySerializer(companies, many = True)
+    return Response(serializer.data, status=status.HTTP_302_FOUND)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def company_detail(request,id):
+    try:
+        company = CompanyService.company_detail(company_id = id)
+        serializer = CompanySerializer(company)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except NotFound as e:
+        return Response({f"{e}"}, status=status.HTTP_400_BAD_REQUEST)
 
 #delete company
 @swagger_auto_schema(

@@ -396,6 +396,22 @@ class CompanyService:
 
         except Recruiters.DoesNotExist:
             raise NotFound("Recruiter not found")
+        
+    @staticmethod
+    def search_company(filters):
+        company_list = Companies.objects.filter(isdeleted = False)
+        if filters.get('name'):
+            company_list = company_list.filter(name__icontains = filters.get('name'))
+        if filters.get('address'):
+            company_list = company_list.filter(address = filters.get('address'))
+        return company_list
+    
+    @staticmethod
+    def company_detail(company_id):
+        try:
+            return Companies.objects.get(id = company_id, isdeleted = False)
+        except Companies.DoesNotExist:
+            raise NotFound({"error":"Company not found"})
 
 class interviewService:
     @staticmethod
