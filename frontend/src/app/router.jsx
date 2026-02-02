@@ -1,6 +1,6 @@
 import { createBrowserRouter, Outlet, Navigate, Link } from 'react-router-dom';
 import AuthLayout from '../layouts/AuthLayout';
-import { useAuth } from './AppProviders';
+import { AppProviders, useAuth } from './AppProviders';
 
 import Login from '../features/candidate/pages/Login';
 import Register from '../features/candidate/pages/Register';
@@ -29,19 +29,10 @@ const ProtectedRoute = ({ children }) => {
 };
 
 const navStyle = {
-  position: 'fixed',
-  bottom: '20px',
-  left: '50%',
-  transform: 'translateX(-50%)',
-  zIndex: 1000,
-  display: 'flex',
-  gap: '15px',
-  background: 'rgba(24, 25, 107, 0.95)',
-  padding: '12px 25px',
-  borderRadius: '50px',
-  boxShadow: '0 8px 20px rgba(0,0,0,0.4)',
-  fontSize: '11px',
-  fontWeight: '600'
+  position: 'fixed', bottom: '20px', left: '50%', transform: 'translateX(-50%)',
+  zIndex: 1000, display: 'flex', gap: '15px', background: 'rgba(24, 25, 107, 0.95)',
+  padding: '12px 25px', borderRadius: '50px', boxShadow: '0 8px 20px rgba(0,0,0,0.4)',
+  fontSize: '11px', fontWeight: '600'
 };
 
 const linkStyle = { color: '#fff', textDecoration: 'none' };
