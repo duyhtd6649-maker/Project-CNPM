@@ -1,216 +1,103 @@
-/* RESET */
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-}
-
-#root {
-  width: 100%;
-  height: 100%;
-}
+/* GIỮ NGUYÊN RESET */
+body, html { margin: 0; padding: 0; width: 100%; height: 100%; }
+#root { width: 100%; height: 100%; }
+.login-wrapper, .login-wrapper * { box-sizing: border-box; }
 
 .login-wrapper {
   display: flex;
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Inter', sans-serif;
 }
 
-/* LEFT COLUMN */
+/* PHẦN BÊN TRÁI */
 .login-left {
   flex: 1.2;
+  padding: 40px 80px;
   display: flex;
   flex-direction: column;
-  padding: 60px 100px;
   position: relative;
-  background-color: #ffffff;
+  background: #fff;
 }
 
-/* LOGO THEO ẢNH */
-.logo-container-header {
-  position: absolute;
-  top: 40px;
-  left: 60px;
-}
+/* LOGO THEO MẪU */
+.logo-section { margin-bottom: 50px; }
+.uth-text { font-size: 26px; font-weight: 900; margin: 0; color: #000; }
+.workplace-text { font-size: 26px; font-weight: 900; margin: 0; color: #7b7dff; }
 
-.uth-brand {
-  margin: 0;
-  font-size: 28px;
-  font-weight: 900;
-  color: #000000;
-  line-height: 1.1;
-}
-
-.workplace-brand {
-  margin: 0;
-  font-size: 28px;
-  font-weight: 900;
-  color: #7b7dff;
-}
-
-/* LINK CHO ADMIN */
 .admin-login-link {
   position: absolute;
   top: 40px;
   right: 60px;
-  color: #444444;
+  color: #333;
   text-decoration: none;
-  font-weight: 600;
   font-size: 14px;
-  border: 1px solid #ddd;
-  padding: 8px 15px;
-  border-radius: 20px;
+  font-weight: 600;
 }
 
-/* NỘI DUNG CHÍNH */
 .login-content-box {
   width: 100%;
-  max-width: 400px;
+  max-width: 380px;
   margin: auto;
   text-align: center;
 }
 
-.welcome-title {
-  font-size: 38px;
-  font-weight: 800;
-  margin: 0;
-  color: #000000;
-}
+.welcome-text { font-size: 32px; font-weight: 800; margin-bottom: 10px; }
+.sub-text { color: #666; margin-bottom: 30px; }
 
-.welcome-subtext {
-  font-size: 16px;
-  color: #666666;
-  margin: 10px 0 40px 0;
-}
-
-/* Ô NHẬP LIỆU */
-.input-group-wrapper {
-  position: relative;
-  width: 100%;
-  margin-bottom: 20px;
-}
-
-.input-icon-left {
+/* INPUT BOX BO TRÒN CÓ ICON */
+.input-group { position: relative; margin-bottom: 20px; }
+.input-icon-inner {
   position: absolute;
   left: 20px;
   top: 50%;
   transform: translateY(-50%);
-  color: #bbbbbb;
+  color: #aaa;
 }
-
-.input-group-wrapper input {
+.input-group input {
   width: 100%;
-  padding: 16px 16px 16px 55px;
-  border: 1.5px solid #f0f0f0;
-  border-radius: 15px;
-  background-color: #fcfcfc;
-  font-size: 15px;
+  padding: 15px 15px 15px 55px;
+  border: 1px solid #eee;
+  border-radius: 15px; /* Bo tròn giống ảnh */
+  background: #f9f9f9;
   outline: none;
-  transition: all 0.3s ease;
 }
 
-.input-group-wrapper input:focus {
-  border-color: #7b7dff;
-  background-color: #ffffff;
-  box-shadow: 0 4px 12px rgba(123, 125, 255, 0.08);
-}
+.forgot-link-container { text-align: left; margin-bottom: 25px; }
+.forgot-link-container a { color: #7b7dff; text-decoration: none; font-size: 13px; }
 
-.forgot-password-box {
-  text-align: left;
-  margin-bottom: 25px;
-}
-
-.forgot-password-box a {
-  color: #7b7dff;
-  text-decoration: none;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-/* NÚT BẤM */
-.btn-submit-login {
+/* NÚT LOGIN VIÊN THUỐC */
+.login-btn-purple {
   width: 180px;
-  padding: 14px;
-  background-color: #7b7dff;
-  color: #ffffff;
+  padding: 12px;
+  background: #7b7dff;
+  color: #fff;
   border: none;
-  border-radius: 30px;
+  border-radius: 25px;
   font-size: 16px;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(123, 125, 255, 0.3);
-  transition: transform 0.2s ease;
+  margin-bottom: 15px;
 }
 
-.btn-submit-login:active {
-  transform: scale(0.98);
-}
+.reg-hint { font-size: 14px; color: #999; }
+.reg-hint a { color: #7b7dff; font-weight: 700; text-decoration: none; }
 
-.register-redirect {
-  margin-top: 20px;
-  font-size: 14px;
-  color: #999999;
-}
+/* SOCIAL */
+.social-section-wrapper { margin-top: 40px; }
+.social-divider { display: flex; align-items: center; gap: 10px; color: #eee; margin-bottom: 20px; }
+.social-divider span { color: #ccc; font-size: 12px; }
+.social-divider::before, .social-divider::after { content: ""; flex: 1; height: 1px; background: #eee; }
 
-.register-redirect a {
-  color: #7b7dff;
-  font-weight: 800;
-  text-decoration: none;
-}
+.social-icons-row { display: flex; justify-content: center; gap: 20px; }
+.s-circle { width: 45px; height: 45px; border-radius: 50%; border: none; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+.s-red { background: #ea4335; }
+.s-black { background: #000; }
+.s-gmail { background: #fbbc05; }
 
-/* MẠNG XÃ HỘI */
-.social-auth-section {
-  margin-top: 40px;
-}
-
-.divider-line {
-  display: flex;
-  align-items: center;
-  margin-bottom: 25px;
-}
-
-.divider-line::before,
-.divider-line::after {
-  content: "";
-  flex: 1;
-  height: 1px;
-  background-color: #eeeeee;
-}
-
-.divider-line span {
-  padding: 0 15px;
-  font-size: 12px;
-  color: #cccccc;
-}
-
-.social-btn-row {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-}
-
-.social-btn {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #ffffff;
-  font-size: 20px;
-  cursor: pointer;
-}
-
-.google { background-color: #ea4335; }
-.apple { background-color: #000000; }
-.gmail { background-color: #fbbc05; }
-
-/* GRADIENT BÊN PHẢI */
+/* PHẦN BÊN PHẢI GRADIENT TÍM */
 .login-right-side {
   flex: 1;
-  background: linear-gradient(180deg, #1b10af 0%, #a2a7ff 100%);
+  background: linear-gradient(180deg, #1d12b1 0%, #a2a7ff 100%);
 }

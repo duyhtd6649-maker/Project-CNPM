@@ -5,10 +5,12 @@ from rest_framework import status
 from apps.users_services import UserService, RecruiterService, AdminService, CompanyService, interviewService
 from database.models.users import Companies, Recruiters, Users
 from ..serializers.user_serializers import InterviewSerializer, InterviewUpdateSerializer, UserSerializer, UserProfileSerializer, CandidateSerializer, UserNameSerializer,RecruiterSerializer, CompanySerializer, applicationListSerializer
+from ..serializers.job_serializers import JobSerializer
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.exceptions import *
 from drf_yasg import openapi
+
 
 
 @api_view(['GET'])
@@ -537,7 +539,31 @@ def update_interview(request, interview_id):
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
             
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
+@swagger_auto_schema(
+    method='get',
+    operation_description="View my profile",
+    responses={200: UserSerializer}
+)
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def view_my_profile(request):
+    try:
+        instance = UserService.view_my_profile(request.user)
+
+        if request.user.role == 'candidate':
+            serializer = CandidateSerializer(instance)
+        elif request.user.role == 'recruiter':
+            serializer = RecruiterSerializer(instance)
+        else:
+            serializer = UserSerializer(instance)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+        
+    except NotFound as e:
+        return Response(e.detail, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 

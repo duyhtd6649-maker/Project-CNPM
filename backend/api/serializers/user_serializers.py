@@ -90,6 +90,7 @@ class InterviewSerializer(serializers.Serializer):
     location = serializers.CharField(required=True, max_length=255)
     notes = serializers.CharField(required=False, allow_blank=True, max_length=1000)
     interviewer = serializers.CharField(required=True, max_length=255)
+    application = serializers.UUIDField(required=True)
 
     def validate_interview_date(self, value):
         from django.utils import timezone
@@ -117,6 +118,6 @@ class InterviewUpdateSerializer(serializers.Serializer):
         if value <= timezone.now():
             raise serializers.ValidationError("The new interview date must be a future date.")
         return value
-    
+
 
     

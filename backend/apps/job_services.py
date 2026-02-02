@@ -149,6 +149,15 @@ class JobService:
         except Candidates.DoesNotExist:
             raise PermissionDenied("User is not a candidate")
 
+    @staticmethod
+    def view_job_detail(job_id):
+        try:
+            job = Jobs.objects.get(id = job_id)
+            return job
+        except Jobs.DoesNotExist:
+            raise NotFound({"error":"Job not found"})
 
+
+    
         
     

@@ -10,67 +10,50 @@ import '../components/Login.css';
 const Login = () => {
   const navigate = useNavigate();
   const { setUser } = useAuth(); 
-  const [loginData, setLoginData] = useState({
-    username: '',
-    password: ''
-  });
+  const [loginData, setLoginData] = useState({ username: '', password: '' });
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setLoginData({
-      ...loginData,
-      [name]: value
-    });
+    setLoginData({ ...loginData, [name]: value });
   };
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
-
     try {
-      // 1. Gửi request đăng nhập
+      // Gọi API đăng nhập
       const response = await axiosClient.post('/api/auth/jwt/login/', loginData);
       
-      // 2. Lấy dữ liệu trả về
-      const { access, role, username } = response.data;
+      // FIX LỖI: Sử dụng destructuring với giá trị mặc định để tránh null
+      const { access, role = '', username = '' } = response.data;
       
-      // ==========================================
-      // BƯỚC QUAN TRỌNG: FIX LỖI NULL KHI KHÔNG ĐƯỢC SỬA BACKEND
-      // Nếu role bị null, ta gán cứng nó là 'candidate' để hệ thống chạy tiếp
-      // ==========================================
-      const safeRole = role || 'candidate'; 
-      const safeUsername = username || loginData.username || 'User';
-
-      // 3. Lưu vào localStorage (Lưu giá trị safeRole thay vì role bị null)
+      // 1. Lưu vào localStorage
       localStorage.setItem('access_token', access);
-      localStorage.setItem('user_role', safeRole); 
-      localStorage.setItem('username', safeUsername);
+      localStorage.setItem('user_role', role || ''); 
+      localStorage.setItem('username', username || '');
       
-      // 4. Cập nhật Auth Context
-      setUser({
-        username: safeUsername,
-        role: safeRole
-      });
+      // 2. Cập nhật State cho hệ thống ProtectedRoute
+      setUser({ username, role });
 
       alert("Login successful!");
 
-      // 5. Điều hướng (Sử dụng safeRole đã được bảo vệ khỏi null)
-      const userRoleLower = safeRole.toLowerCase();
+      // FIX LỖI toLowerCase: Kiểm tra role tồn tại trước khi biến đổi
+      const userRole = (role || '').toLowerCase();
 
-      if (userRoleLower === 'candidate') {
+      if (userRole === 'candidate') {
         navigate('/homepage');
-      } else if (userRoleLower === 'recruiter') {
+      } else if (userRole === 'recruiter') {
         navigate('/recruiter-dashboard');
-      } else if (userRoleLower === 'admin') {
+      } else if (userRole === 'admin') {
         navigate('/admin');
       } else {
-        // Trường hợp role lạ, vẫn cho về homepage
+        // Nếu role bị null hoặc lạ, mặc định vào homepage candidate
         navigate('/homepage');
       }
 
     } catch (error) {
-      console.error("Login Error Details:", error);
+      console.error("Login Error:", error);
       const errorMsg = error.response?.data?.detail || "Invalid username or password!";
       alert("Error: " + errorMsg);
     } finally {
@@ -81,30 +64,27 @@ const Login = () => {
   return (
     <div className="login-wrapper">
       <div className="login-left">
-        
-        {/* LOGO SECTION */}
-        <div className="logo-container-header">
-          <h2 className="uth-brand">UTH</h2>
-          <h2 className="workplace-brand">WORKPLACE</h2>
+        {/* LOGO SECTION - THEO ẢNH MẪU */}
+        <div className="logo-section">
+          <h2 className="uth-text">UTH</h2>
+          <h2 className="workplace-text">WORKPLACE</h2>
         </div>
 
-        {/* ADMIN LINK */}
+        {/* ADMIN LINK - THEO ẢNH MẪU */}
         <Link to="/admin-login" className="admin-login-link">
           for ADMIN
         </Link>
 
         <div className="login-content-box">
-          <div className="login-header-text">
-            <h2 className="welcome-title">LOGIN</h2>
-            <p className="welcome-subtext">Let's get started !!!</p>
+          <div className="login-header">
+            <h2 className="welcome-text">LOGIN</h2>
+            <p className="sub-text">Let's get started !!!</p>
           </div>
 
-          <form className="login-form-container" onSubmit={handleLogin}>
-            
-            <div className="input-group-wrapper">
-              <span className="input-icon-left">
-                <FontAwesomeIcon icon={faUser} />
-              </span>
+          <form className="login-form" onSubmit={handleLogin}>
+            <div className="input-group">
+              {/* ICON TRONG INPUT THEO ẢNH MẪU */}
+              <FontAwesomeIcon icon={faUser} className="input-icon-inner" />
               <input 
                 type="text" 
                 name="username" 
@@ -115,10 +95,9 @@ const Login = () => {
               />
             </div>
 
-            <div className="input-group-wrapper">
-              <span className="input-icon-left">
-                <FontAwesomeIcon icon={faLock} />
-              </span>
+            <div className="input-group">
+              {/* ICON TRONG INPUT THEO ẢNH MẪU */}
+              <FontAwesomeIcon icon={faLock} className="input-icon-inner" />
               <input 
                 type="password" 
                 name="password" 
@@ -129,47 +108,41 @@ const Login = () => {
               />
             </div>
 
-            <div className="forgot-password-box">
+            <div className="forgot-link-container">
               <Link to="/forgot">Forgot password</Link>
             </div>
 
-            <div className="action-button-group">
-              <button 
-                type="submit" 
-                className="btn-submit-login" 
-                disabled={loading}
-              >
-                {loading ? "Processing..." : "Login"}
+            <div className="login-action-area">
+              <button type="submit" className="login-btn-purple" disabled={loading}>
+                {loading ? "Logging in..." : "Login"}
               </button>
-              
-              <div className="register-redirect">
+              <div className="reg-hint">
                 Not a member ? <Link to="/register">Register now</Link>
               </div>
             </div>
-
           </form>
 
-          <div className="social-auth-section">
-            <div className="divider-line">
+          <div className="social-section-wrapper">
+            <div className="social-divider">
               <span>Or continue with</span>
             </div>
 
-            <div className="social-btn-row">
-              <button type="button" className="social-btn google">
+            <div className="social-icons-row">
+              <button type="button" className="s-circle s-red">
                 <FontAwesomeIcon icon={faGoogle} />
               </button>
-              <button type="button" className="social-btn apple">
+              <button type="button" className="s-circle s-black">
                 <FontAwesomeIcon icon={faShieldAlt} />
               </button>
-              <button type="button" className="social-btn gmail">
+              <button type="button" className="s-circle s-gmail">
                 <FontAwesomeIcon icon={faEnvelope} />
               </button>
             </div>
           </div>
-
         </div>
       </div>
 
+      {/* MẢNG MÀU GRADIENT BÊN PHẢI THEO ẢNH MẪU */}
       <div className="login-right-side"></div>
     </div>
   );

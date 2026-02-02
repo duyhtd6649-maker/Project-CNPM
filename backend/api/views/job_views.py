@@ -169,4 +169,16 @@ def close_job(request, id):
         return Response({"detail":"Job not found"}, status=status.HTTP_404_NOT_FOUND)
     
 
+@swagger_auto_schema(
+    method = 'get'
+)
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def view_job_detail(request, id):
+    try:
+        job = JobService.view_job_detail(id)
+        serializer = JobSerializer(job)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except NotFound as e:
+        return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
 

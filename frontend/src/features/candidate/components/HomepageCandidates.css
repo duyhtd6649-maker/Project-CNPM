@@ -1,4 +1,3 @@
-.css :
 :root {
   --uth-blue: #00d1b2;
   --header-grad: linear-gradient(90deg, #18196b 0%, #3e3ca0 100%);
@@ -420,7 +419,7 @@
 }
 
 
-index.css :
+index.css 
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

@@ -14,6 +14,7 @@ urlpatterns = [
     path('user/candidate/<uuid:id>/', user_views.GetCandidateProfile),
     path('user/<uuid:id>/', user_views.GetUserInforById),
     path('candidate/profile', user_views.update_candidate_profile), #update profile cho candidate
+    path('user/profile/myprofile', user_views.view_my_profile), #xem profile của mình
     # ===== CV =====
     path('cv/analyzer/',cv_views.Analyze_Cv), #upload và phân tích cv
     path('cv/upload/', cv_views.Upload_Cv), #phân tích cv
@@ -25,6 +26,7 @@ urlpatterns = [
     
     # ===== JOB =====
     path('job/create', job_views.create_job), #tạo job
+    path('job/<uuid:id>/view/', job_views.view_job_detail), #xem chi tiết job
     path('job/<uuid:id>/update', job_views.update_job), #update job
     path('job/<uuid:id>/apply/', application_views.apply_job), #apply job
     path('search/job/', job_views.search_jobs), #tìm job có filter
@@ -40,7 +42,7 @@ urlpatterns = [
     path('company/update/info/', user_views.update_company_info), #update thông tin của company
     path('company/<str:id>/delete_logo/', user_views.delete_company_logo), #xóa logo của company
     # ===== APPLICATION =====    
-    path('applications/<uuid:id>/delete/', application_views.delete_application), #xóa application
+    #path('applications/<uuid:id>/delete/', application_views.delete_application), #xóa application
     path('applications/<uuid:id>/UpdateStatus/', application_views.update_application_system_status), #update application status
     path('applications/search/', application_views.applications), #tìm application có filter
     path('applications/<uuid:id>/', application_views.application_by_id), #xem application
