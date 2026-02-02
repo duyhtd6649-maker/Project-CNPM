@@ -1,5 +1,5 @@
-/* ========== GLOBAL RESET (GIỮ NGUYÊN) ========== */
-body {
+/* RESET */
+html, body {
   margin: 0;
   padding: 0;
   width: 100%;
@@ -11,227 +11,206 @@ body {
   height: 100%;
 }
 
-.login-wrapper,
-.login-wrapper * {
-  box-sizing: border-box;
-}
-
-/* ========== WRAPPER CHÍNH ========== */
 .login-wrapper {
   display: flex;
   width: 100vw;
   height: 100vh;
   overflow: hidden;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #fff;
 }
 
-/* ========== LEFT SIDE (PHẦN FORM) ========== */
+/* LEFT COLUMN */
 .login-left {
-  flex: 1.2; /* Tăng tỉ lệ để form rộng rãi giống mẫu */
-  padding: 40px 60px;
+  flex: 1.2;
   display: flex;
   flex-direction: column;
-  justify-content: center; 
-  align-items: center;     
+  padding: 60px 100px;
   position: relative;
-  background: #fff;
+  background-color: #ffffff;
 }
 
-/* LOGO UTH WORKPLACE (MỚI THÊM THEO ẢNH) */
-.logo-section {
+/* LOGO THEO ẢNH */
+.logo-container-header {
   position: absolute;
   top: 40px;
   left: 60px;
-  text-align: left;
-}
-.uth-text { 
-  margin: 0; 
-  font-size: 24px; 
-  font-weight: 900; 
-  color: #000; 
-  line-height: 1;
-}
-.workplace-text { 
-  margin: 0; 
-  font-size: 24px; 
-  font-weight: 900; 
-  color: #7b7dff; /* Màu tím thương hiệu */
 }
 
-/* ADMIN LINK */
+.uth-brand {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 900;
+  color: #000000;
+  line-height: 1.1;
+}
+
+.workplace-brand {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 900;
+  color: #7b7dff;
+}
+
+/* LINK CHO ADMIN */
 .admin-login-link {
   position: absolute;
   top: 40px;
   right: 60px;
-  color: #333;
+  color: #444444;
   text-decoration: none;
-  font-size: 14px;
   font-weight: 600;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  padding: 8px 15px;
+  border-radius: 20px;
 }
 
 /* NỘI DUNG CHÍNH */
 .login-content-box {
   width: 100%;
-  max-width: 380px;
+  max-width: 400px;
+  margin: auto;
   text-align: center;
 }
 
-.login-header {
-  margin-bottom: 35px;
-}
-
-.welcome-text {
-  font-size: 32px;
+.welcome-title {
+  font-size: 38px;
   font-weight: 800;
-  color: #000;
   margin: 0;
+  color: #000000;
 }
 
-.sub-text {
-  color: #666;
-  margin-top: 8px;
+.welcome-subtext {
   font-size: 16px;
+  color: #666666;
+  margin: 10px 0 40px 0;
 }
 
-/* FORM VÀ INPUT (CHỈNH THEO ẢNH MẪU) */
-.login-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.input-group {
+/* Ô NHẬP LIỆU */
+.input-group-wrapper {
   position: relative;
   width: 100%;
+  margin-bottom: 20px;
 }
 
-/* Icon bên trong input */
-.input-icon-inner {
+.input-icon-left {
   position: absolute;
-  left: 18px;
+  left: 20px;
   top: 50%;
   transform: translateY(-50%);
-  color: #999;
-  font-size: 16px;
+  color: #bbbbbb;
 }
 
-.input-group input {
+.input-group-wrapper input {
   width: 100%;
-  padding: 15px 15px 15px 50px; /* Chừa khoảng trống cho icon */
-  border: 1px solid #e5e5e5;
-  border-radius: 15px; /* Bo tròn mạnh giống ảnh mẫu */
+  padding: 16px 16px 16px 55px;
+  border: 1.5px solid #f0f0f0;
+  border-radius: 15px;
+  background-color: #fcfcfc;
+  font-size: 15px;
   outline: none;
-  font-size: 14px;
-  background-color: #f9f9f9;
-  transition: 0.3s;
+  transition: all 0.3s ease;
 }
 
-.input-group input:focus {
+.input-group-wrapper input:focus {
   border-color: #7b7dff;
-  background-color: #fff;
+  background-color: #ffffff;
+  box-shadow: 0 4px 12px rgba(123, 125, 255, 0.08);
 }
 
-.forgot-link-container {
+.forgot-password-box {
   text-align: left;
-  margin: 5px 0 15px 5px;
-}
-
-.forgot-link-container a {
-  font-size: 13px;
-  color: #7b7dff;
-  text-decoration: none;
-  font-weight: 500;
-}
-
-/* NÚT LOGIN (DẠNG VIÊN THUỐC) */
-.login-btn-purple {
-  width: 160px; /* Thu nhỏ chiều ngang giống ảnh */
-  margin: 0 auto;
-  padding: 12px;
-  background: #7b7dff;
-  color: #fff;
-  border: none;
-  border-radius: 25px; /* Bo tròn hoàn toàn */
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.login-btn-purple:hover {
-  background: #6264f0;
-  transform: translateY(-1px);
-}
-
-.reg-hint {
-  margin-top: 15px;
-  font-size: 14px;
-  color: #888;
-}
-
-.reg-hint a {
-  color: #7b7dff;
-  font-weight: 700;
-  text-decoration: none;
-}
-
-/* SOCIAL SECTION (GIỮ NGUYÊN CODE CỦA BẠN) */
-.social-section-wrapper {
-  margin-top: 40px;
-}
-
-.social-divider {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 13px;
-  color: #ccc;
   margin-bottom: 25px;
 }
 
-.social-divider::before,
-.social-divider::after {
+.forgot-password-box a {
+  color: #7b7dff;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* NÚT BẤM */
+.btn-submit-login {
+  width: 180px;
+  padding: 14px;
+  background-color: #7b7dff;
+  color: #ffffff;
+  border: none;
+  border-radius: 30px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(123, 125, 255, 0.3);
+  transition: transform 0.2s ease;
+}
+
+.btn-submit-login:active {
+  transform: scale(0.98);
+}
+
+.register-redirect {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #999999;
+}
+
+.register-redirect a {
+  color: #7b7dff;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+/* MẠNG XÃ HỘI */
+.social-auth-section {
+  margin-top: 40px;
+}
+
+.divider-line {
+  display: flex;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.divider-line::before,
+.divider-line::after {
   content: "";
   flex: 1;
   height: 1px;
-  background: #eee;
+  background-color: #eeeeee;
 }
 
-.social-icons-row {
+.divider-line span {
+  padding: 0 15px;
+  font-size: 12px;
+  color: #cccccc;
+}
+
+.social-btn-row {
   display: flex;
   justify-content: center;
   gap: 20px;
 }
 
-.s-circle {
-  width: 45px;
-  height: 45px;
+.social-btn {
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #ffffff;
   font-size: 20px;
   cursor: pointer;
-  transition: 0.3s;
 }
 
-/* Màu sắc icon social theo chuẩn ảnh mẫu */
-.s-red { background-color: #ea4335; color: white; }
-.s-black { background-color: #000; color: white; }
-.s-gmail { background-color: #fbbc05; color: white; }
+.google { background-color: #ea4335; }
+.apple { background-color: #000000; }
+.gmail { background-color: #fbbc05; }
 
-/* ========== RIGHT SIDE (GRADIENT TÍM THEO ẢNH) ========== */
+/* GRADIENT BÊN PHẢI */
 .login-right-side {
   flex: 1;
-  background: linear-gradient(180deg, #1d12b1 0%, #a2a7ff 100%);
-  /* Không cần image nếu dùng gradient giống ảnh mẫu của bạn */
-}
-
-/* RESPONSIVE */
-@media (max-width: 900px) {
-  .login-right-side { display: none; }
-  .login-left { flex: 1; padding: 20px; }
-  .logo-section { left: 30px; }
+  background: linear-gradient(180deg, #1b10af 0%, #a2a7ff 100%);
 }

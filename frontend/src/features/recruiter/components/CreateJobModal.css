@@ -1,0 +1,134 @@
+/* Overlay bao phủ toàn màn hình */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(10, 15, 45, 0.4);
+    backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    padding: 20px;
+}
+
+/* Container chính của Modal */
+.modal-content-large {
+    background: #F4F7FE;
+    width: 100%;
+    max-width: 1100px;
+    max-height: 95vh;
+    border-radius: 30px;
+    padding: 40px;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.btn-close-modal {
+    background: none;
+    border: none;
+    color: #A3AED0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.modal-title { color: #2b3674; font-size: 28px; font-weight: 800; margin-bottom: 5px; }
+.modal-subtitle { color: #A3AED0; margin-bottom: 30px; }
+
+/* Grid chia 2 cột: Form và Preview */
+.create-job-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 30px;
+}
+
+/* Cột trái: Form */
+.job-form-main {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 14px 17px 40px 4px rgba(112, 144, 176, 0.08);
+}
+
+.form-group { margin-bottom: 20px; }
+.form-group label { 
+    display: block; 
+    font-weight: 700; 
+    color: #2b3674; 
+    margin-bottom: 10px; 
+    font-size: 14px;
+}
+
+.form-group input, .form-group textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid #E0E1E2;
+    outline: none;
+    transition: all 0.2s;
+}
+
+.form-group input:focus { border-color: #4318FF; box-shadow: 0 0 0 3px rgba(67, 24, 255, 0.1); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+.btn-publish-submit {
+    width: 100%;
+    padding: 15px;
+    background: #4318FF;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+/* Cột phải: Preview Panel */
+.preview-panel {
+    background: #E9EDF7;
+    padding: 30px;
+    border-radius: 20px;
+    height: fit-content;
+}
+
+.preview-label { color: #4318FF; font-weight: 800; font-size: 12px; margin-bottom: 20px; }
+
+.preview-card {
+    background: white;
+    padding: 25px;
+    border-radius: 18px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+}
+
+.preview-avatar {
+    width: 48px; height: 48px;
+    background: #4318FF;
+    border-radius: 12px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+}
+
+.preview-header { display: flex; gap: 15px; align-items: center; margin-bottom: 20px; }
+.preview-header h4 { margin: 0; color: #2b3674; font-size: 18px; }
+.preview-header p { margin: 0; color: #A3AED0; font-size: 13px; }
+
+.preview-tags { display: flex; gap: 10px; margin-bottom: 20px; }
+.badge-blue { background: #eef2ff; color: #4318FF; padding: 5px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; }
+.badge-green { background: #f0fdf4; color: #16a34a; padding: 5px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; }
+
+.preview-body h5 { color: #2b3674; margin-bottom: 8px; font-size: 15px; }
+.preview-body p { color: #707EAE; font-size: 14px; line-height: 1.6; white-space: pre-line; }
+
+@media (max-width: 900px) { .create-job-grid { grid-template-columns: 1fr; } }
