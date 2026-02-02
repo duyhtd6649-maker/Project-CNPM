@@ -3,8 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
 import { faEnvelope, faShieldAlt } from '@fortawesome/free-solid-svg-icons'; 
-import axiosClient from "/src/infrastructure/http/axiosClient";
-import { useAuth } from '../../../app/AppProviders'; // Đã sửa đường dẫn lùi 3 cấp
+import axiosClient from "../../../infrastructure/http/axiosClient";
+import { useAuth } from '../../../app/AppProviders';
 import '../components/Login.css';
 
 const Login = () => {
@@ -22,48 +22,20 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      // 1. Gọi API đăng nhập
-      const response = await axiosClient.post('/api/auth/jwt/login/', loginData);
+      const response = await axiosClient.post('/api/auth/jwt/login/', {
+        username: loginData.username,
+        password: loginData.password
+      });
       
-      // 2. Lấy dữ liệu từ Backend
-      const { access, role, username } = response.data;
+      login(response.data);
       
-      // 3. Lưu vào localStorage
-      localStorage.setItem('access_token', access);
-      localStorage.setItem('role', role);
-
-      // 4. Cập nhật AuthContext (BẮT BUỘC để qua được ProtectedRoute)
-      setUser({ username: username || loginData.username, role: role });
-
-      // Chuyển role về chữ thường để so sánh
-      const userRole = role ? role.toLowerCase() : '';
-      
-      console.log("Logged in with role:", userRole);
-
-      // 5. Điều hướng dựa trên Role và router.jsx
-      if (userRole === 'recruiter') {
-        alert(`Chào mừng Nhà tuyển dụng ${username || ''}!`);
-        navigate('/recruiter-dashboard');
-      } else if (userRole === 'candidate') {
-        alert(`Chào mừng Ứng viên ${username || ''}!`);
-        
-        // Chuyển hướng đến đường dẫn 'homepage' khai báo trong router.jsx
-        navigate('/homepage');
-
-        // PHƯƠNG ÁN DỰ PHÒNG: Nếu sau 300ms vẫn ở trang Login, ép trình duyệt nhảy trang
-        setTimeout(() => {
-          if (window.location.pathname.includes('login')) {
-            window.location.href = '/homepage';
-          }
-        }, 300);
+      if (response.data.role === 'admin') {
+        navigate('/admin');
       } else {
-        navigate('/');
+        navigate('/home'); 
       }
-
     } catch (error) {
-      console.error("Login Error:", error);
-      const errorMsg = error.response?.data?.detail || "Đăng nhập thất bại! Vui lòng kiểm tra lại tài khoản và mật khẩu.";
-      alert(errorMsg);
+      alert("Đăng nhập thất bại! Vui lòng kiểm tra lại tài khoản hoặc mật khẩu.");
     } finally {
       setLoading(false);
     }
@@ -72,9 +44,13 @@ const Login = () => {
   return (
     <div className="login-wrapper">
       <div className="login-left">
+        <Link to="/admin-login" className="admin-login-link">
+           for ADMIN
+        </Link>
+
         <div className="brand-logo-container">
-          <span className="text-uth" style={{color: '#2e5bff', fontWeight: '800', fontSize: '24px'}}>UTH</span>
-          <span className="text-workplace" style={{color: '#05cd99', fontWeight: '800', fontSize: '24px'}}>WORKPLACE</span>
+          <span className="text-uth">UTH</span>
+          <span className="text-workplace">WORKPLACE</span>
         </div>
 
         <div className="login-form-content">
@@ -107,12 +83,12 @@ const Login = () => {
             </div>
 
             <div className="forgot-link-container">
-              <Link to="/forgot">Forgot password</Link>
+              <Link to="/forgot-password">Forgot password</Link>
             </div>
 
             <div className="login-action-area">
               <button type="submit" className="login-btn-purple" disabled={loading}>
-                {loading ? "Logging in..." : "Login"}
+                {loading ? "..." : "Login"}
               </button>
               <div className="reg-hint">
                 Not a member ? <Link to="/register">Register now</Link>
@@ -139,7 +115,6 @@ const Login = () => {
           </div>
         </div>
       </div>
-
       <div className="login-right-side"></div>
     </div>
   );

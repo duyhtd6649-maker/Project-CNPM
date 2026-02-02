@@ -4,10 +4,10 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import status
-from django.contrib.auth.models import update_last_login
 from apps import users_services
 from ..serializers.auth_serializers import LogoutSerializer, CustomTokenObtainPairSerializer
 from drf_yasg.utils import swagger_auto_schema
+
 
 @swagger_auto_schema(
     method='post',
@@ -15,6 +15,7 @@ from drf_yasg.utils import swagger_auto_schema
     request_body=LogoutSerializer,
     responses={200: 'Kết quả phân tích JSON', 400: 'Lỗi dữ liệu'}
 )
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def logout(request):
@@ -35,18 +36,6 @@ def jwt_from_session(request):
         "refresh": str(refresh),
         "role": request.user.role,
     })
-
+    
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
-
-    def post(self, request, *args, **kwargs):
-        response = super().post(request, *args, **kwargs)
-        if response.status_code == status.HTTP_200_OK:
-            serializer = self.get_serializer(data=request.data)
-            try:
-                serializer.is_valid(raise_exception=True)
-                user = serializer.user
-                update_last_login(None, user)
-            except Exception:
-                pass
-        return response

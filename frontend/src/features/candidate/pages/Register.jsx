@@ -13,11 +13,9 @@ const Register = () => {
     phone: '', 
     password: '', 
     repeatPassword: '',
-    gender: 'Male', 
-    country: '', 
-    dob: '', 
-    jobs: '', 
-    email: '', 
+    gender: 'Male',
+    country: '',
+    jobs: '',
     role: 'Candidate'
   });
 
@@ -30,15 +28,11 @@ const Register = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    
     if (formData.password !== formData.repeatPassword) {
       alert("Mật khẩu nhập lại không khớp!");
       return;
     }
 
-    setLoading(true);
-
-    // Mapping dữ liệu theo CustomRegisterSerializer của Backend
     const payload = {
       username: formData.email, 
       email: formData.email,
@@ -55,34 +49,12 @@ const Register = () => {
     };
 
     try {
-      // Đã thêm /api/ để khớp với cấu trúc thư mục api/urls.py của bạn
-      await axiosClient.post('/api/auth/registration/', payload);
-      
-      alert(`Đăng ký tài khoản ${formData.role} thành công!`);
+      setLoading(true);
+      const res = await axiosClient.post('/api/auth/registration/', payload);
+      alert("Đăng ký thành công!");
       navigate('/login');
-      
-    } catch (error) {
-      console.error("Register Error:", error);
-
-      // 1. Xử lý nếu trả về HTML (thường do sai URL baseURL)
-      if (typeof error.response?.data === 'string' && error.response.data.includes('<!DOCTYPE html>')) {
-        alert("Lỗi hệ thống: Sai địa chỉ API (404). Vui lòng kiểm tra lại baseURL trong axiosClient.js");
-        return;
-      }
-
-      // 2. Xử lý lỗi từ Backend
-      const errorData = error.response?.data;
-      let errorMsg = "Đăng ký thất bại, vui lòng thử lại!";
-
-      if (errorData && typeof errorData === 'object') {
-        errorMsg = Object.entries(errorData)
-          .map(([field, msgs]) => `${field}: ${Array.isArray(msgs) ? msgs.join(", ") : msgs}`)
-          .join("\n");
-      } else if (error.message === "Network Error") {
-        errorMsg = "Không thể kết nối đến Server. Hãy chắc chắn đã chạy 'python manage.py runserver'";
-      }
-      
-      alert("Lỗi đăng ký:\n" + errorMsg);
+    } catch (err) {
+      alert("Lỗi đăng ký: " + JSON.stringify(err.response?.data));
     } finally {
       setLoading(false);
     }
@@ -96,13 +68,13 @@ const Register = () => {
           <div className="form-grid">
 
             <div className="form-group">
-              <label>Full Name</label>
-              <input type="text" name="name" placeholder="Enter your name" onChange={handleChange} required />
+              <label>Username</label>
+              <input name="username" onChange={handleChange} required />
             </div>
 
             <div className="form-group">
-              <label>Phone Number</label>
-              <input type="text" name="phone" placeholder="Enter phone number" onChange={handleChange} required />
+              <label>Email</label>
+              <input type="email" name="email" onChange={handleChange} required />
             </div>
 
             <div className="form-group">
@@ -132,7 +104,7 @@ const Register = () => {
 
             <div className="form-group">
               <label>Repeat Password</label>
-              <input type="password" name="repeatPassword" placeholder="Repeat Password" onChange={handleChange} required />
+              <input type="password" name="repeatPassword" onChange={handleChange} required />
             </div>
 
             <div className="form-group">
