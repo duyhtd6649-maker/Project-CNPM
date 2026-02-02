@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 from apps.job_services import JobService
-from ..serializers.job_serializers import JobSerializer,JobForFilterSerializer
+from ..serializers.job_serializers import JobSerializer,JobForFilterSerializer, JobStatusUpdateSerializer
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.exceptions import *
 from drf_yasg import openapi
@@ -181,4 +181,23 @@ def view_job_detail(request, id):
         return Response(serializer.data, status=status.HTTP_200_OK)
     except NotFound as e:
         return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
+
+@swagger_auto_schema(
+    method='put',
+    request_body=JobStatusUpdateSerializer,
+    responses={200: JobSerializer}
+)
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def process_job(request, id):
+    try:
+        serializer = JobStatusUpdateSerializer(data = request.data)
+        serializer.is_valid(raise_exception=True)
+        job = JobService.process_job(user=request.user, job_id = id, new_status= serializer.validated_data.get('new_status'))
+        serializer = JobSerializer(job)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except NotFound as e:
+        return Response({f"{e}"},status=status.HTTP_404_NOT_FOUND)
+    except PermissionError as e:
+        return Response({f"{e}"},status=status.HTTP_403_FORBIDDEN)
 
