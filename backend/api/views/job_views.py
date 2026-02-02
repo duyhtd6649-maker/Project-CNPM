@@ -148,4 +148,18 @@ def recommended_jobs(request):
     except Exception as e:
         return Response({"error": f"Error: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
 
+@swagger_auto_schema(
+    method='put',
+    responses={200: JobSerializer}
+)
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def close_job(request, id):
+    try:
+        job = JobService.close_job(user=request.user, job_id= id)
+        return Response({"detail":"success"}, status=status.HTTP_200_OK)
+    except NotFound:
+        return Response({"detail":"Job not found"}, status=status.HTTP_404_NOT_FOUND)
+    
+
 

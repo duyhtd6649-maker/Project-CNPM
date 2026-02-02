@@ -15,6 +15,7 @@ urlpatterns = [
     path('user/<str:username>/',user_views.GetUserbyUsername),
     path('user/candidate/<uuid:id>/', user_views.GetCandidateProfile),
     path('user/<uuid:id>/', user_views.GetUserInforById),
+    path('candidate/profile', user_views.update_candidate_profile),
     # ===== CV =====
     path('cv/analyzer/',cv_views.Analyze_Cv),
     path('cv/upload/', cv_views.Upload_Cv),
@@ -27,6 +28,7 @@ urlpatterns = [
     path('job/search/', job_views.search_jobs),
     path('job/<uuid:id>/delete/', job_views.delete_job),
     path('job/recommended/', job_views.recommended_jobs),
+    path('job/<uuid:id>/', job_views.close_job),
     # ===== COMPANY =====
     path('company/viewcompanies/', user_views.view_companies),
     path('company/<uuid:id>/delete/', user_views.delete_companies),

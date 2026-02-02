@@ -113,11 +113,31 @@ def update_profile(request, id):
     serializer = UserProfileSerializer(data=request.data, partial=True)
     if serializer.is_valid():
         try:
-            user_instance = UserService.update_profile(user_id=id, validated_data=serializer.validated_data)
+            user_instance = UserService.update_profile(user_id=request.user.id, validated_data=serializer.validated_data)
             return Response(UserProfileSerializer(user_instance).data, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error": f"{str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@swagger_auto_schema(
+    method='put',
+    operation_description="update Profile",
+    request_body=CandidateSerializer,
+    responses={200: CandidateSerializer}
+)
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+@parser_classes([MultiPartParser, FormParser, JSONParser])
+def update_candidate_profile(request):
+    serializer = CandidateSerializer(data = request.data, partial = True)
+    serializer.is_valid(raise_exception=True)
+    try:
+        instance = UserService.update_candidate_profile(user=request.user, validated_data=serializer.validated_data)
+        serializer = CandidateSerializer(instance)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except NotFound as e:
+        return Response({f"e"}, status= status.HTTP_404_NOT_FOUND)
+    
 
 
 @swagger_auto_schema(

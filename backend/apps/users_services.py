@@ -38,7 +38,6 @@ class UserService:
             user.phone = validated_data.get('phone', user.phone)
             user.first_name = validated_data.get('first_name', user.first_name)
             user.last_name = validated_data.get('last_name', user.last_name)
-            user.address = validated_data.get('address', user.address)
 
             if 'avatar' in validated_data:
                 user.avatar = validated_data['avatar']
@@ -48,6 +47,23 @@ class UserService:
             
         except Users.DoesNotExist:
             raise NotFound({"error": "User not found"})
+        
+    @staticmethod
+    def update_candidate_profile(user, validated_data):
+        try:
+            candidate = Candidates.objects.get(user = user, isdeleted = False)
+            user_data = validated_data.pop('user', {})
+            instance = UserService.update_profile(user_id=user.id, validated_data=user_data)
+            candidate.description = validated_data.get('description')
+            candidate.address = validated_data.get('address')
+            candidate.date_of_birth = validated_data.get('date_of_birth')
+            candidate.save()
+            return candidate
+        except Candidates.DoesNotExist:
+            raise NotFound({"error":"candidate not found"})
+        except NotFound as e:
+            raise NotFound({f"{e}"})
+            
         
     def upload_avatar(user, file_data):
         try:

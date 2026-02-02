@@ -30,7 +30,10 @@ class Users(AbstractUser):
         app_label = 'database'
     def __str__(self):
         return f"User: {self.username}"
-       
+    def save(self, *args, **kwargs):
+        self.fullname = f"{self.last_name} {self.first_name}".strip()
+        super().save(*args, **kwargs)
+
 class Recruiters(AuditableModel):
     id = models.CharField(db_column='Id', primary_key=True, max_length=255,default=uuid.uuid4,editable=False)  # Field name made lowercase.
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, db_column='UserId',related_name='recruiter')  # Field name made lowercase.

@@ -82,7 +82,7 @@ class JobService:
         company = CompanyService.Get_User_Company(user)
         try:
             recruiter = RecruiterService.Get_recruiter(user)
-            return Jobs.objects.create(**validated_data,company=company,recruiter=recruiter)
+            return Jobs.objects.create(**validated_data,company=company,recruiter=recruiter, status='Pending')
         except Exception as e:
             raise Exception(f"error: {e}")
         
@@ -108,6 +108,17 @@ class JobService:
         job_list = job_list.order_by('-created_date')
         return job_list
     
+    @staticmethod
+    def close_job(user, job_id):
+        try:
+            job = Jobs.objects.get(id = job_id)
+            permission = JobService.check_job_modify_permission(user, job)
+        except Jobs.DoesNotExist:
+            raise NotFound("Job not exist")
+        if permission == True:
+            job.status = 'Closed'
+            job.save()
+        return job
 
     @staticmethod
     def get_recommended_jobs(user):
