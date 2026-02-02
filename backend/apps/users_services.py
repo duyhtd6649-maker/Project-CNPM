@@ -178,7 +178,7 @@ class UserService:
                 return Recruiters.objects.get(user=user)
             else:
                 return user
-                
+                    
         except Users.DoesNotExist:
             raise NotFound({"error":"User not found"})
         except Candidates.DoesNotExist:
