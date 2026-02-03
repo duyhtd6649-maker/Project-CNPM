@@ -23,8 +23,7 @@ const Login = () => {
     setLoading(true);
     try {
       // Gọi API đăng nhập
-      const response = await axiosClient.post('/api/auth/jwt/login/', loginData);
-      
+const response = await axiosClient.post('auth/jwt/login/', loginData);      
       // FIX LỖI: Sử dụng destructuring với giá trị mặc định để tránh null
       const { access, role = '', username = '' } = response.data;
       
