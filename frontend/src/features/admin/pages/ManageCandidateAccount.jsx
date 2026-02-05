@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  LayoutDashboard, UserCog, Activity, Library, 
-  ShieldCheck, ClipboardList, MessageSquare, Gift, 
-  Menu, X, Settings, Bell, ChevronDown, ArrowLeft
+import {
+  LayoutDashboard, UserCog, Activity, Library,
+  ShieldCheck, ClipboardList, MessageSquare, Gift,
+  Menu, X, Settings, Bell, ChevronDown, ArrowLeft, Users
 } from 'lucide-react';
 import '../components/ManageCandidateAccount.css';
 
@@ -27,13 +27,14 @@ const ManageCandidateAccount = () => {
         </div>
         <nav className="sidebar-nav-custom">
           <div className="nav-item-custom" onClick={() => navigate('/admin')}><LayoutDashboard size={20} /> <span>Dashboard</span></div>
-          <div className="nav-item-custom active"><UserCog size={20} /> <span>Manage Account</span></div>
-          <div className="nav-item-custom"><Activity size={20} /> <span>Monitor Logs & Analytics</span></div>
-          <div className="nav-item-custom"><Library size={20} /> <span>Cabinets of Knowledge</span></div>
-          <div className="nav-item-custom"><ShieldCheck size={20} /> <span>System Status Monitor</span></div>
-          <div className="nav-item-custom"><ClipboardList size={20} /> <span>System Reports</span></div>
-          <div className="nav-item-custom"><MessageSquare size={20} /> <span>Articles Management</span></div>
-          <div className="nav-item-custom"><Gift size={20} /> <span>User Package Management</span></div>
+
+          <div className="sidebar-divider-text">ACCOUNT MANAGEMENT</div>
+          <div className="nav-item-custom" onClick={() => navigate('/manage-internal')}><ShieldCheck size={20} /> <span>Internal Accounts</span></div>
+          <div className="nav-item-custom active"><Users size={20} /> <span>Candidates</span></div>
+          <div className="nav-item-custom" onClick={() => navigate('/manage-recruiter')}><UserCog size={20} /> <span>Recruiters</span></div>
+          <div className="nav-item-custom" onClick={() => navigate('/manage-admin-acc')}><Activity size={20} /> <span>Admin Accounts</span></div>
+
+
         </nav>
       </aside>
       <aside className="manage-left-sidebar">
@@ -46,7 +47,7 @@ const ManageCandidateAccount = () => {
         </div>
 
         <nav className="sub-nav-list">
-          <div 
+          <div
             className={`sub-nav-item ${activeTab === 'internal' ? 'active' : ''}`}
             onClick={() => {
               setActiveTab('internal');
@@ -55,8 +56,8 @@ const ManageCandidateAccount = () => {
           >
             Internal Account
           </div>
-          
-          <div 
+
+          <div
             className={`sub-nav-item ${activeTab === 'candidate' ? 'active' : ''}`}
             onClick={() => {
               setActiveTab('candidate');
@@ -65,8 +66,8 @@ const ManageCandidateAccount = () => {
           >
             Candidate Account
           </div>
-          
-          <div 
+
+          <div
             className={`sub-nav-item ${activeTab === 'recruiter' ? 'active' : ''}`}
             onClick={() => {
               setActiveTab('recruiter');
@@ -75,8 +76,8 @@ const ManageCandidateAccount = () => {
           >
             Recruiter Account
           </div>
-          
-          <div 
+
+          <div
             className={`sub-nav-item ${activeTab === 'admin' ? 'active' : ''}`}
             onClick={() => {
               setActiveTab('admin');
@@ -89,7 +90,7 @@ const ManageCandidateAccount = () => {
 
         <div className="sub-sidebar-footer">
           <div className="sub-nav-item" onClick={() => navigate('/admin')}>
-            <ArrowLeft size={18} style={{marginRight: '10px'}}/> Back to menu
+            <ArrowLeft size={18} style={{ marginRight: '10px' }} /> Back to menu
           </div>
           <div className="divider-sub"></div>
           <div className="sub-nav-item-small">My Profile</div>
