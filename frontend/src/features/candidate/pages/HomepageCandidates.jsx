@@ -46,7 +46,6 @@ const HomepageCandidates = () => {
           <div className="nav-item" onClick={() => navigate('/companies')}><Users size={18} /> <span>Company</span></div>
           <div className="nav-item" onClick={() => navigate('/job-list')}><Briefcase size={18} /> <span>Job</span></div>
           <div className="nav-item" onClick={() => navigate('/chatbot')}><Bot size={18} /> <span>AI</span></div>
-          <div className="nav-item" onClick={() => navigate('/create-cv')}><FileText size={18} /> <span>Create CV</span></div>
 
           <div className="nav-item account-btn-container" onClick={() => setIsAccountOpen(!isAccountOpen)}>
             <div className="account-icon-wrapper">
@@ -140,12 +139,11 @@ const HomepageCandidates = () => {
             <div className="action-row"><span>Connect with businesses</span><UserPlus size={18} /></div>
           </div>
 
-          <div className="card action-card" onClick={() => navigate('/create-cv')} style={{ cursor: 'pointer' }}>
+          <div className="card action-card" onClick={() => navigate('/saved-cv')} style={{ cursor: 'pointer' }}>
             <div className="action-row"><span>CV Management</span><FileText size={18} /></div>
           </div>
 
           <div className="card menu-list-card">
-            <div className="menu-row" onClick={() => navigate('/saved-cv')} style={{ cursor: 'pointer' }}><Bookmark size={16} /> Saved items</div>
             <div className="menu-row"><Newspaper size={16} /> News</div>
           </div>
         </aside>
@@ -234,28 +232,7 @@ const HomepageCandidates = () => {
             </div>
           </div>
 
-          {/* KHUNG CHAT (THAY THẾ TRENDING) */}
-          <div className="card chat-mini-card">
-            <div className="news-header-section">
-              <span className="news-title">Messenger</span>
-              <Settings size={14} className="settings-icon" style={{ cursor: 'pointer' }} />
-            </div>
 
-            <div className="chat-body">
-              <div className="chat-bubble received">Chào bạn! Chúc bạn ngày mới tốt lành.</div>
-              <div className="chat-bubble sent">Cảm ơn nhé!</div>
-              <div className="chat-bubble received">Bạn đã cập nhật CV chưa?</div>
-            </div>
-
-            <div className="chat-footer-input">
-              <div className="chat-input-wrapper">
-                <input type="text" placeholder="Aa" />
-                <Smile size={16} color="#666" />
-                <Paperclip size={16} color="#666" />
-              </div>
-              <button className="chat-send-btn"><Send size={16} /></button>
-            </div>
-          </div>
         </aside>
       </div>
     </div>

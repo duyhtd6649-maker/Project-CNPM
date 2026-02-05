@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import "../components/EditProfile.css";
+import "../components/ViewUserProfile.css";
 
 const EditProfile = () => {
   const fileInputRef = useRef(null);
@@ -194,19 +195,16 @@ const EditProfile = () => {
 
   return (
     <div className="edit-profile-container">
-      <header className="edit-profile-header">
-        <div className="header-left">
-          <span className="back-arrow" onClick={handleBack}>←</span>
-          <div className="header-text">
-            <h1>WELCOME, {formData.userName.toUpperCase()}</h1>
-            <p className="current-date">
-              {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-            </p>
-          </div>
+      <header className="profile-top-nav">
+        <div className="welcome-section">
+          <h1 onClick={handleBack} className="back-home-link">
+            <span className="back-arrow">⬅</span> Welcome, {formData.userName || 'User'}
+          </h1>
+          <p className="current-date">Hôm nay: {new Date().toLocaleDateString('vi-VN')}</p>
         </div>
-        <div className="header-right">
-          <button className="notification-btn">🔔</button>
-          <button className="logout-btn" onClick={handleLogout}>Logout</button>
+        <div className="header-actions">
+          <button className="notif-badge">🔔</button>
+          <button className="logout-btn-nav" onClick={handleLogout}>Logout</button>
         </div>
       </header>
 

@@ -48,10 +48,6 @@ const CandidateNavbar = () => {
                     <Bot size={18} /> <span>AI</span>
                 </div>
 
-                <div className={`nav-item ${isActive('/create-cv') ? 'active' : ''}`} onClick={() => navigate('/create-cv')}>
-                    <FileText size={18} /> <span>Create CV</span>
-                </div>
-
                 <div className="nav-item account-btn-container" onClick={() => setIsAccountOpen(!isAccountOpen)}>
                     <div className="account-icon-wrapper">
                         <UserCircle size={24} />

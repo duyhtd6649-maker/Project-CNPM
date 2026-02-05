@@ -184,7 +184,6 @@ const CompanyProfile = () => {
                     <div className="nav-item active" onClick={() => navigate('/companies')}><Users size={18} /> <span>Company</span></div>
                     <div className="nav-item" onClick={() => navigate('/job-list')}><Briefcase size={18} /> <span>Job</span></div>
                     <div className="nav-item" onClick={() => navigate('/chatbot')}><Bot size={18} /> <span>AI</span></div>
-                    <div className="nav-item" onClick={() => navigate('/create-cv')}><FileText size={18} /> <span>Create CV</span></div>
 
                     <div className="nav-item account-btn-container" onClick={() => setIsAccountOpen(!isAccountOpen)}>
                         <div className="account-icon-wrapper">
