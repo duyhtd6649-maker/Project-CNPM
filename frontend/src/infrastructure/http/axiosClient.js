@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosClient = axios.create({
-  baseURL: "http://127.0.0.1:8000/api/", // Xóa dấu / ở cuối
+  baseURL: "http://127.0.0.1:8000/api", // Xóa dấu / ở cuối
   withCredentials: true,
   timeout: 10000,
 });
