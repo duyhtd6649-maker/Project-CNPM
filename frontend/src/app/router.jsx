@@ -25,6 +25,8 @@ import ManageInternalAccount from '../features/admin/pages/ManageInternalAccount
 import ManageCandidateAccount from '../features/admin/pages/ManageCandidateAccount';
 import ManageRecruiterAccount from '../features/admin/pages/ManageRecruiterAccount';
 import ManageAdminAccount from '../features/admin/pages/ManageAdminAccount';
+import SystemStatus from '../features/admin/pages/SystemStatus';
+import JobPosts from '../features/admin/pages/JobPosts';
 
 import RecruiterDashboard from '../features/recruiter/pages/RecruiterDashboard'; // Đảm bảo đường dẫn này đúng
 import OrganizationProfile from '../features/recruiter/pages/OrganizationProfile';
@@ -103,6 +105,8 @@ export const router = createBrowserRouter([
       { path: 'manage-candidate', element: <ProtectedRoute><ManageCandidateAccount /></ProtectedRoute> },
       { path: 'manage-recruiter', element: <ProtectedRoute><ManageRecruiterAccount /></ProtectedRoute> },
       { path: 'manage-admin-acc', element: <ProtectedRoute><ManageAdminAccount /></ProtectedRoute> },
+      { path: 'system-status', element: <ProtectedRoute><SystemStatus /></ProtectedRoute> },
+      { path: 'job-posts', element: <ProtectedRoute><JobPosts /></ProtectedRoute> },
 
       // Mặc định nếu sai đường dẫn thì về login
       { path: '*', element: <Navigate to="/login" /> },

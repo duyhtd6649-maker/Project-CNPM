@@ -1,0 +1,286 @@
+:root {
+    --primary-blue: #4880FF;
+    --primary-green: #10B981;
+    --navy-dark: #101935;
+    --bg-body: #F5F6FA;
+    --text-dark: #202224;
+    --danger-red: #ea5455;
+    --warning-yellow: #f59e0b;
+}
+
+.system-status-container {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    background: var(--bg-body);
+    font-family: 'Nunito Sans', sans-serif;
+}
+
+/* FIX: Override global fixed positioning from AdminDashboard if present */
+.system-status-container .admin-sidebar {
+    position: relative !important;
+    transform: none !important;
+    left: auto;
+    top: auto;
+    width: 280px;
+    background: var(--navy-dark);
+}
+
+/* Reusing Sidebar Styles for Consistency */
+.admin-sidebar,
+.manage-left-sidebar {
+    width: 280px;
+    background: var(--navy-dark);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    color: white;
+    flex-shrink: 0;
+}
+
+.sidebar-header-uth,
+.sidebar-blue-header {
+    padding: 30px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.uth-branding {
+    font-weight: 900;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.uth-blue-text {
+    color: #4880FF;
+}
+
+.workplace-green-text {
+    color: #10B981;
+}
+
+.sidebar-nav-custom,
+.sub-nav-list {
+    flex: 1;
+    padding-top: 20px;
+    overflow-y: auto;
+}
+
+.nav-item-custom,
+.sub-nav-item {
+    display: flex;
+    align-items: center;
+    padding: 15px 25px;
+    color: #94a3b8;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 600;
+    gap: 12px;
+    text-decoration: none;
+}
+
+.nav-item-custom:hover,
+.sub-nav-item:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.nav-item-custom.active,
+.sub-nav-item.active {
+    background: rgba(72, 128, 255, 0.15);
+    color: #4880FF;
+    border-right: 3px solid #4880FF;
+}
+
+.sub-sidebar-footer {
+    padding: 20px 25px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.divider-sub {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 10px 0;
+}
+
+/* Main Content Area */
+.status-right-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: #F5F6FA;
+}
+
+.status-top-header {
+    height: 80px;
+    padding: 0 40px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    background: white;
+    border-bottom: 1px solid #eee;
+}
+
+.status-view-area {
+    padding: 30px 40px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.page-title {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--text-dark);
+    margin-bottom: 25px;
+}
+
+/* Status Dashboard Grid */
+.status-dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.status-card {
+    background: white;
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.03);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.status-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.status-card-title {
+    font-size: 16px;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.status-metric-value {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--text-dark);
+}
+
+.status-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.status-indicator.good {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--primary-green);
+}
+
+.status-indicator.warning {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--warning-yellow);
+}
+
+.status-indicator.error {
+    background: rgba(234, 84, 85, 0.1);
+    color: var(--danger-red);
+}
+
+/* Service Health List */
+.services-health-section {
+    background: white;
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.03);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.services-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.service-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    border: 1px solid #f1f5f9;
+    border-radius: 12px;
+    transition: all 0.2s;
+}
+
+.service-item:hover {
+    border-color: var(--primary-blue);
+    background: #f8faff;
+}
+
+.service-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.service-icon {
+    width: 40px;
+    height: 40px;
+    background: #e0e7ff;
+    color: var(--primary-blue);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.service-name {
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.service-uptime {
+    font-size: 13px;
+    color: #64748b;
+}
+
+.service-status-badge {
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-operational {
+    background: #d1fae5;
+    color: #059669;
+}
+
+.status-degraded {
+    background: #fef3c7;
+    color: #d97706;
+}
