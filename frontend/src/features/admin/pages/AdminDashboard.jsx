@@ -75,7 +75,7 @@ const AdminDashboard = () => {
             {isSidebarOpen && <span>Monitor Logs & Analytics</span>}
           </div>
 
-          <div className="nav-item-custom">
+          <div className="nav-item-custom" onClick={() => navigate('/cv-templates')}>
             <FileText size={20} />
             {isSidebarOpen && <span>Cabinets of Knowledge</span>}
           </div>
