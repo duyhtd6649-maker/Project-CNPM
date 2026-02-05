@@ -34,6 +34,7 @@ urlpatterns = [
     path('job/recommended/', job_views.recommended_jobs), #recommendation job
     path('job/<uuid:id>/close/', job_views.close_job), #đóng job
     path('job/processjob/<uuid:id>/',job_views.process_job),
+    path('seed-jobs/', job_views.seed_jobs_data),  # Tạo dữ liệu giả cho testing
     # ===== COMPANY =====
     path('company/<uuid:id>/', user_views.company_detail), #lấy detail của 1 company
     path('search/company/',user_views.search_company), #search company có filter
