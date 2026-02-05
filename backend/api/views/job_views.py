@@ -1,13 +1,15 @@
 from rest_framework.decorators import api_view, permission_classes, parser_classes
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.parsers import MultiPartParser, FormParser
 from apps.job_services import JobService
-from ..serializers.job_serializers import JobSerializer,JobForFilterSerializer
+from ..serializers.job_serializers import JobSerializer,JobForFilterSerializer, JobStatusUpdateSerializer
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.exceptions import *
 from drf_yasg import openapi
+from database.models.jobs import Jobs, Categories
+from database.models.users import Companies
 
 
 #Dang Job
@@ -182,3 +184,89 @@ def view_job_detail(request, id):
     except NotFound as e:
         return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
 
+@swagger_auto_schema(
+    method='put',
+    request_body=JobStatusUpdateSerializer,
+    responses={200: JobSerializer}
+)
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def process_job(request, id):
+    try:
+        serializer = JobStatusUpdateSerializer(data = request.data)
+        serializer.is_valid(raise_exception=True)
+        job = JobService.process_job(user=request.user, job_id = id, new_status= serializer.validated_data.get('new_status'))
+        serializer = JobSerializer(job)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except NotFound as e:
+        return Response({f"{e}"},status=status.HTTP_404_NOT_FOUND)
+    except PermissionError as e:
+        return Response({f"{e}"},status=status.HTTP_403_FORBIDDEN)
+
+
+# ===== SEED DATA (CHỈ DÙNG CHO TESTING) =====
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def seed_jobs_data(request):
+    """Endpoint tạo dữ liệu giả cho testing - KHÔNG CẦN ĐĂNG NHẬP"""
+    try:
+        # Tạo Categories
+        categories_data = [
+            "Information Technology", "Marketing", "Finance & Accounting", 
+            "Human Resources", "Design", "Sales", "Engineering", "Customer Service",
+        ]
+        categories = []
+        for name in categories_data:
+            cat, _ = Categories.objects.get_or_create(name=name, defaults={'created_by': 'system'})
+            categories.append(cat)
+
+        # Tạo Companies
+        companies_data = [
+            {"name": "TechViet Solutions", "description": "Công ty hàng đầu về phát triển phần mềm tại Việt Nam.", "website": "https://techviet.com.vn", "logo_url": "https://images.unsplash.com/photo-1549924231-f129b911e442?w=200", "address": "123 Nguyễn Huệ, Q1, TP.HCM", "tax_code": "0123456789"},
+            {"name": "FPT Software", "description": "FPT Software là công ty CNTT lớn nhất Việt Nam.", "website": "https://fpt-software.com", "logo_url": "https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=200", "address": "Duy Tân, Cầu Giấy, Hà Nội", "tax_code": "0101234567"},
+            {"name": "VNG Corporation", "description": "VNG sở hữu Zalo, ZaloPay và nhiều sản phẩm gaming.", "website": "https://vng.com.vn", "logo_url": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=200", "address": "182 Lê Đại Hành, Q11, TP.HCM", "tax_code": "0309456712"},
+            {"name": "Momo Vietnam", "description": "Ví điện tử MoMo với hơn 40 triệu người dùng.", "website": "https://momo.vn", "logo_url": "https://images.unsplash.com/photo-1554774853-aae0a22c8aa4?w=200", "address": "99 Nguyễn Thị Minh Khai, Q1, TP.HCM", "tax_code": "0312789456"},
+            {"name": "Grab Vietnam", "description": "Grab - siêu ứng dụng hàng đầu Đông Nam Á.", "website": "https://grab.com/vn", "logo_url": "https://images.unsplash.com/photo-1553877522-43269d4ea984?w=200", "address": "Tòa Lim Tower, Q1, TP.HCM", "tax_code": "0315678901"},
+        ]
+        companies = []
+        for data in companies_data:
+            comp, _ = Companies.objects.get_or_create(name=data['name'], defaults={**{k: v for k, v in data.items() if k != 'name'}, 'created_by': 'system'})
+            companies.append(comp)
+
+        # Tạo Jobs
+        jobs_data = [
+            {"title": "Senior Python Developer", "description": "Phát triển backend bằng Python/Django. Yêu cầu 3+ năm kinh nghiệm.", "location": "TP. Hồ Chí Minh", "skill": ["Python", "Django", "PostgreSQL", "Docker", "AWS"], "salary_min": 25000000, "salary_max": 45000000, "status": "active", "company_idx": 0, "category_idx": 0},
+            {"title": "Frontend React Developer", "description": "Phát triển UI với React.js. Yêu cầu 2+ năm kinh nghiệm.", "location": "Hà Nội", "skill": ["React", "TypeScript", "Redux", "TailwindCSS"], "salary_min": 18000000, "salary_max": 35000000, "status": "active", "company_idx": 1, "category_idx": 0},
+            {"title": "DevOps Engineer", "description": "Xây dựng CI/CD và quản lý AWS/GCP. Yêu cầu 3+ năm.", "location": "TP. Hồ Chí Minh", "skill": ["Docker", "Kubernetes", "AWS", "Terraform", "CI/CD"], "salary_min": 30000000, "salary_max": 55000000, "status": "active", "company_idx": 2, "category_idx": 0},
+            {"title": "Mobile Developer (React Native)", "description": "Phát triển app mobile cross-platform. Yêu cầu 2+ năm.", "location": "Đà Nẵng", "skill": ["React Native", "JavaScript", "iOS", "Android", "Redux"], "salary_min": 20000000, "salary_max": 40000000, "status": "active", "company_idx": 3, "category_idx": 0},
+            {"title": "Data Analyst", "description": "Phân tích dữ liệu và xây dựng dashboard. Yêu cầu 2+ năm.", "location": "TP. Hồ Chí Minh", "skill": ["SQL", "Python", "Power BI", "Excel"], "salary_min": 15000000, "salary_max": 28000000, "status": "active", "company_idx": 4, "category_idx": 2},
+            {"title": "UI/UX Designer", "description": "Thiết kế giao diện và trải nghiệm người dùng.", "location": "Hà Nội", "skill": ["Figma", "Sketch", "Adobe XD", "Prototyping"], "salary_min": 15000000, "salary_max": 30000000, "status": "active", "company_idx": 0, "category_idx": 4},
+            {"title": "Digital Marketing Specialist", "description": "Quản lý chiến dịch Facebook Ads, Google Ads.", "location": "TP. Hồ Chí Minh", "skill": ["Facebook Ads", "Google Ads", "SEO", "Content Marketing"], "salary_min": 12000000, "salary_max": 25000000, "status": "active", "company_idx": 1, "category_idx": 1},
+            {"title": "HR Manager", "description": "Quản lý tuyển dụng và chính sách nhân sự.", "location": "Hà Nội", "skill": ["Recruitment", "HR Management", "Training", "Labor Law"], "salary_min": 25000000, "salary_max": 45000000, "status": "active", "company_idx": 2, "category_idx": 3},
+            {"title": "Full Stack Developer (Node.js)", "description": "Phát triển full stack với Node.js và React.", "location": "TP. Hồ Chí Minh", "skill": ["Node.js", "React", "MongoDB", "Redis", "Express.js"], "salary_min": 25000000, "salary_max": 50000000, "status": "active", "company_idx": 3, "category_idx": 0},
+            {"title": "Product Manager", "description": "Định hướng roadmap và chiến lược sản phẩm.", "location": "TP. Hồ Chí Minh", "skill": ["Product Strategy", "Agile", "Data Analysis", "Jira"], "salary_min": 30000000, "salary_max": 60000000, "status": "active", "company_idx": 4, "category_idx": 0},
+        ]
+        
+        created_jobs = 0
+        for data in jobs_data:
+            company = companies[data['company_idx']] if companies else None
+            category = categories[data['category_idx']] if categories else None
+            _, created = Jobs.objects.get_or_create(
+                title=data['title'], company=company,
+                defaults={'category': category, 'description': data['description'], 'location': data['location'], 'skill': data['skill'], 'salary_min': data['salary_min'], 'salary_max': data['salary_max'], 'status': data['status'], 'created_by': 'system'}
+            )
+            if created:
+                created_jobs += 1
+
+        return Response({
+            "status": "success",
+            "message": f"Đã tạo dữ liệu thành công!",
+            "data": {
+                "categories": len(categories),
+                "companies": len(companies),
+                "jobs_created": created_jobs,
+                "total_jobs": Jobs.objects.count()
+            }
+        }, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

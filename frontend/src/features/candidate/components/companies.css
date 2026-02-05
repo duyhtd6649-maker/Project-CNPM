@@ -1,0 +1,590 @@
+/* Companies Page Styles */
+
+/* Override global constraints for Companies page */
+body:has(.companies-page-container) {
+    overflow: visible !important;
+    height: auto !important;
+}
+
+body:has(.companies-page-container) #root,
+body:has(.companies-page-container) .app-container {
+    height: auto !important;
+    overflow: visible !important;
+}
+
+/* Page Container - Scrollable */
+.companies-page-container {
+    width: 100%;
+    min-height: 100vh;
+    background: #fff;
+    overflow: visible;
+}
+
+/* Hide Hero Section - as per design */
+.companies-hero {
+    display: none;
+}
+
+/* Main Layout - Full Width */
+.companies-main {
+    display: flex;
+    width: 100%;
+    padding: 30px 40px;
+    gap: 40px;
+    background: #fff;
+}
+
+/* Sidebar */
+.companies-sidebar {
+    width: 240px;
+    flex-shrink: 0;
+}
+
+.filters-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.filters-header h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.clear-all-btn {
+    background: none;
+    border: none;
+    color: #7c3aed;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.clear-all-btn:hover {
+    text-decoration: underline;
+}
+
+.filter-group {
+    border-bottom: 1px solid #e5e7eb;
+    padding: 15px 0;
+}
+
+.filter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    color: #374151;
+}
+
+.filter-header svg {
+    transition: transform 0.2s;
+    color: #9ca3af;
+}
+
+.rotate-icon {
+    transform: rotate(180deg);
+}
+
+.filter-options {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.filter-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: #4b5563;
+    cursor: pointer;
+}
+
+.filter-option input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    border: 1.5px solid #d1d5db;
+    cursor: pointer;
+    accent-color: #7c3aed;
+}
+
+/* Main Content */
+.companies-content {
+    flex: 1;
+}
+
+/* Featured Section */
+.featured-section {
+    margin-bottom: 40px;
+}
+
+.featured-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.featured-header h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.view-all-link {
+    color: #7c3aed;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.view-all-link:hover {
+    text-decoration: underline;
+}
+
+.featured-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.featured-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 24px;
+    position: relative;
+    transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.featured-card:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.featured-badge {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: #faf5ff;
+    color: #7c3aed;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid #e9d5ff;
+}
+
+.featured-logo {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+.featured-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 4px;
+}
+
+.featured-industry {
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 12px;
+}
+
+.featured-desc {
+    font-size: 14px;
+    color: #4b5563;
+    line-height: 1.5;
+    margin-bottom: 16px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.follow-btn {
+    width: 100%;
+    background: #f3f4f6;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #374151;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.follow-btn:hover {
+    background: #e5e7eb;
+}
+
+/* Company List */
+.companies-list-section {
+    background: transparent;
+    padding: 0;
+}
+
+.list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.list-header h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.sort-dropdown {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.sort-dropdown select {
+    border: none;
+    background: transparent;
+    font-weight: 600;
+    color: #1f2937;
+    cursor: pointer;
+    outline: none;
+}
+
+.companies-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.company-card {
+    display: flex;
+    gap: 20px;
+    padding: 24px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.company-card:hover {
+    border-color: #c4b5fd;
+    box-shadow: 0 4px 15px rgba(124, 58, 237, 0.1);
+}
+
+.company-logo-wrapper {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.company-logo-emoji {
+    font-size: 28px;
+}
+
+.company-info {
+    flex: 1;
+}
+
+.company-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.company-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 4px;
+}
+
+.company-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #6b7280;
+    flex-wrap: wrap;
+}
+
+.company-rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.company-reviews {
+    color: #9ca3af;
+}
+
+.company-dot {
+    color: #d1d5db;
+}
+
+.view-profile-btn {
+    background: white;
+    border: 1.5px solid #7c3aed;
+    color: #7c3aed;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.view-profile-btn:hover {
+    background: #7c3aed;
+    color: white;
+}
+
+.company-desc {
+    font-size: 14px;
+    color: #4b5563;
+    line-height: 1.6;
+    margin-bottom: 16px;
+}
+
+.hot-jobs {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.hot-jobs-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.hot-jobs-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.job-tag {
+    background: #f3f4f6;
+    color: #374151;
+    font-size: 13px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.job-tag:hover {
+    background: #e5e7eb;
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 30px;
+}
+
+.page-btn {
+    width: 36px;
+    height: 36px;
+    border: 1px solid #e5e7eb;
+    background: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.page-btn:hover {
+    border-color: #7c3aed;
+    color: #7c3aed;
+}
+
+.page-btn.active {
+    background: #7c3aed;
+    border-color: #7c3aed;
+    color: white;
+}
+
+.page-dots {
+    color: #9ca3af;
+    font-size: 14px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .featured-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .companies-main {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .companies-main {
+        flex-direction: column;
+    }
+
+    .companies-sidebar {
+        width: 100%;
+    }
+
+    .featured-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-title {
+        font-size: 2rem;
+    }
+
+    .company-card {
+        flex-direction: column;
+    }
+
+    .company-header-row {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .view-profile-btn {
+        width: 100%;
+    }
+}
+
+/* Loading, Error, Empty States */
+.loading-container,
+.error-container,
+.empty-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    text-align: center;
+    min-height: 300px;
+}
+
+.loading-spinner {
+    animation: spin 1s linear infinite;
+    color: #7c3aed;
+    margin-bottom: 16px;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-container p,
+.empty-container p {
+    color: #6b7280;
+    font-size: 16px;
+}
+
+.error-container {
+    background: #fef2f2;
+    border-radius: 12px;
+    border: 1px solid #fecaca;
+}
+
+.error-message {
+    color: #dc2626;
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 16px;
+}
+
+.retry-btn {
+    background: #7c3aed;
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.retry-btn:hover {
+    background: #6d28d9;
+}
+
+.empty-container h3 {
+    color: #374151;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 16px 0 8px;
+}
+
+.empty-container p {
+    color: #6b7280;
+}
+
+/* Filter Search Input */
+.filter-search-input input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.filter-search-input input:focus {
+    border-color: #7c3aed;
+}
+
+/* Company Logo Image */
+.company-logo-img,
+.featured-logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+}

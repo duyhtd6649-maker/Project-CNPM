@@ -52,7 +52,7 @@ const Register = () => {
 
     try {
       setLoading(true);
-      const res = await axiosClient.post("/api/auth/registration/", payload);
+      const res = await axiosClient.post("/auth/registration/", payload);
       alert("Đăng ký thành công!");
       navigate("/login");
     } catch (err) {

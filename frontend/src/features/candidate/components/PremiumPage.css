@@ -1,4 +1,3 @@
-
 .premium-page-container {
   padding: 60px 20px;
   display: flex;
@@ -6,6 +5,16 @@
   align-items: center;
   background: #fff;
   min-height: 100vh;
+}
+
+.premium-content {
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #fff;
+  width: 100%;
+  flex: 1;
 }
 
 .billing-toggle {
@@ -18,7 +27,7 @@
 
 .plans-grid {
   display: flex;
-  gap: 0; 
+  gap: 0;
   justify-content: center;
   width: 100%;
   max-width: 1200px;
@@ -34,12 +43,29 @@
   flex-direction: column;
 }
 
-.plan-card h3 { font-size: 24px; margin-bottom: 30px; }
+.plan-card h3 {
+  font-size: 24px;
+  margin-bottom: 30px;
+}
 
-.price-tag { margin: 40px 0; }
-.currency { font-size: 20px; vertical-align: top; }
-.amount { font-size: 64px; font-weight: 400; }
-.period { font-size: 16px; color: #666; }
+.price-tag {
+  margin: 40px 0;
+}
+
+.currency {
+  font-size: 20px;
+  vertical-align: top;
+}
+
+.amount {
+  font-size: 64px;
+  font-weight: 400;
+}
+
+.period {
+  font-size: 16px;
+  color: #666;
+}
 
 .plan-button {
   margin-top: auto;
@@ -51,7 +77,9 @@
   transition: 0.2s;
 }
 
-.plan-button:hover { background: #f0f0ff; }
+.plan-button:hover {
+  background: #f0f0ff;
+}
 
 .back-to-menu {
   margin-top: 40px;
@@ -64,12 +92,50 @@
 }
 
 
-.switch { position: relative; display: inline-block; width: 40px; height: 20px; }
-.switch input { opacity: 0; width: 0; height: 0; }
-.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #4b49ac; transition: .4s; border-radius: 20px; }
-.slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-input:checked + .slider { background-color: #ccc; }
-input:checked + .slider:before { transform: translateX(20px); }
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 20px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #4b49ac;
+  transition: .4s;
+  border-radius: 20px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 14px;
+  width: 14px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked+.slider {
+  background-color: #ccc;
+}
+
+input:checked+.slider:before {
+  transform: translateX(20px);
+}
 
 
 .premium-shortcut {
@@ -82,6 +148,18 @@ input:checked + .slider:before { transform: translateX(20px); }
   background: #fff;
 }
 
-.premium-title { font-size: 13px; font-weight: bold; margin: 0; }
-.premium-desc { font-size: 11px; color: #888; margin: 2px 0 0; }
-.premium-key-icon { color: #ffbb00; }
+.premium-title {
+  font-size: 13px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.premium-desc {
+  font-size: 11px;
+  color: #888;
+  margin: 2px 0 0;
+}
+
+.premium-key-icon {
+  color: #ffbb00;
+}

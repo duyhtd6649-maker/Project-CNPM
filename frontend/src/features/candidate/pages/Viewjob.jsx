@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import '../components/Viewjob.css';
 import CandidateNavbar from '../components/CandidateNavbar';
+import axiosClient from '../../../infrastructure/http/axiosClient';
 import {
     Search, ChevronRight, Clock, Globe, Banknote, MapPin,
     CheckCircle, Send, Bookmark, Briefcase, ArrowLeft
@@ -10,18 +11,98 @@ import {
 
 const JobDetail = () => {
     const navigate = useNavigate();
-    const location = useLocation();
-    const { job } = location.state || {};
+    const { id } = useParams();
+    const [job, setJob] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    const displayJob = job || {
-        role: "Senior Software Engineer",
-        company: "Sharp Corporation",
-        location: "Osaka, Japan",
-        salary: "$2500 - $4000",
-        tags: ["Full-time", "Remote"],
-        logo: "https://placehold.co/100x100?text=S",
-        isAiLogo: false
+    // Format salary từ số thành string hiển thị
+    const formatSalary = (min, max) => {
+        if (!min && !max) return 'Negotiable';
+        const formatNum = (num) => {
+            if (num >= 1000000) return `$${(num / 1000000).toFixed(1)}M`;
+            if (num >= 1000) return `$${(num / 1000).toFixed(0)}k`;
+            return `$${num}`;
+        };
+        if (min && max) return `${formatNum(min)} - ${formatNum(max)}`;
+        if (min) return `From ${formatNum(min)}`;
+        return `Up to ${formatNum(max)}`;
     };
+
+    // Fetch job detail từ API
+    useEffect(() => {
+        const fetchJobDetail = async () => {
+            if (!id) {
+                setError('Job ID không hợp lệ');
+                setIsLoading(false);
+                return;
+            }
+            setIsLoading(true);
+            setError(null);
+            try {
+                const response = await axiosClient.get(`/search/job/`);
+                const data = response.data;
+                // Transform data từ API sang format hiển thị
+                setJob({
+                    id: data.id,
+                    role: data.title,
+                    company: data.company || 'Unknown Company',
+                    location: data.location || 'Remote',
+                    logo: `https://ui-avatars.com/api/?name=${encodeURIComponent(data.company || 'C')}&background=6366f1&color=fff&size=100`,
+                    tags: data.skill || [],
+                    salary: formatSalary(data.salary_min, data.salary_max),
+                    description: data.description || ''
+                });
+            } catch (err) {
+                console.error('Error fetching job detail:', err);
+                if (err.response?.status === 404) {
+                    setError('Công việc không tồn tại hoặc đã bị xóa.');
+                } else {
+                    setError('Không thể tải thông tin công việc. Vui lòng thử lại sau.');
+                }
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchJobDetail();
+    }, [id]);
+
+    // Loading state
+    if (isLoading) {
+        return (
+            <div className="app-container" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+                <CandidateNavbar />
+                <main className="main-layout" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+                    <div style={{ textAlign: 'center' }}>
+                        <div style={{ width: '48px', height: '48px', border: '4px solid #e5e7eb', borderTop: '4px solid #6366f1', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto 16px' }}></div>
+                        <p style={{ color: 'var(--text-secondary)' }}>Đang tải thông tin công việc...</p>
+                    </div>
+                </main>
+            </div>
+        );
+    }
+
+    // Error state
+    if (error) {
+        return (
+            <div className="app-container" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+                <CandidateNavbar />
+                <main className="main-layout" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+                    <div style={{ textAlign: 'center', padding: '40px' }}>
+                        <p style={{ color: '#dc2626', fontSize: '1.1rem', marginBottom: '16px' }}>{error}</p>
+                        <button
+                            onClick={() => navigate('/job-list')}
+                            style={{ padding: '10px 20px', backgroundColor: '#6366f1', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}
+                        >
+                            Quay lại danh sách
+                        </button>
+                    </div>
+                </main>
+            </div>
+        );
+    }
+
+    const displayJob = job;
 
     return (
         <div className="app-container" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>

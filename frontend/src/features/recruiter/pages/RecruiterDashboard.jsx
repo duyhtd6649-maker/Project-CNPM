@@ -1,163 +1,344 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom';
+import axios from 'axios';
+import OrganizationProfile from './OrganizationProfile';
+import { useNavigate } from 'react-router-dom'; 
+
 import { 
-  Menu, Search, Bell, User, LayoutDashboard, 
-  LogOut, TrendingUp, TrendingDown, Users, 
-  FileText, DollarSign, ShieldAlert, CheckCircle,
-  Briefcase, ListTodo, Building2, Target // Thêm Target vào đây để hết lỗi
+  LayoutDashboard, 
+  Briefcase, 
+  Users, 
+  Plus, 
+  Search, 
+  Bell, 
+  Moon, 
+  User, 
+  LogOut,
+  TrendingUp,
+  CheckCircle,
+  Clock,
+  MoreHorizontal,
+  Building2 // Gộp Building2 vào đây cho gọn
 } from 'lucide-react';
+
 import { 
-  XAxis, YAxis, CartesianGrid, Tooltip, 
-  ResponsiveContainer, AreaChart, Area, 
-  PieChart, Pie, Cell 
+  ResponsiveContainer, 
+  AreaChart, 
+  Area, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip 
 } from 'recharts';
-import '/src/features/recruiter/components/RecruiterDashboard.css';
+
+// Import CSS
+import '../components/RecruiterDashboard.css';
+// Import component CreateJobPost
+import CreateJobPost from './CreateJobPost';
 
 const RecruiterDashboard = () => {
-  const [isSidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const [showModal, setShowModal] = useState(false);
+  const [isSidebarClosed, setSidebarClosed] = useState(false);
+  
+  // --- LOGIC BACKEND: State lưu danh sách jobs ---
+  const [jobs, setJobs] = useState([]);
 
-  const handleLogout = () => {
-    localStorage.clear();
-    navigate('/login');
+  // --- LOGIC BACKEND: Hàm lấy danh sách job ---
+  const fetchJobs = async () => {
+    try {
+      const token = localStorage.getItem('access_token');
+      // Chỉnh lại URL đúng endpoint job list của bạn nếu cần
+      const response = await axios.get('http://127.0.0.1:8000/api/recruiter/jobs/', { 
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      setJobs(response.data);
+    } catch (error) {
+      console.error("Lỗi khi lấy danh sách job:", error);
+    }
   };
 
-  const lineData = [
-    { name: 'Seg', val1: 400, val2: 240 }, { name: 'Ter', val1: 300, val2: 139 },
-    { name: 'Qua', val1: 600, val2: 980 }, { name: 'Qui', val1: 278, val2: 390 },
-    { name: 'Sex', val1: 189, val2: 480 }, { name: 'Sab', val1: 239, val2: 380 },
-    { name: 'Dom', val1: 349, val2: 430 },
-  ];
+  useEffect(() => {
+    fetchJobs();
+  }, []);
 
-  const pieData = [
-    { name: 'Sales', value: 50, color: '#ff9f43' },
-    { name: 'Contract', value: 25, color: '#8357ff' },
-    { name: 'Subscriptions', value: 25, color: '#00cfe8' },
+  // Logic Log Out
+  const handleLogout = () => {
+    localStorage.clear();
+    sessionStorage.clear();
+    window.location.href = '/login'; 
+  };
+
+  const chartData = [
+    { name: 'Sep', apps: 350 },
+    { name: 'Oct', apps: 450 },
+    { name: 'Nov', apps: 300 },
+    { name: 'Dec', apps: 800 },
+    { name: 'Jan', apps: 500 },
+    { name: 'Feb', apps: 700 },
   ];
 
   return (
-    <div className="dashboard-wrapper">
-      <aside className="dashboard-sidebar active">
+    <div className={`dashboard-wrapper ${isSidebarClosed ? 'sidebar-closed' : ''}`}>
+      
+      {/* --- SIDEBAR --- */}
+      <aside className="dashboard-sidebar">
         <div className="sidebar-header-custom">
-          <span className="logo-uth">UTH</span>
-          <span className="logo-workplace">WORKPLACE</span>
+          UTH <span className="logo-workplace">Workplace</span>
         </div>
+        <div className="sidebar-divider"></div>
         
-        <hr className="sidebar-divider" />
-
-        <nav className="sidebar-nav">
-          <div className="nav-link-gradient active">
-            <LayoutDashboard size={20} /> Dashboard
-          </div>
-          <div className="nav-link-custom">
-            <Briefcase size={20} /> Manage Jobs
-          </div>
-          <div className="nav-link-custom">
-            <ListTodo size={20} /> Candidate Pipeline
-          </div>
-          <div className="nav-link-custom">
-            <Building2 size={20} /> Organization Profile
+        <nav className="sidebar-menu">
+          <div 
+            className={`menu-item ${activeTab === 'dashboard' ? 'active' : ''}`} 
+            onClick={() => setActiveTab('dashboard')}
+          >
+            <LayoutDashboard size={22} />
+            <span className="menu-text">Dashboard</span>
           </div>
           
-          <div className="nav-link-custom logout-item" onClick={handleLogout}>
-            <LogOut size={20} /> Logout
+          <div 
+            className={`menu-item ${activeTab === 'jobs' ? 'active' : ''}`} 
+            onClick={() => setActiveTab('jobs')}
+          >
+            <Briefcase size={22} />
+            <span className="menu-text">My Jobs</span>
+          </div>
+
+          <div 
+            className={`menu-item ${activeTab === 'candidates' ? 'active' : ''}`}
+            onClick={() => setActiveTab('candidates')}
+          >
+            <Users size={22} />
+            <span className="menu-text">Candidates</span>
+          </div>
+
+          <div 
+            className={`menu-item ${activeTab === 'organization' ? 'active' : ''}`}
+            onClick={() => setActiveTab('organization')}
+          >
+            <Building2 size={22} />
+            <span className="menu-text">Organization Profile</span>
           </div>
         </nav>
-      </aside>
-
-      <main className="dashboard-main-shifted">
-        <header className="dashboard-header">
-           <div className="header-left">
-             <div className="header-search">
-               <Search size={18} color="#a3aed0" />
-               <input type="text" placeholder="Search" />
-             </div>
-           </div>
-           <div className="header-right">
-             <Bell size={20} color="#a3aed0" />
-             <div className="user-profile-header" style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
-                <div style={{textAlign: 'right'}}>
-                  <div style={{fontWeight: '700', fontSize: '14px', color: '#2b3674'}}>Manager</div>
-                  <div style={{fontSize: '12px', color: '#a3aed0'}}>Recruiter</div>
-                </div>
-                <div className="avatar-circle"><User size={20} /></div>
-             </div>
-           </div>
-        </header>
-
-        <div className="dashboard-content">
-          <div className="stats-grid">
-            <div className="stat-card">
-              <div className="stat-header"><span>Total Employee</span> <Users size={18} /></div>
-              <div className="stat-value">40,689</div>
-              <div className="stat-trend trend-up"><TrendingUp size={14}/> 8.5% Up from yesterday</div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-header"><span>Total KPIs</span> <Target size={18} /></div>
-              <div className="stat-value">$89,000</div>
-              <div className="stat-trend trend-down"><TrendingDown size={14}/> 4.3% Down from yesterday</div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-header"><span>Total CVs</span> <FileText size={18} /></div>
-              <div className="stat-value">10,293</div>
-              <div className="stat-trend trend-up"><TrendingUp size={14}/> 1.3% Up from past week</div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-header"><span>Sales</span> <DollarSign size={18} /></div>
-              <div className="stat-value">$89.5m</div>
-              <div className="stat-trend trend-up"><TrendingUp size={14}/> 1.8% Up from yesterday</div>
-            </div>
-          </div>
-
-          <div className="main-grid">
-            <div className="card-white">
-              <h4>Threat Exposure Level</h4>
-              <div className="progress-circle-box threat"><span>60%</span></div>
-              <p style={{fontSize: '13px', color: '#a3aed0'}}>Your system is moderately exposed.</p>
-            </div>
-            <div className="card-white">
-              <h4>System Security Score</h4>
-              <div className="progress-circle-box security"><span>80%</span></div>
-              <p style={{fontSize: '13px', color: '#a3aed0'}}>Security is strong.</p>
-            </div>
-            <div className="card-white">
-              <h4>Revenue Target</h4>
-              <div className="target-info">
-                <h2 style={{color: '#00cfe8', fontSize: '36px', marginTop: '15px'}}>46%</h2>
-                <p style={{fontWeight: '700'}}>2,300 / 5,000</p>
-                <small style={{color: '#a3aed0'}}>Target achievement status.</small>
-              </div>
-            </div>
-          </div>
-
-          <div className="bottom-grid">
-            <div className="chart-container">
-              <h4 style={{marginBottom: '20px'}}>Total De Vendas Hoje</h4>
-              <ResponsiveContainer width="100%" height={300}>
-                <AreaChart data={lineData}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                  <XAxis dataKey="name" axisLine={false} tickLine={false} />
-                  <YAxis axisLine={false} tickLine={false} />
-                  <Tooltip />
-                  <Area type="monotone" dataKey="val1" stroke="#ee5d50" fill="transparent" strokeWidth={3} />
-                  <Area type="monotone" dataKey="val2" stroke="#2b3674" fill="transparent" strokeWidth={3} />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="chart-container">
-              <h4 style={{marginBottom: '20px'}}>Distribution by Business</h4>
-              <ResponsiveContainer width="100%" height={200}>
-                <PieChart>
-                  <Pie data={pieData} innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
-                    {pieData.map((entry, index) => <Cell key={index} fill={entry.color} />)}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
+        
+        {/* Nút Log Out nằm ở cuối sidebar */}
+        <div className="sidebar-footer" style={{ padding: '20px' }}>
+          <div className="menu-item logout" onClick={handleLogout} style={{ cursor: 'pointer' }}>
+            <LogOut size={22} />
+            <span className="menu-text">Log Out</span>
           </div>
         </div>
-      </main>
+      </aside>
+
+      {/* --- MAIN CONTENT --- */}
+      <div className="main-container-right">
+        
+        {/* HEADER */}
+        <header className="dashboard-header">
+          <div className="header-titles">
+            <p className="breadcrumb">
+              Pages / {
+                activeTab === 'dashboard' ? 'Dashboard' : 
+                activeTab === 'organization' ? 'Organization' : 
+                activeTab.charAt(0).toUpperCase() + activeTab.slice(1)
+              }
+            </p>
+            <h2 className="page-title">
+              {
+                activeTab === 'dashboard' ? 'Main Dashboard' : 
+                activeTab === 'organization' ? 'Organization Profile' : 
+                'Management'
+              }
+            </h2>
+          </div>
+
+          <div className="header-right-tools">
+            <div className="search-container-custom">
+              <Search size={18} color="#A3AED0" />
+              <input type="text" placeholder="Search..." />
+            </div>
+            
+            <button className="btn-create" onClick={() => setShowModal(true)}>
+              <Plus size={20} />
+              <span>Create Job</span>
+            </button>
+
+            <Bell size={20} color="#A3AED0" style={{ cursor: 'pointer' }} />
+            <Moon size={20} color="#A3AED0" style={{ cursor: 'pointer' }} />
+            <div className="avatar-circle" style={{ 
+              width: '40px', height: '40px', borderRadius: '50%', 
+              background: '#F4F7FE', display: 'flex', alignItems: 'center', 
+              justifyContent: 'center', color: '#2b3674' 
+            }}>
+              <User size={20} />
+            </div>
+          </div>
+        </header>
+
+        {/* CONTENT BODY */}
+        <main className="dashboard-content">
+          
+          {/* TRƯỜNG HỢP 1: DASHBOARD */}
+          {activeTab === 'dashboard' && (
+            <>
+              {/* STATS GRID */}
+              <div className="stats-grid">
+                <div className="stat-card">
+                  <div className="stat-icon-box"><Briefcase size={24} /></div>
+                  <div className="stat-info">
+                    <p className="stat-label">Total Jobs</p>
+                    <h3 className="stat-value">{jobs.length || 124}</h3>
+                  </div>
+                </div>
+                
+                <div className="stat-card">
+                  <div className="stat-icon-box" style={{ color: '#05cd99' }}><Users size={24} /></div>
+                  <div className="stat-info">
+                    <p className="stat-label">Applicants</p>
+                    <h3 className="stat-value">1,482</h3>
+                  </div>
+                </div>
+
+                <div className="stat-card">
+                  <div className="stat-icon-box" style={{ color: '#ffb547' }}><Clock size={24} /></div>
+                  <div className="stat-info">
+                    <p className="stat-label">Interviews</p>
+                    <h3 className="stat-value">45</h3>
+                  </div>
+                </div>
+
+                <div className="stat-card">
+                  <div className="stat-icon-box" style={{ color: '#ee5d50' }}><CheckCircle size={24} /></div>
+                  <div className="stat-info">
+                    <p className="stat-label">Hired</p>
+                    <h3 className="stat-value">12</h3>
+                  </div>
+                </div>
+              </div>
+
+              {/* CHART & STATISTICS */}
+              <div className="bottom-grid">
+                <div className="chart-container">
+                  <div className="chart-header" style={{ marginBottom: '20px' }}>
+                    <h4 style={{ color: '#2b3674', fontSize: '20px' }}>Application Trends</h4>
+                  </div>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <AreaChart data={chartData}>
+                      <defs>
+                        <linearGradient id="colorApps" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#4318FF" stopOpacity={0.1}/>
+                          <stop offset="95%" stopColor="#4318FF" stopOpacity={0}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F4F7FE" />
+                      <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#A3AED0', fontSize: 12}} />
+                      <YAxis axisLine={false} tickLine={false} tick={{fill: '#A3AED0', fontSize: 12}} />
+                      <Tooltip />
+                      <Area type="monotone" dataKey="apps" stroke="#4318FF" strokeWidth={3} fillOpacity={1} fill="url(#colorApps)" />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+
+                <div className="chart-container">
+                  <h4 style={{ color: '#2b3674', fontSize: '20px', marginBottom: '20px' }}>Daily Statistics</h4>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                    <p style={{ color: '#A3AED0' }}>Dữ liệu tổng hợp theo ngày sẽ hiển thị tại đây.</p>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* TRƯỜNG HỢP 2: MY JOBS */}
+          {activeTab === 'jobs' && (
+            <div className="table-card">
+              <div className="table-header">
+                <h3>Active Job Listings</h3>
+                <MoreHorizontal style={{ color: '#A3AED0', cursor: 'pointer' }} />
+              </div>
+              <table className="jobs-table">
+                <thead>
+                  <tr>
+                    <th>Job Name</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Progress</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {jobs.map((job) => (
+                    <tr key={job.id}>
+                      <td><span className="job-name-text">{job.title}</span></td>
+                      <td>
+                        <div className="status-badge pending">
+                          <Clock size={14}/> Pending
+                        </div>
+                      </td>
+                      <td>{new Date(job.created_at || Date.now()).toLocaleDateString('en-GB')}</td>
+                      <td>
+                        <div className="progress-container">
+                          <div className="progress-bar" style={{ width: '10%' }}></div>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                  {/* Dữ liệu mẫu giữ nguyên */}
+                  <tr>
+                    <td><span className="job-name-text">Senior React Developer</span></td>
+                    <td><div className="status-badge active"><CheckCircle size={14}/> Approved</div></td>
+                    <td>12.Jan.2026</td>
+                    <td>
+                      <div className="progress-container">
+                        <div className="progress-bar" style={{ width: '70%' }}></div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><span className="job-name-text">UI/UX Designer</span></td>
+                    <td><div className="status-badge active"><CheckCircle size={14}/> Approved</div></td>
+                    <td>08.Jan.2026</td>
+                    <td>
+                      <div className="progress-container">
+                        <div className="progress-bar" style={{ width: '45%' }}></div>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* TRƯỜNG HỢP 3: CANDIDATES */}
+          {activeTab === 'candidates' && (
+             <div className="dashboard-view">
+                <h3>Candidates Management</h3>
+                <p>Tính năng đang phát triển...</p>
+             </div>
+          )}
+
+          {/* TRƯỜNG HỢP 4: ORGANIZATION PROFILE */}
+          {activeTab === 'organization' && (
+             <div className="dashboard-view">
+                <OrganizationProfile />
+             </div>
+          )}
+
+        </main>
+      </div>
+
+      {/* PORTAL CHO MODAL */}
+      {showModal && ReactDOM.createPortal(
+        <CreateJobPost 
+          onClose={() => setShowModal(false)} 
+          onSuccess={() => {
+            setShowModal(false);
+            fetchJobs();
+          }} 
+        />,
+        document.body
+      )}
     </div>
   );
 };

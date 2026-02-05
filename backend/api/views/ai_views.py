@@ -6,18 +6,52 @@ from apps.chatbot_services.ai_services import career_coach_service, cv_analyzer_
 from rest_framework.decorators import api_view
 from database.models import Conversation, Message
 from apps.chatbot_services.interview_engine import handle_turn
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+import json
 
 
 class CareerCoachAPIView(APIView):
+    @swagger_auto_schema(
+        operation_description="AI Career Coach - Tư vấn lộ trình nghề nghiệp",
+        request_body=CareerCoachRequestSerializer,
+        responses={
+            200: CareerCoachResponseSerializer,
+            400: "Bad Request - Thiếu câu hỏi hoặc dữ liệu sai format"
+        }
+    )
     def post(self, request):
-        serializer = CareerCoachRequestSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        req_serializer = CareerCoachRequestSerializer(data=request.data)
+        req_serializer.is_valid(raise_exception=True)
 
-        result = career_coach_service(
-            serializer.validated_data["question"]
-        )
+        try:
+            ai_result = career_coach_service(
+                req_serializer.validated_data["question"]
+            )
+            res_serializer = CareerCoachResponseSerializer(data=ai_result)
+            
+            if res_serializer.is_valid():
+                return Response(res_serializer.data, status=status.HTTP_200_OK)
+            else:
+                print("AI Output Error:", res_serializer.errors)
+                return Response(
+                    {
+                        "error": "AI trả về dữ liệu thiếu hoặc sai định dạng.", 
+                        "details": res_serializer.errors
+                    }, 
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
 
-        return Response(result, status=status.HTTP_200_OK)
+        except json.JSONDecodeError:
+            return Response(
+                {"error": "AI trả về định dạng text thay vì JSON. Vui lòng thử lại."}, 
+                status=status.HTTP_502_BAD_GATEWAY
+            )
+        except Exception as e:
+            return Response(
+                {"error": f"Lỗi hệ thống: {str(e)}"}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
 
 class CvAnalyzerAPIView(APIView):

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../../app/AppProviders';
 import { 
   Search, Bell, ChevronDown, Users, FileText, 
-  DollarSign, TrendingUp, LayoutDashboard, 
-  UserCog, Activity, Library, ShieldCheck, 
-  ClipboardList, MessageSquare, Gift, Menu, X
+  TrendingUp, LayoutDashboard, UserCog, Activity, 
+  ShieldCheck, Menu, X, LogOut
 } from 'lucide-react';
 import { 
   LineChart, Line, XAxis, YAxis, CartesianGrid, 
@@ -21,158 +21,196 @@ const cvData = [
 
 const spendingData = [
   { year: '2015', user: 30, repeated: 10 },
-  { year: '2016', user: 70, repeated: 40 },
-  { year: '2017', user: 45, repeated: 30 },
-  { year: '2018', user: 60, repeated: 55 },
-  { year: '2019', user: 95, repeated: 85 },
-  { year: '2020', user: 80, repeated: 70 },
+  { year: '2016', user: 50, repeated: 25 },
+  { year: '2017', user: 45, repeated: 20 },
+  { year: '2018', user: 80, repeated: 40 },
+  { year: '2019', user: 60, repeated: 35 },
+  { year: '2020', user: 90, repeated: 55 },
 ];
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  
-  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+  const { user, setUser } = useAuth();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-  const goToManageAccount = () => {
-    navigate('/manage-internal');
+  const handleLogout = () => {
+    if (window.confirm("Are you sure you want to logout?")) {
+      localStorage.clear();
+      setUser(null);
+      navigate('/admin-login');
+    }
   };
 
   return (
     <div className="admin-container">
-      {isSidebarOpen && <div className="sidebar-overlay" onClick={toggleSidebar}></div>}
-
-      <aside className={`admin-sidebar ${isSidebarOpen ? 'open' : ''}`}>
+      {/* SIDEBAR */}
+      <aside className={`admin-sidebar ${!isSidebarOpen ? 'collapsed' : ''}`}>
         <div className="sidebar-header-uth">
-          <div className="uth-branding" onClick={() => navigate('/admin')} style={{cursor:'pointer'}}>
+          <div className="uth-branding">
             <span className="uth-blue-text">UTH</span>
-            <span className="workplace-green-text"> WORKPLACE</span>
+            {isSidebarOpen && <span className="workplace-green-text"> WORKPLACE</span>}
           </div>
-          <button className="close-sidebar-btn" onClick={toggleSidebar}><X size={24} /></button>
         </div>
-        
+
         <nav className="sidebar-nav-custom">
           <div className="nav-item-custom active" onClick={() => navigate('/admin')}>
-            <LayoutDashboard size={20} /> <span>Dashboard</span>
+            <LayoutDashboard size={20} /> 
+            {isSidebarOpen && <span>Dashboard</span>}
+          </div>
+
+          {isSidebarOpen && <div className="sidebar-divider-text">MANAGEMENT</div>}
+
+          <div className="nav-item-custom" onClick={() => navigate('/manage-internal')}>
+            <ShieldCheck size={20} /> 
+            {isSidebarOpen && <span>Internal Accounts</span>}
           </div>
           
-          <div className="nav-item-custom" onClick={goToManageAccount}>
-            <UserCog size={20} /> <span>Manage Account</span>
+          <div className="nav-item-custom" onClick={() => navigate('/manage-candidate')}>
+            <Users size={20} /> 
+            {isSidebarOpen && <span>Candidates</span>}
           </div>
 
-          <div className="nav-item-custom"><Activity size={20} /> <span>Monitor Logs & Analytics</span></div>
-          <div className="nav-item-custom"><Library size={20} /> <span>Cabinets of Knowledge</span></div>
-          <div className="nav-item-custom"><ShieldCheck size={20} /> <span>System Status Monitor</span></div>
-          <div className="nav-item-custom"><ClipboardList size={20} /> <span>System Reports</span></div>
-          <div className="nav-item-custom"><MessageSquare size={20} /> <span>Articles Management</span></div>
-          <div className="nav-item-custom"><Gift size={20} /> <span>User Package Management</span></div>
+          <div className="nav-item-custom" onClick={() => navigate('/manage-recruiter')}>
+            <UserCog size={20} /> 
+            {isSidebarOpen && <span>Recruiters</span>}
+          </div>
+
+          <div className="nav-item-custom" onClick={() => navigate('/manage-admin-acc')}>
+            <Activity size={20} /> 
+            {isSidebarOpen && <span>Admin Accounts</span>}
+          </div>
+
+          {isSidebarOpen && <div className="sidebar-divider-text">SYSTEM</div>}
+          
+          <div className="nav-item-custom">
+            <FileText size={20} /> 
+            {isSidebarOpen && <span>Job Moderation</span>}
+          </div>
         </nav>
+
+        <div className="sub-sidebar-footer">
+          <div className="nav-item-custom logout-sub" onClick={handleLogout}>
+            <LogOut size={18} /> 
+            {isSidebarOpen && <span>Logout</span>}
+          </div>
+        </div>
       </aside>
 
-      <div className="admin-content-wrapper">
-        <header className="admin-header">
-          <div className="header-left">
-            <button className="header-menu-btn" onClick={toggleSidebar}><Menu size={20} /></button>
-            <div className="search-box">
-              <Search size={18} color="#94a3b8" />
-              <input type="text" placeholder="Search" />
-            </div>
+      {/* MAIN CONTENT AREA */}
+      <main className="admin-main" style={{ 
+        marginLeft: isSidebarOpen ? '280px' : '80px',
+        width: isSidebarOpen ? 'calc(100% - 280px)' : 'calc(100% - 80px)'
+      }}>
+        <header className="admin-navbar">
+          <button className="toggle-sidebar" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+            {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+
+          <div className="search-box">
+            <Search size={18} />
+            <input type="text" placeholder="Search analytics..." />
           </div>
-          <div className="header-right">
-            <div className="notification"><Bell size={22} /><span className="badge">6</span></div>
-            
-            <div className="user-account-box" onClick={goToManageAccount} style={{cursor:'pointer'}}>
-              <div className="avatar-placeholder"></div>
-              <ChevronDown size={16} color="#94a3b8" />
+
+          <div className="nav-actions">
+            <div className="nav-icon">
+              <Bell size={20} />
+              <span className="badge">3</span>
+            </div>
+            <div className="admin-profile-trigger">
+              <img src={`https://ui-avatars.com/api/?name=${user?.username || 'Admin'}&background=4880FF&color=fff`} alt="Avatar" />
+              <div className="admin-info">
+                <p className="admin-name">{user?.username || 'Super Admin'}</p>
+                <p className="admin-role">Administrator</p>
+              </div>
+              <ChevronDown size={16} />
             </div>
           </div>
         </header>
 
-        <div className="stats-grid">
-          <div className="stat-card" onClick={goToManageAccount} style={{cursor: 'pointer'}}>
-            <div className="stat-main">
-              <div><p style={{color:'#606060', fontSize:'14px'}}>Total User</p><h2 className="stat-value">40,689</h2></div>
-              <div className="stat-icon purple"><Users size={22} /></div>
-            </div>
-            <p className="stat-change up"><TrendingUp size={14}/> 8.5% <span style={{fontWeight:400, color:'#606060'}}>Up from yesterday</span></p>
-          </div>
-          <div className="stat-card">
-            <div className="stat-main">
-              <div><p style={{color:'#606060', fontSize:'14px'}}>Total CVs</p><h2 className="stat-value">10,293</h2></div>
-              <div className="stat-icon orange"><FileText size={22} /></div>
-            </div>
-            <p className="stat-change up"><TrendingUp size={14}/> 1.3% <span style={{fontWeight:400, color:'#606060'}}>Up from week</span></p>
-          </div>
-          <div className="stat-card">
-            <div className="stat-main">
-              <div><p style={{color:'#606060', fontSize:'14px'}}>Total Spending</p><h2 className="stat-value">$89,000</h2></div>
-              <div className="stat-icon green"><DollarSign size={22} /></div>
-            </div>
-            <p className="stat-change down" style={{color:'#F93C65'}}><TrendingUp size={14} style={{transform:'rotate(180deg)'}}/> 4.3% <span style={{fontWeight:400, color:'#606060'}}>Down</span></p>
-          </div>
-          <div className="stat-card">
-            <div className="stat-main">
-              <div><p style={{color:'#606060', fontSize:'14px'}}>Total Report</p><h2 className="stat-value">2,040</h2></div>
-              <div className="stat-icon red"><ClipboardList size={22} /></div>
-            </div>
-            <p className="stat-change up"><TrendingUp size={14}/> 1.8% <span style={{fontWeight:400, color:'#606060'}}>Up</span></p>
-          </div>
-        </div>
+        <div className="dashboard-content">
+          <h1 className="page-title">Dashboard Overview</h1>
 
-        <div className="chart-main-card">
-          <h3 style={{marginBottom:'20px', fontWeight:800}}>CVs Details</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <AreaChart data={cvData}>
-              <defs>
-                <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#4880FF" stopOpacity={0.3}/><stop offset="95%" stopColor="#4880FF" stopOpacity={0}/>
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-              <XAxis dataKey="name" axisLine={false} tickLine={false} />
-              <YAxis axisLine={false} tickLine={false} />
-              <Tooltip />
-              <Area type="monotone" dataKey="value" stroke="#4880FF" strokeWidth={3} fill="url(#colorValue)" />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
-
-        <div className="bottom-grid">
-          <div className="bottom-card">
-            <h3 style={{fontWeight:800, marginBottom:'20px'}}>Users</h3>
-            <div className="donut-container">
-              <div className="donut-visual">
-                <div className="donut-info">
-                  <h4>34,249</h4>
-                  <p>Total Users</p>
-                </div>
+          {/* Stats Grid */}
+          <div className="stats-grid">
+            <div className="stat-card">
+              <div className="stat-info">
+                <p className="stat-label">Total Users</p>
+                <h2 className="stat-value">40,689</h2>
+                <p className="stat-change up"><TrendingUp size={14}/> 8.5% Up</p>
               </div>
-              <div className="donut-legend">
-                <div className="legend-item">
-                  <span className="dot blue"></span> <span>New Users</span>
-                </div>
-                <div className="legend-item">
-                  <span className="dot gray"></span> <span>Repeated</span>
-                </div>
+              <div className="stat-icon blue"><Users size={28} /></div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-info">
+                <p className="stat-label">Active Jobs</p>
+                <h2 className="stat-value">10,293</h2>
+                <p className="stat-change up"><TrendingUp size={14}/> 1.3% Up</p>
               </div>
+              <div className="stat-icon green"><FileText size={28} /></div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-info">
+                <p className="stat-label">Pending Approval</p>
+                <h2 className="stat-value">2,040</h2>
+                <p className="stat-change up"><TrendingUp size={14}/> 4.3% Up</p>
+              </div>
+              <div className="stat-icon red"><Activity size={28} /></div>
             </div>
           </div>
 
-          <div className="bottom-card">
-            <h3 style={{fontWeight:800, marginBottom:'20px'}}>Total Spending Analytic</h3>
-            <ResponsiveContainer width="100%" height={320}>
-              <LineChart data={spendingData}>
+          {/* Registration Analytics Chart */}
+          <div className="chart-main-card">
+            <h3 style={{fontWeight:800, marginBottom:'20px'}}>Registration Analytics</h3>
+            <ResponsiveContainer width="100%" height={350}>
+              <AreaChart data={cvData}>
+                <defs>
+                  <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#4880FF" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#4880FF" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                <XAxis dataKey="year" axisLine={false} tickLine={false} />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} />
                 <YAxis axisLine={false} tickLine={false} />
                 <Tooltip />
-                <Line type="monotone" dataKey="user" stroke="#4880FF" strokeWidth={3} dot={{r: 6, fill:'#4880FF'}} />
-                <Line type="monotone" dataKey="repeated" stroke="#10B981" strokeWidth={3} dot={{r: 6, fill:'#10B981'}} />
-              </LineChart>
+                <Area type="monotone" dataKey="value" stroke="#4880FF" fillOpacity={1} fill="url(#colorValue)" strokeWidth={3} />
+              </AreaChart>
             </ResponsiveContainer>
           </div>
+
+          <div className="bottom-grid">
+            <div className="bottom-card">
+              <h3 style={{fontWeight:800, marginBottom:'20px'}}>User Segments</h3>
+              <div className="donut-container">
+                <div className="donut-visual">
+                  <div className="donut-info">
+                    <h4>34,249</h4>
+                    <p>Total Users</p>
+                  </div>
+                </div>
+                <div className="donut-legend">
+                  <div className="legend-item"><span className="dot blue"></span> <span>Recruiters</span></div>
+                  <div className="legend-item"><span className="dot gray"></span> <span>Candidates</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bottom-card">
+              <h3 style={{fontWeight:800, marginBottom:'20px'}}>Platform Growth</h3>
+              <ResponsiveContainer width="100%" height={320}>
+                <LineChart data={spendingData}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                  <XAxis dataKey="year" axisLine={false} tickLine={false} />
+                  <YAxis axisLine={false} tickLine={false} />
+                  <Tooltip />
+                  <Line type="monotone" dataKey="user" stroke="#4880FF" strokeWidth={3} dot={{r: 6}} />
+                  <Line type="monotone" dataKey="repeated" stroke="#10B981" strokeWidth={3} dot={{r: 6}} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 };

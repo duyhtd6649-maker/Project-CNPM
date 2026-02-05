@@ -1,0 +1,625 @@
+/* Company Profile Page Styles */
+
+/* Override global constraints */
+body:has(.company-profile-container) {
+    overflow: visible !important;
+    height: auto !important;
+}
+
+body:has(.company-profile-container) #root,
+body:has(.company-profile-container) .app-container {
+    height: auto !important;
+    overflow: visible !important;
+}
+
+/* Page Container */
+.company-profile-container {
+    width: 100%;
+    min-height: 100vh;
+    background: #f9fafb;
+}
+
+/* Breadcrumb Navigation */
+.cp-breadcrumb {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 16px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.cp-back-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(124, 58, 237, 0.25);
+}
+
+.cp-back-btn:hover {
+    background: linear-gradient(135deg, #6d28d9 0%, #5b21b6 100%);
+    transform: translateX(-3px);
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.35);
+}
+
+.cp-back-btn svg {
+    transition: transform 0.2s ease;
+}
+
+.cp-back-btn:hover svg {
+    transform: translateX(-3px);
+}
+
+.cp-breadcrumb-trail {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.cp-breadcrumb-link {
+    color: #7c3aed;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.cp-breadcrumb-link:hover {
+    color: #5b21b6;
+    text-decoration: underline;
+}
+
+.cp-breadcrumb-current {
+    color: #1f2937;
+    font-weight: 500;
+}
+
+.cp-breadcrumb-trail svg {
+    color: #9ca3af;
+}
+
+/* Hero Section */
+.cp-hero-section {
+    background: #fff;
+    position: relative;
+}
+
+.cp-cover-photo {
+    height: 200px;
+    background-image: url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.cp-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.5), transparent);
+}
+
+.cp-hero-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px;
+}
+
+.cp-profile-header {
+    display: flex;
+    gap: 24px;
+    margin-top: -50px;
+    padding-bottom: 30px;
+    position: relative;
+}
+
+.cp-company-logo {
+    width: 100px;
+    height: 100px;
+    background: white;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    border: 4px solid white;
+    flex-shrink: 0;
+}
+
+.cp-company-info {
+    flex: 1;
+    padding-top: 55px;
+}
+
+.cp-info-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.cp-title-group h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: #1f2937;
+    margin: 0 0 10px 0;
+}
+
+.cp-meta-tags {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.cp-meta-tags span,
+.cp-meta-tags a {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.cp-website-link {
+    color: #7c3aed;
+    text-decoration: none;
+}
+
+.cp-website-link:hover {
+    text-decoration: underline;
+}
+
+.cp-action-btns {
+    display: flex;
+    gap: 10px;
+}
+
+.cp-btn-follow {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #7c3aed;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.cp-btn-follow:hover {
+    background: #6d28d9;
+}
+
+.cp-btn-share {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border: 1px solid #e5e7eb;
+    padding: 10px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.cp-btn-share:hover {
+    background: #f3f4f6;
+    border-color: #d1d5db;
+}
+
+/* Tabs */
+.cp-tabs-bar {
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+    position: sticky;
+    top: 70px;
+    z-index: 50;
+}
+
+.cp-tabs-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px;
+    display: flex;
+    gap: 30px;
+}
+
+.cp-tab-item {
+    padding: 16px 0;
+    text-decoration: none;
+    color: #6b7280;
+    font-weight: 600;
+    font-size: 14px;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+}
+
+.cp-tab-item:hover {
+    color: #374151;
+}
+
+.cp-tab-item.active {
+    color: #7c3aed;
+    border-bottom-color: #7c3aed;
+}
+
+.cp-badge {
+    background: #f3f4f6;
+    color: #374151;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    margin-left: 6px;
+}
+
+/* Main Layout */
+.cp-main-layout {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 30px 40px;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+}
+
+/* Content Left */
+.cp-content-left {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.cp-about-card {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+}
+
+.cp-about-card h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0 0 16px 0;
+}
+
+.cp-about-card p {
+    color: #4b5563;
+    line-height: 1.7;
+    font-size: 15px;
+    margin: 0;
+}
+
+.cp-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.cp-stat-item span {
+    display: block;
+    font-size: 12px;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.cp-stat-item strong {
+    font-size: 18px;
+    color: #1f2937;
+}
+
+/* Tech Stack */
+.cp-tech-stack {
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+}
+
+.cp-tech-stack h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0 0 16px 0;
+}
+
+.cp-tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.cp-tech-tag {
+    background: #f3f4f6;
+    color: #374151;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Jobs Section */
+.cp-jobs-section {
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+}
+
+.cp-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.cp-section-header h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0;
+}
+
+.cp-view-all {
+    color: #7c3aed;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.cp-view-all:hover {
+    text-decoration: underline;
+}
+
+.cp-job-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.cp-job-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    transition: all 0.2s;
+}
+
+.cp-job-card:hover {
+    border-color: #c4b5fd;
+    box-shadow: 0 2px 8px rgba(124, 58, 237, 0.1);
+}
+
+.cp-job-info h4 {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0 0 4px 0;
+}
+
+.cp-job-info p {
+    font-size: 13px;
+    color: #6b7280;
+    margin: 0;
+}
+
+.cp-btn-apply {
+    background: #7c3aed;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.cp-btn-apply:hover {
+    background: #6d28d9;
+}
+
+/* Sidebar */
+.cp-sidebar-right {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.cp-widget {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    overflow: hidden;
+}
+
+.cp-widget-header {
+    padding: 16px 20px;
+    font-weight: 700;
+    font-size: 15px;
+    color: #1f2937;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.cp-widget-body {
+    padding: 16px 20px;
+}
+
+.cp-widget-body p {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #4b5563;
+    font-size: 14px;
+    margin: 0;
+}
+
+.cp-map-placeholder {
+    height: 150px;
+    background: #f3f4f6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #9ca3af;
+    font-size: 14px;
+}
+
+.cp-culture-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.cp-culture-tag {
+    background: #faf5ff;
+    color: #7c3aed;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .cp-main-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .cp-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .cp-breadcrumb {
+        flex-direction: column;
+        gap: 12px;
+        padding: 12px 20px;
+    }
+
+    .cp-breadcrumb-trail {
+        font-size: 12px;
+    }
+
+    .cp-back-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .cp-profile-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .cp-company-info {
+        padding-top: 0;
+    }
+
+    .cp-info-main {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .cp-meta-tags {
+        justify-content: center;
+    }
+
+    .cp-hero-content,
+    .cp-tabs-content,
+    .cp-main-layout {
+        padding: 0 20px;
+    }
+}
+
+/* Loading, Error, Empty States */
+.cp-loading-container,
+.cp-error-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    text-align: center;
+    min-height: 60vh;
+}
+
+.cp-loading-spinner {
+    animation: cp-spin 1s linear infinite;
+    color: #7c3aed;
+    margin-bottom: 16px;
+}
+
+@keyframes cp-spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.cp-loading-container p,
+.cp-error-container h3 {
+    color: #374151;
+    font-size: 18px;
+    margin-top: 16px;
+}
+
+.cp-error-container h3 {
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+/* Logo Image */
+.cp-logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+/* Empty Jobs */
+.cp-empty-jobs {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+    background: #f9fafb;
+    border-radius: 8px;
+}
+
+.cp-empty-jobs p {
+    color: #6b7280;
+    font-size: 14px;
+    margin-top: 12px;
+}

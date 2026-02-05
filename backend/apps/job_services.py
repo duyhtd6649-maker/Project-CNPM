@@ -136,7 +136,7 @@ class JobService:
             if candidate_skills:
                 for skill in candidate_skills:
                     skill_score_expression = skill_score_expression + Case(
-                        When(skills__contains=skill, then=Value(10)),
+                        When(skill__contains=skill, then=Value(10)),
                         default=Value(0),
                         output_field=IntegerField()
                     )
@@ -153,6 +153,18 @@ class JobService:
     def view_job_detail(job_id):
         try:
             job = Jobs.objects.get(id = job_id)
+            return job
+        except Jobs.DoesNotExist:
+            raise NotFound({"error":"Job not found"})
+        
+    @staticmethod
+    def process_job(user,job_id, new_status):
+        if not AdminService.Is_Super_User(user):
+            raise PermissionError({"error":"User don't have permission"})
+        try:
+            job = Jobs.objects.get(id = job_id)
+            job.status = new_status
+            job.save()
             return job
         except Jobs.DoesNotExist:
             raise NotFound({"error":"Job not found"})

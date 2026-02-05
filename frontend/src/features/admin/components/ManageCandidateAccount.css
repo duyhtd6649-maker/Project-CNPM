@@ -1,8 +1,9 @@
 :root {
   --primary-blue: #4880FF;
   --primary-green: #10B981;
-  --sidebar-dark-blue: #2b109e;
+  --navy-dark: #101935; /* Màu Navy */
   --bg-body: #F5F6FA;
+  --text-dark: #202224;
 }
 
 .manage-page-container {
@@ -13,98 +14,101 @@
   background: var(--bg-body);
 }
 
-.manage-left-sidebar {
+/* --- SIDEBAR (Sửa lại background) --- */
+.manage-left-sidebar,
+.admin-sidebar {
   width: 280px;
-  background: linear-gradient(90deg, #5B8DFA 0%, #32C192 100%);
+  /* Đã đổi từ Gradient sang màu Navy phẳng */
+  background: var(--navy-dark); 
   height: 100vh;
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
   color: white;
+  transition: width 0.3s;
 }
 
-.sidebar-blue-header {
+.sidebar-blue-header,
+.sidebar-header-uth {
   padding: 30px 20px;
   display: flex;
   align-items: center;
-  gap: 15px;
+  justify-content: space-between;
 }
 
-.header-menu-btn-white {
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
-  padding: 8px;
-  border-radius: 8px;
-  cursor: pointer;
-  color: white;
-  display: flex;
-  align-items: center;
-}
-
-.uth-branding-white {
+.uth-branding {
   font-weight: 900;
   font-size: 20px;
-}
-
-.uth-branding-white .uth-text {
-  color: #ffffff;
-}
-
-.sub-nav-list {
-  flex: 1;
-  padding: 10px 0;
-}
-
-.sub-nav-item {
-  padding: 14px 25px;
   cursor: pointer;
-  font-weight: 600;
-  font-size: 15px;
-  transition: 0.2s;
+}
+.uth-blue-text { color: #4880FF; }
+.workplace-green-text { color: #10B981; }
+
+.close-sidebar-btn {
+  background: transparent;
+  border: none;
   color: white;
-}
-
-.sub-nav-item.active {
-  background: #ffffff;
-  color: #2b109e !important;
-  border-radius: 8px;
-  margin: 0 15px;
-}
-
-.sub-nav-item:hover:not(.active) {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.sub-sidebar-footer {
-  padding-bottom: 30px;
-}
-
-.divider-sub {
-  height: 1px;
-  background: rgba(255, 255, 255, 0.1);
-  margin: 15px 20px;
-}
-
-.sub-nav-item-small {
-  padding: 8px 25px;
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.6);
   cursor: pointer;
 }
 
+/* Nav Menu */
+.sidebar-nav-custom, .manage-nav-list {
+  flex: 1;
+  padding-top: 20px;
+  overflow-y: auto;
+}
+
+.nav-item-custom, .nav-item {
+  display: flex;
+  align-items: center;
+  padding: 15px 25px;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 600;
+  gap: 12px;
+  text-decoration: none;
+}
+
+.nav-item-custom:hover, .nav-item:hover {
+  color: white;
+  background: rgba(255,255,255,0.05);
+}
+
+.nav-item-custom.active, .nav-item.active {
+  background: rgba(72, 128, 255, 0.15);
+  color: #4880FF;
+  border-right: 3px solid #4880FF;
+}
+
+/* Footer Sidebar */
+.sub-sidebar-footer {
+  padding: 20px 25px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+.sub-nav-item { color: #94a3b8; padding: 10px 0; cursor: pointer; display: flex; align-items: center; font-size: 14px;}
+.sub-nav-item:hover { color: white; }
+.logout-sub { color: #FF5630; }
+.divider-sub { height: 1px; background: rgba(255,255,255,0.1); margin: 10px 0; }
+.sub-nav-item-small { font-size: 13px; color: #64748b; padding: 5px 0; }
+
+/* --- CONTENT BÊN PHẢI --- */
 .manage-right-content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
+  overflow: hidden;
+  background: #F5F6FA;
 }
 
 .manage-top-header {
   height: 80px;
   padding: 0 40px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-end; /* Đẩy user box sang phải */
   align-items: center;
+  background: white;
+  border-bottom: 1px solid #eee;
 }
 
 .header-right-actions {
@@ -112,68 +116,56 @@
   align-items: center;
   gap: 25px;
 }
+.notification { position: relative; }
+.notification .badge { position: absolute; top: -5px; right: -5px; background: red; color: white; font-size: 10px; padding: 2px 5px; border-radius: 10px;}
+.user-account-box { display: flex; gap: 10px; align-items: center; }
+.avatar-placeholder { width: 35px; height: 35px; background: #ddd; border-radius: 50%; }
 
+/* Main Area */
 .manage-view-area {
-  padding: 0 40px 40px 40px;
+  padding: 30px 40px;
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .view-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
+  margin-bottom: 25px;
 }
 
 .view-header h2 {
   font-weight: 800;
   color: #202224;
+  font-size: 24px;
+}
+
+.btn-add-new {
+  background: var(--navy-dark);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 5px 15px rgba(16, 25, 53, 0.2);
 }
 
 .view-content-card {
   background: white;
   border-radius: 20px;
-  height: calc(100% - 80px);
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-  color: #94a3b8;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.03);
+  padding: 20px;
+  color: #888;
 }
 
-.btn-add-new {
-  background: #2b109e;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.admin-sidebar {
-  width: 280px;
-  background: white;
-  height: 100vh;
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 1000;
-  transform: translateX(-100%);
-  transition: transform 0.3s ease;
-}
-
-.admin-sidebar.open {
-  transform: translateX(0);
-}
-
-.sidebar-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.4);
-  z-index: 999;
-}
+/* Nếu có table trong view-content-card thì css table sẽ nằm ở đây, 
+   hiện tại snippet candidate của bạn đang hiển thị icon settings trống */

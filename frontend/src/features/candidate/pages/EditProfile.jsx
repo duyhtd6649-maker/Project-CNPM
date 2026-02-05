@@ -6,7 +6,7 @@ const EditProfile = () => {
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
-  
+
   const [formData, setFormData] = useState({
     avatar: null,
     userName: '',
@@ -22,23 +22,57 @@ const EditProfile = () => {
 
 
   useEffect(() => {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    if (currentUser) {
-      setFormData({
-        avatar: currentUser.avatar || null,
-        userName: currentUser.name || '', 
-        email: currentUser.email || '',
-        id: currentUser.id || '',
-        country: currentUser.country || '',
-        dateOfBirth: currentUser.dob || '', 
-        gender: currentUser.gender || 'Male',
-        jobs: currentUser.jobs || '',
-        achievement: currentUser.achievement || '',
-        package: currentUser.package || 'Free'
-      });
-    } else {
+    const token = localStorage.getItem('access_token');
+
+    if (!token) {
       navigate('/login');
+      return;
     }
+
+    // Fetch profile data from backend API
+    const fetchProfile = async () => {
+      try {
+        const response = await fetch('http://127.0.0.1:8000/api/user/profile/myprofile', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setFormData({
+            avatar: data.avatar || null,
+            userName: `${data.first_name || ''} ${data.last_name || ''}`.trim() || data.username || '',
+            email: data.email || '',
+            id: data.id_number || '',
+            country: data.country || '',
+            dateOfBirth: data.dob || '',
+            gender: data.gender || 'Male',
+            jobs: data.jobs || '',
+            achievement: data.achievement || '',
+            package: 'Free'
+          });
+        } else {
+          // If API fails, fallback to localStorage username
+          const username = localStorage.getItem('username');
+          setFormData(prev => ({
+            ...prev,
+            userName: username || ''
+          }));
+        }
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+        const username = localStorage.getItem('username');
+        setFormData(prev => ({
+          ...prev,
+          userName: username || ''
+        }));
+      }
+    };
+
+    fetchProfile();
   }, [navigate]);
 
   const handleChange = (e) => {
@@ -65,9 +99,9 @@ const EditProfile = () => {
     navigate('/profile');
   };
 
-  
+
   const validateForm = () => {
-   
+
     if (formData.dateOfBirth) {
       const birthYear = new Date(formData.dateOfBirth).getFullYear();
       if (birthYear >= 2018 && birthYear <= 2027) {
@@ -77,7 +111,7 @@ const EditProfile = () => {
     }
 
     if (formData.jobs && formData.jobs.trim().length > 0) {
-   
+
       if (/^\d/.test(formData.jobs)) {
         alert("Tên công việc không hợp lệ, không bắt đầu bằng chữ số. Vui lòng nhập lại!");
         return false;
@@ -88,40 +122,73 @@ const EditProfile = () => {
   };
 
 
-  const handleSave = () => {
-   
+  const handleSave = async () => {
+
     if (!validateForm()) {
-      return; 
+      return;
     }
 
-    const userToSave = {
-      ...JSON.parse(localStorage.getItem('currentUser') || '{}'),
-      avatar: formData.avatar,
-      name: formData.userName,
-      email: formData.email,
-      id: formData.id,
+    const token = localStorage.getItem('access_token');
+
+    // Prepare data for backend API - split userName into first_name and last_name
+    // Backend requires BOTH first_name AND last_name to not be blank
+    const nameParts = formData.userName.trim().split(' ').filter(p => p.length > 0);
+    let firstName, lastName;
+
+    if (nameParts.length === 0) {
+      // Nếu không có tên, dùng placeholder
+      firstName = 'User';
+      lastName = 'User';
+    } else if (nameParts.length === 1) {
+      // Nếu chỉ có 1 từ, dùng cho cả first_name và last_name
+      firstName = nameParts[0];
+      lastName = nameParts[0];
+    } else {
+      // Nếu có nhiều từ: từ cuối là first_name (tên), còn lại là last_name (họ)
+      firstName = nameParts[nameParts.length - 1];
+      lastName = nameParts.slice(0, -1).join(' ');
+    }
+
+    const profileData = {
+      first_name: firstName,
+      last_name: lastName,
       country: formData.country,
       dob: formData.dateOfBirth,
       gender: formData.gender,
       jobs: formData.jobs,
-      achievement: formData.achievement,
-      package: formData.package
+      id_number: formData.id
     };
 
-    localStorage.setItem('currentUser', JSON.stringify(userToSave));
-    
-    const usersList = JSON.parse(localStorage.getItem('usersList') || '[]');
-    const updatedList = usersList.map(u => 
-      u.email === userToSave.email ? userToSave : u
-    );
-    localStorage.setItem('usersList', JSON.stringify(updatedList));
-    
-    alert('Cập nhật thành công!');
-    navigate('/profile');
+    try {
+      const response = await fetch('http://127.0.0.1:8000/api/candidate/profile', {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(profileData)
+      });
+
+      if (response.ok) {
+        // Also update localStorage username for navbar display
+        localStorage.setItem('username', formData.userName);
+        alert('Cập nhật thành công!');
+        navigate('/profile');
+      } else {
+        const errorData = await response.json();
+        alert('Lỗi cập nhật: ' + JSON.stringify(errorData));
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      alert('Lỗi kết nối. Vui lòng thử lại!');
+    }
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('currentUser');
+    localStorage.removeItem('userProfile');
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('username');
+    localStorage.removeItem('user_role');
     navigate('/login');
   };
 
@@ -167,9 +234,9 @@ const EditProfile = () => {
               </div>
               <div className="form-field">
                 <label>Email</label>
-                <input type="text" name="email" value={formData.email} onChange={handleChange} disabled style={{backgroundColor: '#eee'}} />
+                <input type="text" name="email" value={formData.email} onChange={handleChange} disabled style={{ backgroundColor: '#eee' }} />
               </div>
-              
+
               <div className="form-field">
                 <label>ID number or Passport</label>
                 <input type="text" name="id" value={formData.id} onChange={handleChange} />
@@ -179,7 +246,7 @@ const EditProfile = () => {
                 <label>Country</label>
                 <input type="text" name="country" value={formData.country} onChange={handleChange} />
               </div>
-               <div className="form-field">
+              <div className="form-field">
                 <label>Date of Birth</label>
                 <input type="date" name="dateOfBirth" value={formData.dateOfBirth} onChange={handleChange} />
               </div>
@@ -189,8 +256,8 @@ const EditProfile = () => {
               <div className="form-field">
                 <label>Gender</label>
                 <select name="gender" value={formData.gender} onChange={handleChange}>
-                   <option value="Male">Male</option>
-                   <option value="Female">Female</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
                 </select>
               </div>
               <div className="form-field">

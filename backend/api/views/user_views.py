@@ -151,15 +151,18 @@ def update_candidate_profile(request):
 @permission_classes([IsAuthenticated])
 @parser_classes([MultiPartParser, FormParser])
 def upload_avatar(request):
-    file_obj = request.FILES.get('avatar')
+    serializer = UserProfileSerializer(data = request.data)
+    serializer.is_valid(raise_exception=True)
+    file_obj = serializer.validated_data.get('avatar_url')
     if not file_obj:
         return Response({"error": "No avatar file selected"}, status=status.HTTP_400_BAD_REQUEST)
         
     try:
         updated_user = UserService.upload_avatar(request.user, file_obj)
+        serializer = UserProfileSerializer(updated_user)
         return Response({
             "message": "Avatar uploaded successfully", 
-            "avatar_url": updated_user.avatar_url
+            "avatar_url": serializer.data.get('avatar')
         }, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({"error": f"{str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
@@ -565,5 +568,35 @@ def view_my_profile(request):
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+@swagger_auto_schema(
+    method='get',
+    operation_description="View user's company profile",
+    responses={200: CompanySerializer}
+)
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def view_user_company_profile(request):
+    try:
+        company_instance = CompanyService.view_user_company_profile(request.user)
+        serializer = CompanySerializer(company_instance)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except NotFound as e:
+        return Response(e.detail, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-
+@swagger_auto_schema(
+    method='get',
+    operation_description="Get admin dashboard data",
+    responses={200: 'Dashboard data retrieved successfully', 403: 'Forbidden', 400: 'Bad Request'}
+)
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def admin_dashboard_stats(request):
+    try:
+        dashboard_data = AdminService.admin_dashboard_stats(request.user)
+        return Response(dashboard_data, status=status.HTTP_200_OK)
+    except PermissionDenied:
+        return Response({"error": "User is not an admin"}, status=status.HTTP_403_FORBIDDEN)
+    except Exception as e:
+        return Response({"error": f"{str(e)}"}, status=status.HTTP_400_BAD_REQUEST)

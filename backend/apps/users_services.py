@@ -64,13 +64,8 @@ class UserService:
         except NotFound as e:
             raise NotFound({f"{e}"})
             
-        
+    @staticmethod   
     def upload_avatar(user, file_data):
-        try:
-            user = Users.objects.get(id=user.id)
-        except Users.DoesNotExist:
-            raise NotFound({"error":"User not found"})
-
         user.avatar_url = file_data
         user.save()
         return user
@@ -186,6 +181,7 @@ class UserService:
         except Recruiters.DoesNotExist:
             raise NotFound({"error":"Recruiter not found"})
 
+
 class AdminService:
     @staticmethod    
     def Is_Super_User(user):
@@ -232,6 +228,30 @@ class AdminService:
                 raise NotFound({"error":"User not found"})
         else:
             raise PermissionDenied({"error":"user don't have permission"})
+        
+    @staticmethod
+    def admin_dashboard_stats(self):
+        if not AdminService.Is_Super_User(self):
+            raise PermissionDenied({"error":"user don't have permission"})
+        else:
+            total_users = Users.objects.filter(isdeleted=False).count()
+            total_candidates = Candidates.objects.filter(isdeleted=False).count()
+            total_recruiters = Recruiters.objects.filter(isdeleted=False).count()
+            total_companies = Companies.objects.filter(isdeleted=False).count()
+            total_jobs = Jobs.objects.filter(isdeleted=False).count()
+            total_job_pending = Jobs.objects.filter(isdeleted=False, status='pending').count()
+            total_applications = Applications.objects.filter(isdeleted=False).count()
+
+            stats = {
+                "total_users": total_users,
+                "total_candidates": total_candidates,
+                "total_recruiters": total_recruiters,
+                "total_companies": total_companies,
+                "total_jobs": total_jobs,
+                "total_job_pending": total_job_pending,
+                "total_applications": total_applications,
+            }
+            return stats
 
 class RecruiterService:   
     @staticmethod    
@@ -428,6 +448,15 @@ class CompanyService:
             return Companies.objects.get(id = company_id, isdeleted = False)
         except Companies.DoesNotExist:
             raise NotFound({"error":"Company not found"})
+        
+    @staticmethod
+    def view_user_company_profile(user):
+        try:
+            if user.company is None:
+                raise NotFound({"error":"User has no company"})
+            return Companies.objects.get(id=user.company.id, isdeleted = False)
+        except Companies.DoesNotExist:
+            raise NotFound({"error":"Company not found"})   
 
 class interviewService:
     @staticmethod
