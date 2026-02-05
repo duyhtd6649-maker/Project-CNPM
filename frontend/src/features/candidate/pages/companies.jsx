@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import {
     Search, Home, Users, Briefcase, Bot, FileText,
     UserCircle, ChevronDown, CreditCard, Bell, LogOut,
-    Star, MapPin, Building2, ChevronLeft, ChevronRight, Loader
+    Star, MapPin, Building2, ChevronLeft, ChevronRight, Loader, Settings
 } from 'lucide-react';
 import axiosClient from '../../../infrastructure/http/axiosClient';
 import "../components/HomepageCandidates.css";
@@ -12,12 +12,25 @@ import "../components/companies.css";
 const JobDirectory = () => {
     const navigate = useNavigate();
     const [isAccountOpen, setIsAccountOpen] = useState(false);
+    const [isNotifyOpen, setIsNotifyOpen] = useState(false);
+    const [activeTab, setActiveTab] = useState('All');
     const [allCompanies, setAllCompanies] = useState([]); // Data gốc từ API hoặc mock
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [addressFilter, setAddressFilter] = useState('');
     const [sortBy, setSortBy] = useState('recommended'); // Sort option
+
+    const notifications = [
+        { id: 1, type: 'Admin', user: 'System Admin', msg: 'Your account security settings have been updated successfully.', time: '12/26/2026 4:04 PM' },
+        { id: 2, type: 'Recruiter', user: 'Techcombank HR', msg: 'We have received your application for Senior Frontend Developer position.', time: '12/27/2026 9:15 AM' },
+        { id: 3, type: 'Recruiter', user: 'FPT Software', msg: 'Invitation to interview: Monday at 2:00 PM via Google Meet.', time: '12/28/2026 10:30 AM' }
+    ];
+
+    const filteredNotifications = notifications.filter(item => {
+        if (activeTab === 'All') return true;
+        return item.type === activeTab;
+    });
 
     const [openFilters, setOpenFilters] = useState({
         location: true,
@@ -206,7 +219,7 @@ const JobDirectory = () => {
                                         <div className="icon-box"><CreditCard size={28} /></div>
                                         <span>Premium</span>
                                     </div>
-                                    <div className="mini-item">
+                                    <div className="mini-item" onClick={() => { setIsNotifyOpen(true); setIsAccountOpen(false); }}>
                                         <div className="icon-box"><Bell size={28} /></div>
                                         <span>Notification</span>
                                     </div>
@@ -221,6 +234,39 @@ const JobDirectory = () => {
                     </div>
                 </nav>
             </header>
+
+            {/* NOTIFICATION BOX */}
+            {isNotifyOpen && (
+                <div className="notification-overlay" onClick={() => setIsNotifyOpen(false)}>
+                    <div className="notification-box" onClick={(e) => e.stopPropagation()}>
+                        <div className="notify-header">
+                            <div className="header-title"><span>Inbox</span> <ChevronDown size={14} /></div>
+                            <Settings size={18} className="settings-icon" />
+                        </div>
+                        <div className="notify-tabs">
+                            {['All', 'Admin', 'Recruiter'].map(tab => (
+                                <div key={tab} className={`tab ${activeTab === tab ? 'active' : ''}`} onClick={() => setActiveTab(tab)}>{tab}</div>
+                            ))}
+                        </div>
+                        <div className="notify-content">
+                            {filteredNotifications.length > 0 ? (
+                                filteredNotifications.map(item => (
+                                    <div key={item.id} className="notify-item">
+                                        <div className="notify-avatar"><UserCircle size={32} color={item.type === 'Admin' ? '#4b49ac' : '#666'} /></div>
+                                        <div className="notify-info">
+                                            <div className="notify-user">{item.user} <span className={`type-tag-small ${item.type.toLowerCase()}`}>{item.type}</span></div>
+                                            <div className="notify-msg">{item.msg}</div>
+                                            <div className="notify-time">{item.time}</div>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="empty-state-notify">No notifications in {activeTab}</div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Hero / Search Section */}
             <div className="companies-hero">

@@ -1,12 +1,26 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { UserCircle, ChevronDown, Settings } from 'lucide-react';
 import "../components/EditProfile.css";
 import "../components/ViewUserProfile.css";
+import "../components/HomepageCandidates.css";
 
 const EditProfile = () => {
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
+  const [isNotifyOpen, setIsNotifyOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('All');
 
+  const notifications = [
+    { id: 1, type: 'Admin', user: 'System Admin', msg: 'Your account security settings have been updated successfully.', time: '12/26/2026 4:04 PM' },
+    { id: 2, type: 'Recruiter', user: 'Techcombank HR', msg: 'We have received your application for Senior Frontend Developer position.', time: '12/27/2026 9:15 AM' },
+    { id: 3, type: 'Recruiter', user: 'FPT Software', msg: 'Invitation to interview: Monday at 2:00 PM via Google Meet.', time: '12/28/2026 10:30 AM' }
+  ];
+
+  const filteredNotifications = notifications.filter(item => {
+    if (activeTab === 'All') return true;
+    return item.type === activeTab;
+  });
 
   const [formData, setFormData] = useState({
     avatar: null,
@@ -203,10 +217,43 @@ const EditProfile = () => {
           <p className="current-date">Hôm nay: {new Date().toLocaleDateString('vi-VN')}</p>
         </div>
         <div className="header-actions">
-          <button className="notif-badge">🔔</button>
+          <button className="notif-badge" onClick={() => setIsNotifyOpen(true)}>🔔</button>
           <button className="logout-btn-nav" onClick={handleLogout}>Logout</button>
         </div>
       </header>
+
+      {/* NOTIFICATION BOX */}
+      {isNotifyOpen && (
+        <div className="notification-overlay" onClick={() => setIsNotifyOpen(false)}>
+          <div className="notification-box" onClick={(e) => e.stopPropagation()}>
+            <div className="notify-header">
+              <div className="header-title"><span>Inbox</span> <ChevronDown size={14} /></div>
+              <Settings size={18} className="settings-icon" />
+            </div>
+            <div className="notify-tabs">
+              {['All', 'Admin', 'Recruiter'].map(tab => (
+                <div key={tab} className={`tab ${activeTab === tab ? 'active' : ''}`} onClick={() => setActiveTab(tab)}>{tab}</div>
+              ))}
+            </div>
+            <div className="notify-content">
+              {filteredNotifications.length > 0 ? (
+                filteredNotifications.map(item => (
+                  <div key={item.id} className="notify-item">
+                    <div className="notify-avatar"><UserCircle size={32} color={item.type === 'Admin' ? '#4b49ac' : '#666'} /></div>
+                    <div className="notify-info">
+                      <div className="notify-user">{item.user} <span className={`type-tag-small ${item.type.toLowerCase()}`}>{item.type}</span></div>
+                      <div className="notify-msg">{item.msg}</div>
+                      <div className="notify-time">{item.time}</div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="empty-state-notify">No notifications in {activeTab}</div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       <main className="edit-profile-main">
         <div className="purple-banner"></div>

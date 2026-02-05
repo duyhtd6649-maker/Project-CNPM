@@ -87,7 +87,6 @@ const HomepageCandidates = () => {
           <div className="notification-box" onClick={(e) => e.stopPropagation()}>
             <div className="notify-header">
               <div className="header-title"><span>Inbox</span> <ChevronDown size={14} /></div>
-              <Settings size={18} className="settings-icon" />
             </div>
             <div className="notify-tabs">
               {['All', 'Admin', 'Recruiter'].map(tab => (
