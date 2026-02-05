@@ -27,18 +27,65 @@ const adminApi = {
     // --- Job Posts ---
     getJobPosts: async () => {
         try {
-            const response = await axiosClient.get("/admin/job-posts");
-            return response.data;
+            const response = await axiosClient.get("/search/job/");
+            // Map SnakeCase (Backend) to CamelCase (Frontend)
+            return response.data.map(job => ({
+                id: job.id,
+                title: job.title,
+                company: job.company, // This is company name from serializer
+                postedDate: job.created_date ? new Date(job.created_date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0], // Fallback if created_date missing
+                status: job.status
+            }));
         } catch (error) {
-            console.warn("API Error (getJobPosts), using mock data:", error);
-            return [
-                { id: 101, title: 'Senior Frontend Engineer', company: 'TechCorp Inc.', postedDate: '2023-10-24', status: 'Active' },
-                { id: 102, title: 'Product Designer', company: 'Creative Studio', postedDate: '2023-10-22', status: 'Active' },
-                { id: 103, title: 'Backend Developer (Go)', company: 'FinData Systems', postedDate: '2023-10-20', status: 'Closed' },
-                { id: 104, title: 'Marketing Manager', company: 'Global Brands', postedDate: '2023-10-18', status: 'Draft' },
-                { id: 105, title: 'React Native Developer', company: 'Appify', postedDate: '2023-10-15', status: 'Active' },
-                { id: 106, title: 'DevOps Engineer', company: 'CloudNet', postedDate: '2023-10-10', status: 'Active' },
-            ];
+            console.error("API Error (getJobPosts):", error);
+            throw error; // Let component handle error
+        }
+    },
+
+    deleteJobPost: async (id) => {
+        try {
+            await axiosClient.delete(`/job/${id}/delete/`);
+            return { success: true };
+        } catch (error) {
+            console.error("API Error (deleteJobPost):", error);
+            throw error;
+        }
+    },
+
+    updateJobStatus: async (id, status) => {
+        try {
+            // Backend expects 'new_status' in body
+            await axiosClient.put(`/job/processjob/${id}/`, { new_status: status });
+            return { success: true };
+        } catch (error) {
+            console.error("API Error (updateJobStatus):", error);
+            throw error;
+        }
+    },
+
+    createJobPost: async (jobData) => {
+        try {
+            // Note: Backend might ignore 'company' if it auto-assigns based on User.
+            // We send title, description (optional), location (optional), etc.
+            // For now, mapping frontend 'company' to nothing or just sending it.
+            // Backend requires: title. Optional: description, location, skill, etc.
+            const response = await axiosClient.post("/job/create", {
+                title: jobData.title,
+                company_name: jobData.company, // Might be ignored by backend
+                description: "No description provided", // Required by typical logic? Model says blank=True.
+                location: "Unknown", // Model says blank=True, null=False
+                status: 'Open'
+            });
+            return {
+                id: response.data.id,
+                title: response.data.title,
+                company: response.data.company,
+                postedDate: new Date().toISOString().split('T')[0],
+                status: response.data.status
+            };
+        } catch (error) {
+            console.error("API Error (createJobPost):", error);
+            throw error;
         }
     }
 };
