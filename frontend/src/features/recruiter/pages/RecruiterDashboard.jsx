@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
+import OrganizationProfile from './OrganizationProfile';
+import { useNavigate } from 'react-router-dom'; 
+
 import { 
   LayoutDashboard, 
   Briefcase, 
@@ -14,8 +17,10 @@ import {
   TrendingUp,
   CheckCircle,
   Clock,
-  MoreHorizontal
+  MoreHorizontal,
+  Building2 // Gộp Building2 vào đây cho gọn
 } from 'lucide-react';
+
 import { 
   ResponsiveContainer, 
   AreaChart, 
@@ -32,6 +37,7 @@ import '../components/RecruiterDashboard.css';
 import CreateJobPost from './CreateJobPost';
 
 const RecruiterDashboard = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [showModal, setShowModal] = useState(false);
   const [isSidebarClosed, setSidebarClosed] = useState(false);
@@ -43,8 +49,8 @@ const RecruiterDashboard = () => {
   const fetchJobs = async () => {
     try {
       const token = localStorage.getItem('access_token');
-      // Gọi đến API view: job_list trong job_views.py
-      const response = await axios.get('http://127.0.0.1:8000/api/cv/list/', { // Lưu ý: Chỉnh lại URL đúng endpoint job list của bạn nếu cần
+      // Chỉnh lại URL đúng endpoint job list của bạn nếu cần
+      const response = await axios.get('http://127.0.0.1:8000/api/recruiter/jobs/', { 
         headers: { 'Authorization': `Bearer ${token}` }
       });
       setJobs(response.data);
@@ -100,12 +106,23 @@ const RecruiterDashboard = () => {
             <span className="menu-text">My Jobs</span>
           </div>
 
-          <div className="menu-item">
+          <div 
+            className={`menu-item ${activeTab === 'candidates' ? 'active' : ''}`}
+            onClick={() => setActiveTab('candidates')}
+          >
             <Users size={22} />
             <span className="menu-text">Candidates</span>
           </div>
-        </nav>
 
+          <div 
+            className={`menu-item ${activeTab === 'organization' ? 'active' : ''}`}
+            onClick={() => setActiveTab('organization')}
+          >
+            <Building2 size={22} />
+            <span className="menu-text">Organization Profile</span>
+          </div>
+        </nav>
+        
         {/* Nút Log Out nằm ở cuối sidebar */}
         <div className="sidebar-footer" style={{ padding: '20px' }}>
           <div className="menu-item logout" onClick={handleLogout} style={{ cursor: 'pointer' }}>
@@ -121,8 +138,20 @@ const RecruiterDashboard = () => {
         {/* HEADER */}
         <header className="dashboard-header">
           <div className="header-titles">
-            <p className="breadcrumb">Pages / {activeTab === 'dashboard' ? 'Dashboard' : 'My Jobs'}</p>
-            <h2 className="page-title">{activeTab === 'dashboard' ? 'Main Dashboard' : 'Job Management'}</h2>
+            <p className="breadcrumb">
+              Pages / {
+                activeTab === 'dashboard' ? 'Dashboard' : 
+                activeTab === 'organization' ? 'Organization' : 
+                activeTab.charAt(0).toUpperCase() + activeTab.slice(1)
+              }
+            </p>
+            <h2 className="page-title">
+              {
+                activeTab === 'dashboard' ? 'Main Dashboard' : 
+                activeTab === 'organization' ? 'Organization Profile' : 
+                'Management'
+              }
+            </h2>
           </div>
 
           <div className="header-right-tools">
@@ -150,7 +179,9 @@ const RecruiterDashboard = () => {
 
         {/* CONTENT BODY */}
         <main className="dashboard-content">
-          {activeTab === 'dashboard' ? (
+          
+          {/* TRƯỜNG HỢP 1: DASHBOARD */}
+          {activeTab === 'dashboard' && (
             <>
               {/* STATS GRID */}
               <div className="stats-grid">
@@ -218,8 +249,10 @@ const RecruiterDashboard = () => {
                 </div>
               </div>
             </>
-          ) : (
-            /* TAB MY JOBS - Phần bảng chi tiết */
+          )}
+
+          {/* TRƯỜNG HỢP 2: MY JOBS */}
+          {activeTab === 'jobs' && (
             <div className="table-card">
               <div className="table-header">
                 <h3>Active Job Listings</h3>
@@ -235,7 +268,6 @@ const RecruiterDashboard = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {/* Map dữ liệu từ Database */}
                   {jobs.map((job) => (
                     <tr key={job.id}>
                       <td><span className="job-name-text">{job.title}</span></td>
@@ -244,7 +276,7 @@ const RecruiterDashboard = () => {
                           <Clock size={14}/> Pending
                         </div>
                       </td>
-                      <td>{new Date().toLocaleDateString('en-GB')}</td>
+                      <td>{new Date(job.created_at || Date.now()).toLocaleDateString('en-GB')}</td>
                       <td>
                         <div className="progress-container">
                           <div className="progress-bar" style={{ width: '10%' }}></div>
@@ -252,8 +284,7 @@ const RecruiterDashboard = () => {
                       </td>
                     </tr>
                   ))}
-
-                  {/* Giữ nguyên các hàng mẫu của bạn bên dưới */}
+                  {/* Dữ liệu mẫu giữ nguyên */}
                   <tr>
                     <td><span className="job-name-text">Senior React Developer</span></td>
                     <td><div className="status-badge active"><CheckCircle size={14}/> Approved</div></td>
@@ -278,6 +309,22 @@ const RecruiterDashboard = () => {
               </table>
             </div>
           )}
+
+          {/* TRƯỜNG HỢP 3: CANDIDATES */}
+          {activeTab === 'candidates' && (
+             <div className="dashboard-view">
+                <h3>Candidates Management</h3>
+                <p>Tính năng đang phát triển...</p>
+             </div>
+          )}
+
+          {/* TRƯỜNG HỢP 4: ORGANIZATION PROFILE */}
+          {activeTab === 'organization' && (
+             <div className="dashboard-view">
+                <OrganizationProfile />
+             </div>
+          )}
+
         </main>
       </div>
 
@@ -287,7 +334,7 @@ const RecruiterDashboard = () => {
           onClose={() => setShowModal(false)} 
           onSuccess={() => {
             setShowModal(false);
-            fetchJobs(); // Load lại bảng ngay sau khi tạo thành công
+            fetchJobs();
           }} 
         />,
         document.body

@@ -27,7 +27,7 @@ import ManageRecruiterAccount from '../features/admin/pages/ManageRecruiterAccou
 import ManageAdminAccount from '../features/admin/pages/ManageAdminAccount';
 
 import RecruiterDashboard from '../features/recruiter/pages/RecruiterDashboard'; // Đảm bảo đường dẫn này đúng
-
+import OrganizationProfile from '../features/recruiter/pages/OrganizationProfile';
 // --- CẬP NHẬT PROTECTED ROUTE THÔNG MINH HƠN ---
 const ProtectedRoute = ({ children }) => {
   const { user } = useAuth();
@@ -89,6 +89,11 @@ export const router = createBrowserRouter([
       {
         path: 'recruiter-dashboard',
         element: <ProtectedRoute><RecruiterDashboard /></ProtectedRoute>
+      },
+      // --- [MỚI] THÊM ROUTE VÀO ĐÂY ---
+      {
+        path: 'organization-profile',
+        element: <ProtectedRoute><OrganizationProfile /></ProtectedRoute>
       },
 
       // --- ROUTE ADMIN ---
