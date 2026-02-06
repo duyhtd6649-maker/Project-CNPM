@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../../app/AppProviders';
 import axios from 'axios';
 import {
   LayoutDashboard, Users, Search, Bell, ChevronDown,
@@ -11,6 +12,7 @@ import '../components/ManageInternalAccount.css';
 
 const ManageInternalAccount = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // --- STATE QUẢN LÝ DỮ LIỆU ---
@@ -39,7 +41,10 @@ const ManageInternalAccount = () => {
   const fetchAccounts = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(API_URL);
+      const token = localStorage.getItem('access_token');
+      const response = await axios.get(API_URL, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       // Xử lý dữ liệu trả về (nếu API trả về dạng phân trang .results)
       const data = Array.isArray(response.data) ? response.data : (response.data.results || []);
       setAccounts(data);
@@ -66,7 +71,10 @@ const ManageInternalAccount = () => {
     e.preventDefault();
     try {
       // Gọi API tạo user (Tùy endpoint backend của bạn)
-      await axios.post(API_URL, formData);
+      const token = localStorage.getItem('access_token');
+      await axios.post(API_URL, formData, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       alert("Thêm thành công!");
       setShowAddModal(false);
       setFormData({ username: '', email: '', password: '', role: 'candidate' });
@@ -153,7 +161,7 @@ const ManageInternalAccount = () => {
             </div>
             <div className="notification"><Bell size={20} /></div>
             <div className="user-account-box">
-              <div className="avatar-placeholder" style={{ width: 35, height: 35, borderRadius: '50%', background: '#ddd' }}></div>
+              <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.username || 'Admin')}&background=4880FF&color=fff&bold=true`} alt="Avatar" style={{ width: '35px', height: '35px', borderRadius: '50%' }} />
             </div>
           </div>
         </header>
