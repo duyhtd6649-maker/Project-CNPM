@@ -90,17 +90,8 @@ const InterviewQuestions = () => {
                     <div className="sidebar-divider-text">ACCOUNT MANAGEMENT</div>
                     <div className="nav-item-custom" onClick={() => navigate('/manage-internal')}><UserCog size={20} /> <span>Manage Account</span></div>
                     <div className="sidebar-divider-text">FEATURES</div>
-                    <div className="nav-item-custom"><Activity size={20} /> <span>Monitor Logs & Analytics</span></div>
-
-                    {/* Active State for Cabinets */}
-                    <div className="nav-item-custom active" onClick={() => navigate('/cv-templates')}>
-                        <FileText size={20} /> <span>Cabinets of Knowledge</span>
-                    </div>
 
                     <div className="nav-item-custom" onClick={() => navigate('/system-status')}><ShieldCheck size={20} /> <span>System Status Monitor</span></div>
-                    <div className="nav-item-custom"><ClipboardList size={20} /> <span>System Reports</span></div>
-                    <div className="nav-item-custom"><MessageSquare size={20} /> <span>Articles Management</span></div>
-                    <div className="nav-item-custom"><Gift size={20} /> <span>User Package Management</span></div>
                 </nav>
             </aside>
 

@@ -1,4 +1,4 @@
-from .views import user_views, ai_views, auth_views, cv_views, job_views, application_views, cabinet_views
+from .views import user_views, ai_views, auth_views, cv_views, job_views, application_views, cabinet_views, dashboard_views
 from django.urls import path, include
 from rest_framework.views import APIView
 from dj_rest_auth.views import PasswordResetView, PasswordResetConfirmView
@@ -82,12 +82,11 @@ urlpatterns = [
     path("ai/career/coach", ai_views.CareerCoachAPIView.as_view()),
     path("ai/cv/analyzer", ai_views.CvAnalyzerAPIView.as_view()),
     path("ai/mock-interview/", mock_interview),
-<<<<<<< HEAD
 
-    path("notification", user_views.notification)
-=======
+    path("notification", user_views.notification),
+
     # ===== DASHBOARD =====
-    path("dashboard/admin/stats/", AdminDashboardStatsView.as_view()),
+    path("dashboard/admin/stats/", dashboard_views.AdminDashboardStatsView.as_view()),
     # ===== KNOWLEDGE CABINETS =====
     path('cabinets/cv-templates/', cabinet_views.CvTemplateListCreateView.as_view()),
     path('cabinets/cv-templates/<str:id>/', cabinet_views.CvTemplateDetailView.as_view()),
@@ -95,5 +94,4 @@ urlpatterns = [
     path('cabinets/interview-questions/<str:id>/', cabinet_views.InterviewQuestionDetailView.as_view()),
     path('cabinets/resources/', cabinet_views.ResourceListCreateView.as_view()),
     path('cabinets/resources/<str:id>/', cabinet_views.ResourceDetailView.as_view()),
->>>>>>> 2b1df23 (Update UI Admin, adjust cabinets of knowledge, dashboard)
 ]

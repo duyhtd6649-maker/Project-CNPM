@@ -7,7 +7,6 @@ from api.serializers.cabinet_serializers import CvTemplateSerializer, InterviewQ
 class CvTemplateListCreateView(generics.ListCreateAPIView):
     queryset = CvTemplate.objects.all()
     serializer_class = CvTemplateSerializer
-    serializer_class = CvTemplateSerializer
     permission_classes = [permissions.IsAuthenticated]
     parser_classes = [JSONParser, MultiPartParser, FormParser]
 

@@ -30,7 +30,7 @@ const AdminDashboard = () => {
     const fetchDashboardData = async () => {
       try {
         const token = localStorage.getItem('access_token');
-        const res = await axios.get('http://127.0.0.1:8000/api/admin/dashboard-stats/', {
+        const res = await axios.get('http://127.0.0.1:8000/api/dashboard/admin/stats/', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setDashboardData(res.data);
@@ -78,34 +78,9 @@ const AdminDashboard = () => {
           {/* 3. FEATURES */}
           {isSidebarOpen && <div className="sidebar-divider-text">FEATURES</div>}
 
-          <div className="nav-item-custom">
-            <Activity size={20} />
-            {isSidebarOpen && <span>Monitor Logs & Analytics</span>}
-          </div>
-
-          <div className="nav-item-custom" onClick={() => navigate('/cv-templates')}>
-            <FileText size={20} />
-            {isSidebarOpen && <span>Cabinets of Knowledge</span>}
-          </div>
-
           <div className="nav-item-custom" onClick={() => navigate('/system-status')}>
             <ShieldCheck size={20} />
             {isSidebarOpen && <span>System Status Monitor</span>}
-          </div>
-
-          <div className="nav-item-custom">
-            <TrendingUp size={20} />
-            {isSidebarOpen && <span>System Reports</span>}
-          </div>
-
-          <div className="nav-item-custom">
-            <FileText size={20} />
-            {isSidebarOpen && <span>Articles Management</span>}
-          </div>
-
-          <div className="nav-item-custom">
-            <Users size={20} />
-            {isSidebarOpen && <span>User Package Management</span>}
           </div>
         </nav>
 
@@ -237,7 +212,7 @@ const AdminDashboard = () => {
           </div>
         </div>
       </main>
-    </div>
+    </div >
   );
 };
 
