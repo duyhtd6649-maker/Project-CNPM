@@ -68,7 +68,7 @@ const JobBrowsing = () => {
                     company: job.company || 'Unknown Company',
                     location: job.location || 'Remote',
                     logo: `https://ui-avatars.com/api/?name=${encodeURIComponent(job.company || 'C')}&background=6366f1&color=fff&size=100`,
-                    tags: job.skill || [],
+                    tags: Array.isArray(job.skill) ? job.skill : (typeof job.skill === 'string' ? job.skill.split(',') : []),
                     salary: formatSalary(job.salary_min, job.salary_max),
                     salary_min: job.salary_min,
                     salary_max: job.salary_max,

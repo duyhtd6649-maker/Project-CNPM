@@ -5,8 +5,9 @@ import CandidateNavbar from '../components/CandidateNavbar';
 import axiosClient from '../../../infrastructure/http/axiosClient';
 import {
     Search, ChevronRight, Clock, Globe, Banknote, MapPin,
-    CheckCircle, Send, Bookmark, Briefcase, ArrowLeft
+    CheckCircle, Send, Bookmark, Briefcase, ArrowLeft, X, FileText, Loader
 } from 'lucide-react';
+import '../components/ApplyModal.css';
 
 
 const JobDetail = () => {
@@ -15,6 +16,21 @@ const JobDetail = () => {
     const [job, setJob] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    // Apply popup states
+    const [showApplyModal, setShowApplyModal] = useState(false);
+    const [cvList, setCvList] = useState([]);
+    const [selectedCV, setSelectedCV] = useState(null);
+    const [isLoadingCVs, setIsLoadingCVs] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [applyError, setApplyError] = useState(null);
+    const [applySuccess, setApplySuccess] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
+
+    // Filter CVs
+    const filteredCVs = cvList.filter(cv =>
+        cv.file_name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     // Format salary từ số thành string hiển thị
     const formatSalary = (min, max) => {
@@ -69,6 +85,74 @@ const JobDetail = () => {
         };
         fetchJobDetail();
     }, [id]);
+
+    // Open apply modal and fetch CVs
+    const openApplyModal = async () => {
+        setShowApplyModal(true);
+        setApplyError(null);
+        setApplySuccess(false);
+        setSelectedCV(null);
+        setCoverLetter('');
+
+        // Fetch CV list
+        setIsLoadingCVs(true);
+        try {
+            const response = await axiosClient.get('/cv/list/');
+            setCvList(response.data || []);
+        } catch (err) {
+            console.error('Error fetching CVs:', err);
+            setApplyError('Không thể tải danh sách CV. Vui lòng thử lại.');
+        } finally {
+            setIsLoadingCVs(false);
+        }
+    };
+
+    // Close apply modal
+    const closeApplyModal = () => {
+        setShowApplyModal(false);
+        setApplyError(null);
+        setApplySuccess(false);
+    };
+
+    // Handle apply job submission
+    const handleApply = async () => {
+        if (!selectedCV) {
+            setApplyError('Vui lòng chọn một CV để ứng tuyển.');
+            return;
+        }
+
+        setIsSubmitting(true);
+        setApplyError(null);
+
+        try {
+            await axiosClient.post(`/job/${id}/apply/`, {
+                cvsid: selectedCV.id
+            });
+            setApplySuccess(true);
+            // Close modal after 2 seconds
+            setTimeout(() => {
+                closeApplyModal();
+            }, 2000);
+        } catch (err) {
+            console.error('Error applying job:', err);
+            if (err.response?.status === 400) {
+                setApplyError(err.response.data?.error || 'Bạn đã ứng tuyển công việc này rồi.');
+            } else if (err.response?.status === 403) {
+                setApplyError('Bạn không có quyền ứng tuyển. Hãy đảm bảo đã đăng nhập với tài khoản Candidate.');
+            } else {
+                setApplyError('Lỗi khi ứng tuyển. Vui lòng thử lại.');
+            }
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    // Close modal background click handler
+    const handleOverlayClick = (e) => {
+        if (e.target.className === 'apply-modal-overlay') {
+            closeApplyModal();
+        }
+    };
 
     // Loading state
     if (isLoading) {
@@ -215,7 +299,7 @@ const JobDetail = () => {
                                 <div className="job-action-col">
                                     <div className="action-box">
                                         <h4>Interested?</h4>
-                                        <button className="btn btn-primary">
+                                        <button className="btn btn-primary" onClick={openApplyModal}>
                                             <span>Apply Now</span>
                                             <Send size={18} />
                                         </button>
@@ -239,6 +323,86 @@ const JobDetail = () => {
 
                 </section>
             </main>
+
+            {/* Apply Modal */}
+            {showApplyModal && (
+                <div className="apply-modal-overlay" onClick={handleOverlayClick}>
+                    <div className="apply-modal-container">
+                        <div className="apply-modal-header">
+                            <h2>Apply for {displayJob?.role}</h2>
+                            <button className="close-button" onClick={closeApplyModal}>
+                                <X size={20} />
+                            </button>
+                        </div>
+                        <div className="apply-modal-content">
+                            {/* CV Selection */}
+                            <div className="form-group">
+                                <label className="form-label">Select Resume <span style={{ color: '#dc2626' }}>*</span></label>
+                                <input
+                                    type="text"
+                                    className="cv-search-input"
+                                    placeholder="Search your CVs..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                />
+
+                                {isLoadingCVs ? (
+                                    <div style={{ textAlign: 'center', padding: '20px' }}>
+                                        <Loader className="spin-animation" size={24} style={{ animation: 'spin 1s linear infinite' }} />
+                                    </div>
+                                ) : (
+                                    <div className="cv-selection-list">
+                                        {filteredCVs.length > 0 ? (
+                                            filteredCVs.map(cv => (
+                                                <div
+                                                    key={cv.id}
+                                                    className={`cv-item ${selectedCV?.id === cv.id ? 'selected' : ''}`}
+                                                    onClick={() => setSelectedCV(cv)}
+                                                >
+                                                    <FileText size={20} className="cv-icon" />
+                                                    <div className="cv-info">
+                                                        <div className="cv-name">{cv.file_name}</div>
+                                                    </div>
+                                                    {selectedCV?.id === cv.id && <CheckCircle size={18} color="#6366f1" />}
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <div className="empty-cvs">
+                                                {cvList.length === 0 ? "You haven't uploaded any CVs yet." : "No CVs match your search."}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Cover Letter - Removed */}
+
+                            {/* Messages */}
+                            {applyError && (
+                                <div className="error-message">
+                                    <X size={16} /> {applyError}
+                                </div>
+                            )}
+                            {applySuccess && (
+                                <div className="success-message">
+                                    <CheckCircle size={16} /> Application sent successfully!
+                                </div>
+                            )}
+                        </div>
+                        <div className="apply-modal-footer">
+                            <button className="btn-cancel" onClick={closeApplyModal}>Cancel</button>
+                            <button
+                                className="btn-submit"
+                                onClick={handleApply}
+                                disabled={isSubmitting || !selectedCV || applySuccess}
+                            >
+                                {isSubmitting ? 'Sending...' : 'Send Application'}
+                                {!isSubmitting && <Send size={16} />}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div >
     );
 };
