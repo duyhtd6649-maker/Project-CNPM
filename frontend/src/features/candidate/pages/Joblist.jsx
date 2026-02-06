@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-    Search, Bookmark, MessageCircle, ChevronLeft, ChevronRight,
+    Search, Bookmark, MessageCircle, ChevronLeft, ChevronRight, ChevronDown,
     ArrowRight, Briefcase, LogOut, MoreHorizontal, Bell, FileText, User
 } from 'lucide-react';
 import CandidateNavbar from '../components/CandidateNavbar';
@@ -16,6 +16,32 @@ const JobBrowsing = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    // Filter states
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filters, setFilters] = useState({
+        location: '',
+        category: '',
+        salaryRange: '',
+        customSalaryMin: '',
+        customSalaryMax: ''
+    });
+    const [activeDropdown, setActiveDropdown] = useState(null);
+    const [originalJobs, setOriginalJobs] = useState([]); // Store original jobs for filtering
+    const [customInputs, setCustomInputs] = useState({
+        location: '',
+        category: ''
+    });
+
+    // Filter options
+    const locationOptions = ['Hà Nội', 'TP.HCM', 'Đà Nẵng', 'Remote', 'Hybrid'];
+    const categoryOptions = ['IT', 'Marketing', 'Sales', 'Design', 'Finance', 'HR'];
+    const salaryRanges = [
+        { label: 'Dưới $20k', min: 0, max: 20000 },
+        { label: '$20k - $40k', min: 20000, max: 40000 },
+        { label: '$40k - $60k', min: 40000, max: 60000 },
+        { label: 'Trên $60k', min: 60000, max: null }
+    ];
+
     // Format salary từ số thành string hiển thị
     const formatSalary = (min, max) => {
         if (!min && !max) return 'Negotiable';
@@ -29,14 +55,13 @@ const JobBrowsing = () => {
         return `Up to ${formatNum(max)}`;
     };
 
-    // Fetch jobs từ API
+    // Fetch all jobs once on mount
     useEffect(() => {
         const fetchJobs = async () => {
             setIsLoading(true);
             setError(null);
             try {
                 const response = await axiosClient.get('/search/job/');
-                // Transform data từ API sang format hiển thị
                 const formattedJobs = response.data.map(job => ({
                     id: job.id,
                     role: job.title,
@@ -45,8 +70,12 @@ const JobBrowsing = () => {
                     logo: `https://ui-avatars.com/api/?name=${encodeURIComponent(job.company || 'C')}&background=6366f1&color=fff&size=100`,
                     tags: job.skill || [],
                     salary: formatSalary(job.salary_min, job.salary_max),
-                    description: job.description
+                    salary_min: job.salary_min,
+                    salary_max: job.salary_max,
+                    description: job.description,
+                    category: job.category || ''
                 }));
+                setOriginalJobs(formattedJobs);
                 setAllJobs(formattedJobs);
             } catch (err) {
                 console.error('Error fetching jobs:', err);
@@ -57,6 +86,100 @@ const JobBrowsing = () => {
         };
         fetchJobs();
     }, []);
+
+    // Apply filters whenever filter state changes
+    useEffect(() => {
+        let filtered = [...originalJobs];
+
+        // Filter by search term (title)
+        if (searchTerm.trim()) {
+            filtered = filtered.filter(job =>
+                job.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                job.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                job.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+            );
+        }
+
+        // Filter by category (match against job title since API doesn't return category field)
+        if (filters.category) {
+            const categoryLower = filters.category.toLowerCase();
+            filtered = filtered.filter(job => {
+                // Check if job title contains the category keyword
+                const titleMatch = job.role.toLowerCase().includes(categoryLower);
+                // Check exact tag match (case insensitive)
+                const tagMatch = job.tags.some(tag => tag.toLowerCase() === categoryLower);
+                return titleMatch || tagMatch;
+            });
+        }
+
+        // Filter by location
+        if (filters.location) {
+            filtered = filtered.filter(job =>
+                job.location.toLowerCase().includes(filters.location.toLowerCase())
+            );
+        }
+
+        // Filter by salary range (preset or custom)
+        if (filters.salaryRange) {
+            const range = salaryRanges.find(r => r.label === filters.salaryRange);
+            if (range) {
+                filtered = filtered.filter(job => {
+                    const jobMin = job.salary_min || 0;
+                    const jobMax = job.salary_max || Infinity;
+                    if (range.max === null) {
+                        return jobMin >= range.min;
+                    }
+                    return jobMin >= range.min && jobMax <= range.max;
+                });
+            }
+        } else if (filters.customSalaryMin || filters.customSalaryMax) {
+            const minSalary = filters.customSalaryMin ? parseFloat(filters.customSalaryMin) * 1000 : 0;
+            const maxSalary = filters.customSalaryMax ? parseFloat(filters.customSalaryMax) * 1000 : Infinity;
+            filtered = filtered.filter(job => {
+                const jobMin = job.salary_min || 0;
+                const jobMax = job.salary_max || Infinity;
+                return jobMax >= minSalary && jobMin <= maxSalary;
+            });
+        }
+
+        setAllJobs(filtered);
+        setCurrentPage(1);
+    }, [searchTerm, filters, originalJobs]);
+
+    // Handle filter change
+    const handleFilterChange = (filterName, value) => {
+        setFilters(prev => ({ ...prev, [filterName]: value }));
+        setActiveDropdown(null);
+    };
+
+    // Handle custom input apply
+    const applyCustomFilter = (filterName) => {
+        if (customInputs[filterName]?.trim()) {
+            setFilters(prev => ({ ...prev, [filterName]: customInputs[filterName].trim() }));
+        }
+        setActiveDropdown(null);
+    };
+
+    // Handle custom salary apply
+    const applyCustomSalary = () => {
+        setFilters(prev => ({
+            ...prev,
+            salaryRange: '',
+            customSalaryMin: customInputs.salaryMin || '',
+            customSalaryMax: customInputs.salaryMax || ''
+        }));
+        setActiveDropdown(null);
+    };
+
+    // Clear all filters
+    const clearAllFilters = () => {
+        setSearchTerm('');
+        setFilters({ location: '', category: '', salaryRange: '', customSalaryMin: '', customSalaryMax: '' });
+        setCustomInputs({ location: '', category: '', salaryMin: '', salaryMax: '' });
+    };
+
+    // Check if has any active filter
+    const hasActiveFilters = searchTerm || filters.location || filters.category || filters.salaryRange || filters.customSalaryMin || filters.customSalaryMax;
 
     const ITEMS_PER_PAGE = 6;
     const [currentPage, setCurrentPage] = useState(1);
@@ -129,18 +252,151 @@ const JobBrowsing = () => {
                                 </div>
                                 <label className="search-bar">
                                     <Search size={20} className="search-icon" />
-                                    <input type="text" placeholder="Search by job title, skill, or keyword" />
+                                    <input
+                                        type="text"
+                                        placeholder="Search by job title, skill, or keyword"
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                    />
                                 </label>
                             </div>
 
                             <div className="filters-row">
-                                <button className="filter-chip active">All Jobs</button>
-                                <button className="filter-chip">Category <span className="material-symbols-outlined">keyboard_arrow_down</span></button>
-                                <button className="filter-chip">Job Type <span className="material-symbols-outlined">keyboard_arrow_down</span></button>
-                                <button className="filter-chip">Location <span className="material-symbols-outlined">keyboard_arrow_down</span></button>
-                                <button className="filter-chip">Salary Range <span className="material-symbols-outlined">keyboard_arrow_down</span></button>
+                                <button
+                                    className={`filter-chip ${!hasActiveFilters ? 'active' : ''}`}
+                                    onClick={clearAllFilters}
+                                >
+                                    All Jobs
+                                </button>
+
+                                {/* Category Dropdown */}
+                                <div className="filter-dropdown-wrapper">
+                                    <button
+                                        className={`filter-chip ${filters.category ? 'active' : ''}`}
+                                        onClick={() => setActiveDropdown(activeDropdown === 'category' ? null : 'category')}
+                                    >
+                                        {filters.category || 'Category'} <ChevronDown size={16} />
+                                    </button>
+                                    {activeDropdown === 'category' && (
+                                        <div className="filter-dropdown">
+                                            <div className="dropdown-input-wrapper">
+                                                <input
+                                                    type="text"
+                                                    placeholder="Nhập category..."
+                                                    value={customInputs.category}
+                                                    onChange={(e) => setCustomInputs(prev => ({ ...prev, category: e.target.value }))}
+                                                    onClick={(e) => e.stopPropagation()}
+                                                />
+                                                <button className="apply-btn" onClick={() => applyCustomFilter('category')}>Áp dụng</button>
+                                            </div>
+                                            <div className="dropdown-divider"></div>
+                                            {categoryOptions.map(opt => (
+                                                <div key={opt} className={`dropdown-item ${filters.category === opt ? 'selected' : ''}`} onClick={() => handleFilterChange('category', opt)}>
+                                                    {opt}
+                                                </div>
+                                            ))}
+                                            {filters.category && (
+                                                <div className="dropdown-item clear" onClick={() => handleFilterChange('category', '')}>
+                                                    Clear
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Location Dropdown */}
+                                <div className="filter-dropdown-wrapper">
+                                    <button
+                                        className={`filter-chip ${filters.location ? 'active' : ''}`}
+                                        onClick={() => setActiveDropdown(activeDropdown === 'location' ? null : 'location')}
+                                    >
+                                        {filters.location || 'Location'} <ChevronDown size={16} />
+                                    </button>
+                                    {activeDropdown === 'location' && (
+                                        <div className="filter-dropdown">
+                                            <div className="dropdown-input-wrapper">
+                                                <input
+                                                    type="text"
+                                                    placeholder="Nhập địa điểm..."
+                                                    value={customInputs.location}
+                                                    onChange={(e) => setCustomInputs(prev => ({ ...prev, location: e.target.value }))}
+                                                    onClick={(e) => e.stopPropagation()}
+                                                />
+                                                <button className="apply-btn" onClick={() => applyCustomFilter('location')}>Áp dụng</button>
+                                            </div>
+                                            <div className="dropdown-divider"></div>
+                                            {locationOptions.map(opt => (
+                                                <div key={opt} className={`dropdown-item ${filters.location === opt ? 'selected' : ''}`} onClick={() => handleFilterChange('location', opt)}>
+                                                    {opt}
+                                                </div>
+                                            ))}
+                                            {filters.location && (
+                                                <div className="dropdown-item clear" onClick={() => handleFilterChange('location', '')}>
+                                                    Clear
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Salary Range Dropdown */}
+                                <div className="filter-dropdown-wrapper">
+                                    <button
+                                        className={`filter-chip ${filters.salaryRange || filters.customSalaryMin || filters.customSalaryMax ? 'active' : ''}`}
+                                        onClick={() => setActiveDropdown(activeDropdown === 'salary' ? null : 'salary')}
+                                    >
+                                        {filters.salaryRange || (filters.customSalaryMin || filters.customSalaryMax ? `$${filters.customSalaryMin || '0'}k - $${filters.customSalaryMax || '∞'}k` : 'Salary Range')} <ChevronDown size={16} />
+                                    </button>
+                                    {activeDropdown === 'salary' && (
+                                        <div className="filter-dropdown salary-dropdown">
+                                            <div className="dropdown-salary-wrapper">
+                                                <span className="salary-label">Nhập mức lương (nghìn $):</span>
+                                                <div className="salary-inputs">
+                                                    <input
+                                                        type="number"
+                                                        placeholder="Min"
+                                                        value={customInputs.salaryMin || ''}
+                                                        onChange={(e) => setCustomInputs(prev => ({ ...prev, salaryMin: e.target.value }))}
+                                                        onClick={(e) => e.stopPropagation()}
+                                                    />
+                                                    <span>-</span>
+                                                    <input
+                                                        type="number"
+                                                        placeholder="Max"
+                                                        value={customInputs.salaryMax || ''}
+                                                        onChange={(e) => setCustomInputs(prev => ({ ...prev, salaryMax: e.target.value }))}
+                                                        onClick={(e) => e.stopPropagation()}
+                                                    />
+                                                </div>
+                                                <button className="apply-btn" onClick={applyCustomSalary}>Áp dụng</button>
+                                            </div>
+                                            <div className="dropdown-divider"></div>
+                                            {salaryRanges.map(range => (
+                                                <div key={range.label} className={`dropdown-item ${filters.salaryRange === range.label ? 'selected' : ''}`} onClick={() => handleFilterChange('salaryRange', range.label)}>
+                                                    {range.label}
+                                                </div>
+                                            ))}
+                                            {(filters.salaryRange || filters.customSalaryMin || filters.customSalaryMax) && (
+                                                <div className="dropdown-item clear" onClick={() => {
+                                                    setFilters(prev => ({ ...prev, salaryRange: '', customSalaryMin: '', customSalaryMax: '' }));
+                                                    setCustomInputs(prev => ({ ...prev, salaryMin: '', salaryMax: '' }));
+                                                    setActiveDropdown(null);
+                                                }}>
+                                                    Clear
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+
                                 <div className="filter-divider"></div>
-                                <button className="clear-filter">Clear All</button>
+                                <button
+                                    className="clear-filter"
+                                    onClick={clearAllFilters}
+                                    style={{ opacity: hasActiveFilters ? 1 : 0.5 }}
+                                >
+                                    Clear All
+                                </button>
                             </div>
                         </div>
                     </header>

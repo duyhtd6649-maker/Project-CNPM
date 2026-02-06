@@ -219,10 +219,6 @@ const JobDetail = () => {
                                             <span>Apply Now</span>
                                             <Send size={18} />
                                         </button>
-                                        <button className="btn btn-outline">
-                                            <Bookmark size={18} />
-                                            <span>Save Job</span>
-                                        </button>
                                         <hr className="divider" />
                                         <div className="company-info">
                                             <h5>About the Company</h5>
@@ -240,27 +236,7 @@ const JobDetail = () => {
                         </div>
                     </div>
 
-                    <div className="similar-jobs-section">
-                        <h3>Similar Opportunities</h3>
-                        <div className="similar-grid">
-                            <div className="card similar-item">
-                                <div className="similar-logo blue-logo">S</div>
-                                <div className="similar-info">
-                                    <h4>Frontend Developer</h4>
-                                    <p>Sony Group • Tokyo</p>
-                                </div>
-                                <span className="mini-tag green-tag">Full-time</span>
-                            </div>
-                            <div className="card similar-item">
-                                <div className="similar-logo red-logo">R</div>
-                                <div className="similar-info">
-                                    <h4>UI/UX Designer</h4>
-                                    <p>Rakuten • Tokyo</p>
-                                </div>
-                                <span className="mini-tag purple-tag">Contract</span>
-                            </div>
-                        </div>
-                    </div>
+
                 </section>
             </main>
         </div >
