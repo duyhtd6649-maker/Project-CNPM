@@ -104,8 +104,9 @@ const EditProfile = () => {
   const validateForm = () => {
     if (formData.dateOfBirth) {
       const birthYear = new Date(formData.dateOfBirth).getFullYear();
-      if (birthYear >= 2018 && birthYear <= 2027) {
-        alert("Năm sinh không hợp lệ. Vui lòng chọn lại!");
+      const currentYear = new Date().getFullYear();
+      if (birthYear > currentYear) {
+        alert("Năm sinh không thể ở tương lai!");
         return false;
       }
     }
@@ -114,46 +115,53 @@ const EditProfile = () => {
 
 
   const handleSave = async () => {
-
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     const token = localStorage.getItem('access_token');
+    const updateFormData = new FormData();
 
-    const profileData = {
-      first_name: formData.firstName || 'User',
-      last_name: formData.lastName || 'User',
-      phone: formData.phone,
-      address: formData.address,
-      date_of_birth: formData.dateOfBirth,
-      description: formData.description
-    };
+    // Append all fields to FormData
+    // Note: Backend now handles flat structure perfectly thanks to our fixes
+    updateFormData.append('first_name', formData.firstName);
+    updateFormData.append('last_name', formData.lastName);
+    updateFormData.append('phone', formData.phone);
+    updateFormData.append('address', formData.address);
+    updateFormData.append('date_of_birth', formData.dateOfBirth);
+    updateFormData.append('description', formData.description);
+
+    // Append avatar only if a new file is selected
+    if (fileInputRef.current && fileInputRef.current.files[0]) {
+      updateFormData.append('avatar', fileInputRef.current.files[0]);
+    }
 
     try {
       const response = await fetch('http://127.0.0.1:8000/api/candidate/profile', {
         method: 'PUT',
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          'Authorization': `Bearer ${token}`
+          // No 'Content-Type' header needed; fetch sets it automatically for FormData
         },
-        body: JSON.stringify(profileData)
+        body: updateFormData
       });
 
       if (response.ok) {
-        // Also update localStorage username for navbar display
+        // Update local storage for immediate UI feedback
         localStorage.setItem('username', `${formData.lastName} ${formData.firstName}`);
-        alert('Cập nhật thành công!');
+        alert("Cập nhật thành công!");
         navigate('/profile');
       } else {
         const errorData = await response.json();
-        alert('Lỗi cập nhật: ' + JSON.stringify(errorData));
+        console.error("Update failed:", errorData);
+        alert(`Lỗi cập nhật: ${JSON.stringify(errorData)}`);
       }
     } catch (error) {
-      console.error('Error updating profile:', error);
-      alert('Lỗi kết nối. Vui lòng thử lại!');
+      console.error("Error updating profile:", error);
+      alert("Đã xảy ra lỗi khi kết nối đến server.");
     }
   };
+
+
+
 
   const handleLogout = () => {
     localStorage.removeItem('userProfile');

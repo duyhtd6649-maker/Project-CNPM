@@ -132,14 +132,41 @@ def update_profile(request, id):
 @permission_classes([IsAuthenticated])
 @parser_classes([MultiPartParser, FormParser, JSONParser])
 def update_candidate_profile(request):
+    # Manual handling for flat FormData structure common in frontend file uploads
+    # If basic user info is present in request.data, update it directly via User Service
+    user_fields = ['first_name', 'last_name', 'phone']
+    user_data = {}
+    for field in user_fields:
+        if field in request.data:
+            user_data[field] = request.data[field]
+    
+    # Explicitly handle avatar only from FILES to avoid string URL issues
+    if 'avatar' in request.FILES:
+        user_data['avatar'] = request.FILES['avatar']
+    
+    if user_data:
+        try:
+            # Ensure avatar file is handled if present in FILES
+            if 'avatar' in request.FILES:
+                user_data['avatar'] = request.FILES['avatar']
+
+            # We use a serializer to validate partial user update
+            user_serializer = UserProfileSerializer(data=user_data, partial=True)
+            if user_serializer.is_valid():
+                UserService.update_profile(user_id=request.user.id, validated_data=user_serializer.validated_data)
+            else:
+                return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"error": f"{str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
+
     serializer = CandidateSerializer(data = request.data, partial = True)
     serializer.is_valid(raise_exception=True)
     try:
         instance = UserService.update_candidate_profile(user=request.user, validated_data=serializer.validated_data)
-        serializer = CandidateSerializer(instance)
+        serializer = CandidateSerializer(instance, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
     except NotFound as e:
-        return Response({f"e"}, status= status.HTTP_404_NOT_FOUND)
+        return Response({"error": str(e)}, status= status.HTTP_404_NOT_FOUND)
     
 @swagger_auto_schema(
     method='post',
@@ -160,7 +187,7 @@ def upload_avatar(request):
         
     try:
         updated_user = UserService.upload_avatar(request.user, file_obj)
-        serializer = UserProfileSerializer(updated_user)
+        serializer = UserProfileSerializer(updated_user, context={'request': request})
         return Response({
             "message": "Avatar uploaded successfully", 
             "avatar_url": serializer.data.get('avatar')
@@ -558,11 +585,11 @@ def view_my_profile(request):
         instance = UserService.view_my_profile(request.user)
 
         if request.user.role == 'candidate':
-            serializer = CandidateSerializer(instance)
+            serializer = CandidateSerializer(instance, context={'request': request})
         elif request.user.role == 'recruiter':
-            serializer = RecruiterSerializer(instance)
+            serializer = RecruiterSerializer(instance, context={'request': request})
         else:
-            serializer = UserSerializer(instance)
+            serializer = UserSerializer(instance, context={'request': request})
 
         return Response(serializer.data, status=status.HTTP_200_OK)
         
