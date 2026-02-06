@@ -50,6 +50,7 @@ def GetCandidateProfile(request, id):
     responses={200: UserSerializer(many=True)}
 )
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def GetUserInfor(request):
     user = UserService.Get_All_User()
     serializer = UserSerializer(user, many = True)
@@ -446,12 +447,14 @@ def RemoveUser(request):
         return Response({"error":f"{str(e)}"},status=status.HTTP_400_BAD_REQUEST)
     
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def GetCandidatesInfor(request):
     candidate = UserService.Get_All_Candidates()
     serializer = CandidateSerializer(candidate, many = True)
     return Response(serializer.data)
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def GetRecruitersInfor(request):
     recruiters = RecruiterService.Get_All_Recruiters()
     serializer = RecruiterSerializer(recruiters, many = True)

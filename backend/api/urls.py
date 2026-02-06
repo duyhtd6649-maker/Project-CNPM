@@ -1,4 +1,4 @@
-from .views import user_views, ai_views, auth_views, cv_views, job_views, application_views
+from .views import user_views, ai_views, auth_views, cv_views, job_views, application_views, cabinet_views, dashboard_views
 from django.urls import path, include
 from rest_framework.views import APIView
 from dj_rest_auth.views import PasswordResetView, PasswordResetConfirmView
@@ -11,6 +11,7 @@ from api.views.ai_views import mock_interview
 
 urlpatterns = [
     # ===== USER =====
+    path('users/', user_views.GetUserInfor),
     path('user/candidate/<uuid:id>/', user_views.GetCandidateProfile),
     path('user/<uuid:id>/', user_views.GetUserInforById),
     path('candidate/profile', user_views.update_candidate_profile), #update profile cho candidate
@@ -82,5 +83,5 @@ urlpatterns = [
     path("ai/cv/analyzer", ai_views.CvAnalyzerAPIView.as_view()),
     path("ai/mock-interview/", mock_interview),
 
-    path("notification", user_views.notification)
-]
+    path("notification", user_views.notification),
+

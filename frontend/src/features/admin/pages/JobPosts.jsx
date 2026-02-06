@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../../app/AppProviders';
 import {
     LayoutDashboard, UserCog, Activity, Library,
     ShieldCheck, ClipboardList, MessageSquare, Gift,
@@ -11,6 +12,7 @@ import adminApi from '../services/adminApi';
 
 const JobPosts = () => {
     const navigate = useNavigate();
+    const { user } = useAuth();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     // Data State
@@ -80,27 +82,7 @@ const JobPosts = () => {
             {/* Actually, I need to wrap the WHOLE return to be safe or target specific blocks. */}
             {/* Let's target the btn-add-job and the end of file to insert modal. */}
 
-            <aside className={`admin-sidebar ${isSidebarOpen ? 'open' : ''}`}>
-                <div className="sidebar-header-uth">
-                    <div className="uth-branding" onClick={() => navigate('/admin')}>
-                        <span className="uth-blue-text">UTH</span>
-                        <span className="workplace-green-text"> WORKPLACE</span>
-                    </div>
-                    <button className="close-sidebar-btn" onClick={toggleSidebar}><X size={24} /></button>
-                </div>
-                <nav className="sidebar-nav-custom">
-                    <div className="nav-item-custom" onClick={() => navigate('/admin')}><LayoutDashboard size={20} /> <span>Dashboard</span></div>
-                    <div className="sidebar-divider-text">ACCOUNT MANAGEMENT</div>
-                    <div className="nav-item-custom" onClick={() => navigate('/manage-internal')}><UserCog size={20} /> <span>Manage Account</span></div>
-                    <div className="sidebar-divider-text">FEATURES</div>
-                    <div className="nav-item-custom"><Activity size={20} /> <span>Monitor Logs & Analytics</span></div>
-                    <div className="nav-item-custom"><Library size={20} /> <span>Cabinets of Knowledge</span></div>
-                    <div className="nav-item-custom active" onClick={() => navigate('/system-status')}><ShieldCheck size={20} /> <span>System Status Monitor</span></div>
-                    <div className="nav-item-custom"><ClipboardList size={20} /> <span>System Reports</span></div>
-                    <div className="nav-item-custom"><MessageSquare size={20} /> <span>Articles Management</span></div>
-                    <div className="nav-item-custom"><Gift size={20} /> <span>User Package Management</span></div>
-                </nav>
-            </aside>
+
 
             <aside className="manage-left-sidebar">
                 <div className="sidebar-blue-header">
@@ -110,6 +92,9 @@ const JobPosts = () => {
                     </div>
                 </div>
                 <nav className="sub-nav-list">
+                    <div className="sub-nav-item" onClick={() => navigate('/admin')}>
+                        <LayoutDashboard size={18} /> Dashboard
+                    </div>
                     <div className="sub-nav-item" onClick={() => navigate('/system-status')}>
                         <Activity size={18} /> Monitor System Status
                     </div>
@@ -135,7 +120,7 @@ const JobPosts = () => {
                             <span style={{ position: 'absolute', top: '-5px', right: '-5px', background: 'red', color: 'white', fontSize: '10px', padding: '2px 5px', borderRadius: '10px' }}>3</span>
                         </div>
                         <div className="user-account-box" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <div style={{ width: '35px', height: '35px', background: '#e2e8f0', borderRadius: '50%' }}></div>
+                            <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.username || 'Admin')}&background=4880FF&color=fff&bold=true`} alt="Avatar" style={{ width: '35px', height: '35px', borderRadius: '50%' }} />
                             <ChevronDown size={16} color="#94a3b8" />
                         </div>
                     </div>

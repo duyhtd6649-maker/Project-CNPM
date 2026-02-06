@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../app/AppProviders';
 import {
@@ -12,26 +13,33 @@ import {
 } from 'recharts';
 import "../components/AdminDashboard.css";
 
-const cvData = [
-  { name: '5k', value: 25 }, { name: '10k', value: 35 }, { name: '15k', value: 55 },
-  { name: '20k', value: 45 }, { name: '25k', value: 90 }, { name: '30k', value: 40 },
-  { name: '35k', value: 55 }, { name: '40k', value: 65 }, { name: '45k', value: 45 },
-  { name: '50k', value: 75 }, { name: '55k', value: 50 }, { name: '60k', value: 60 },
-];
 
-const spendingData = [
-  { year: '2015', user: 30, repeated: 10 },
-  { year: '2016', user: 50, repeated: 25 },
-  { year: '2017', user: 45, repeated: 20 },
-  { year: '2018', user: 80, repeated: 40 },
-  { year: '2019', user: 60, repeated: 35 },
-  { year: '2020', user: 90, repeated: 55 },
-];
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const { user, setUser } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [dashboardData, setDashboardData] = useState({
+    overview: { total_users: 0, total_questions: 0, total_files: 0, total_jobs: 0 },
+    registration_analytics: [],
+    user_segments: { recruiters: 0, candidates: 0, total: 0 },
+    job_growth: []
+  });
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const token = localStorage.getItem('access_token');
+        const res = await axios.get('http://127.0.0.1:8000/api/dashboard/admin/stats/', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setDashboardData(res.data);
+      } catch (error) {
+        console.error("Error fetching dashboard stats:", error);
+      }
+    };
+    fetchDashboardData();
+  }, []);
 
   const handleLogout = () => {
     if (window.confirm("Are you sure you want to logout?")) {
@@ -70,34 +78,9 @@ const AdminDashboard = () => {
           {/* 3. FEATURES */}
           {isSidebarOpen && <div className="sidebar-divider-text">FEATURES</div>}
 
-          <div className="nav-item-custom">
-            <Activity size={20} />
-            {isSidebarOpen && <span>Monitor Logs & Analytics</span>}
-          </div>
-
-          <div className="nav-item-custom" onClick={() => navigate('/cv-templates')}>
-            <FileText size={20} />
-            {isSidebarOpen && <span>Cabinets of Knowledge</span>}
-          </div>
-
           <div className="nav-item-custom" onClick={() => navigate('/system-status')}>
             <ShieldCheck size={20} />
             {isSidebarOpen && <span>System Status Monitor</span>}
-          </div>
-
-          <div className="nav-item-custom">
-            <TrendingUp size={20} />
-            {isSidebarOpen && <span>System Reports</span>}
-          </div>
-
-          <div className="nav-item-custom">
-            <FileText size={20} />
-            {isSidebarOpen && <span>Articles Management</span>}
-          </div>
-
-          <div className="nav-item-custom">
-            <Users size={20} />
-            {isSidebarOpen && <span>User Package Management</span>}
           </div>
         </nav>
 
@@ -145,26 +128,34 @@ const AdminDashboard = () => {
             <div className="stat-card">
               <div className="stat-info">
                 <p className="stat-label">Total Users</p>
-                <h2 className="stat-value">40,689</h2>
-                <p className="stat-change up"><TrendingUp size={14} /> 8.5% Up</p>
+                <h2 className="stat-value">{dashboardData.overview.total_users.toLocaleString()}</h2>
+                <p className="stat-change up"><TrendingUp size={14} /> --</p>
               </div>
               <div className="stat-icon blue"><Users size={28} /></div>
             </div>
             <div className="stat-card">
               <div className="stat-info">
-                <p className="stat-label">Active Jobs</p>
-                <h2 className="stat-value">10,293</h2>
-                <p className="stat-change up"><TrendingUp size={14} /> 1.3% Up</p>
+                <p className="stat-label">Total Questions</p>
+                <h2 className="stat-value">{dashboardData.overview.total_questions.toLocaleString()}</h2>
+                <p className="stat-change up"><TrendingUp size={14} /> --</p>
               </div>
-              <div className="stat-icon green"><FileText size={28} /></div>
+              <div className="stat-icon green"><Activity size={28} /></div>
             </div>
             <div className="stat-card">
               <div className="stat-info">
-                <p className="stat-label">Pending Approval</p>
-                <h2 className="stat-value">2,040</h2>
-                <p className="stat-change up"><TrendingUp size={14} /> 4.3% Up</p>
+                <p className="stat-label">Total Files</p>
+                <h2 className="stat-value">{dashboardData.overview.total_files.toLocaleString()}</h2>
+                <p className="stat-change up"><TrendingUp size={14} /> --</p>
               </div>
-              <div className="stat-icon red"><Activity size={28} /></div>
+              <div className="stat-icon red"><FileText size={28} /></div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-info">
+                <p className="stat-label">Jobs Quantity</p>
+                <h2 className="stat-value">{dashboardData.overview.total_jobs.toLocaleString()}</h2>
+                <p className="stat-change up"><TrendingUp size={14} /> --</p>
+              </div>
+              <div className="stat-icon purple" style={{ background: '#F3E8FF', color: '#9333EA' }}><LayoutDashboard size={28} /></div>
             </div>
           </div>
 
@@ -172,7 +163,7 @@ const AdminDashboard = () => {
           <div className="chart-main-card">
             <h3 style={{ fontWeight: 800, marginBottom: '20px' }}>Registration Analytics</h3>
             <ResponsiveContainer width="100%" height={350}>
-              <AreaChart data={cvData}>
+              <AreaChart data={dashboardData.registration_analytics}>
                 <defs>
                   <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#4880FF" stopOpacity={0.3} />
@@ -194,34 +185,34 @@ const AdminDashboard = () => {
               <div className="donut-container">
                 <div className="donut-visual">
                   <div className="donut-info">
-                    <h4>34,249</h4>
+                    <h4>{dashboardData.user_segments.total.toLocaleString()}</h4>
                     <p>Total Users</p>
                   </div>
+                  {/* Simple CSS Pie Chart representation could be added here if needed, keeping it simple for now */}
                 </div>
                 <div className="donut-legend">
-                  <div className="legend-item"><span className="dot blue"></span> <span>Recruiters</span></div>
-                  <div className="legend-item"><span className="dot gray"></span> <span>Candidates</span></div>
+                  <div className="legend-item"><span className="dot blue"></span> <span>Recruiters ({dashboardData.user_segments.recruiters})</span></div>
+                  <div className="legend-item"><span className="dot gray"></span> <span>Candidates ({dashboardData.user_segments.candidates})</span></div>
                 </div>
               </div>
             </div>
 
             <div className="bottom-card">
-              <h3 style={{ fontWeight: 800, marginBottom: '20px' }}>Platform Growth</h3>
+              <h3 style={{ fontWeight: 800, marginBottom: '20px' }}>Job Post Quantity</h3>
               <ResponsiveContainer width="100%" height={320}>
-                <LineChart data={spendingData}>
+                <LineChart data={dashboardData.job_growth}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
                   <XAxis dataKey="year" axisLine={false} tickLine={false} />
                   <YAxis axisLine={false} tickLine={false} />
                   <Tooltip />
-                  <Line type="monotone" dataKey="user" stroke="#4880FF" strokeWidth={3} dot={{ r: 6 }} />
-                  <Line type="monotone" dataKey="repeated" stroke="#10B981" strokeWidth={3} dot={{ r: 6 }} />
+                  <Line type="monotone" dataKey="jobs" stroke="#4880FF" strokeWidth={3} dot={{ r: 6 }} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
           </div>
         </div>
       </main>
-    </div>
+    </div >
   );
 };
 

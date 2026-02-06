@@ -2,10 +2,14 @@ from rest_framework import serializers
 from database.models.users import Users,Candidates, Companies, Recruiters
 
 class UserSerializer(serializers.ModelSerializer):
-    company = serializers.CharField(source="company.name", read_only=True)
+    company = serializers.SerializerMethodField()
+
+    def get_company(self, obj):
+        return obj.company.name if obj.company else None
+        
     class Meta:
         model = Users
-        fields = ['username','email', 'company', 'role','is_active']
+        fields = ['id', 'username','email', 'phone', 'company', 'role','is_active']
 
 class UserProfileSerializer(serializers.ModelSerializer):
     username = serializers.CharField(read_only = True)

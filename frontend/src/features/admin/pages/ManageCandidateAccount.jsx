@@ -1,16 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../../app/AppProviders';
 import {
   LayoutDashboard, UserCog, Activity, Library,
   ShieldCheck, ClipboardList, MessageSquare, Gift,
   Menu, X, Settings, Bell, ChevronDown, ArrowLeft, Users
 } from 'lucide-react';
 import '../components/ManageCandidateAccount.css';
+import axios from 'axios';
 
 const ManageCandidateAccount = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('candidate');
+  const [candidates, setCandidates] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchCandidates = async () => {
+      try {
+        const token = localStorage.getItem('access_token');
+        const response = await axios.get('http://127.0.0.1:8000/api/users/', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const candidates = response.data.filter(u => u.role === 'candidate');
+        setCandidates(candidates);
+      } catch (err) {
+        console.error("Error fetching candidates:", err);
+        setError("Không thể tải danh sách ứng viên.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCandidates();
+  }, []);
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
@@ -103,7 +128,7 @@ const ManageCandidateAccount = () => {
           <div className="header-right-actions">
             <div className="notification"><Bell size={22} /><span className="badge">6</span></div>
             <div className="user-account-box">
-              <div className="avatar-placeholder"></div>
+              <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.username || 'Admin')}&background=4880FF&color=fff&bold=true`} alt="Avatar" style={{ width: '35px', height: '35px', borderRadius: '50%' }} />
               <ChevronDown size={16} color="#94a3b8" />
             </div>
           </div>
@@ -114,9 +139,42 @@ const ManageCandidateAccount = () => {
             <h2>Candidate Account Management</h2>
             <button className="btn-add-new">Add New Candidate</button>
           </div>
-          <div className="view-content-card">
-            <Settings size={64} color="#e2e8f0" />
-            <p>Candidate account list and information will be displayed here</p>
+          <div className="view-content-card" style={{ display: 'block', padding: '20px' }}>
+            {loading ? (
+              <p>Đang tải...</p>
+            ) : error ? (
+              <p style={{ color: 'red' }}>{error}</p>
+            ) : (
+              <table className="custom-table" style={{ width: '100%' }}>
+                <thead>
+                  <tr>
+                    <th style={{ textAlign: 'left', padding: '10px' }}>Ứng viên</th>
+                    <th style={{ textAlign: 'left', padding: '10px' }}>Email</th>
+                    <th style={{ textAlign: 'left', padding: '10px' }}>Phone</th>
+                    <th style={{ textAlign: 'left', padding: '10px' }}>Hành động</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {candidates.map((cand) => (
+                    <tr key={cand.id || cand.username} style={{ borderBottom: '1px solid #eee' }}>
+                      <td style={{ padding: '10px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          <div className="avatar-sm" style={{ width: 32, height: 32, background: '#E0E7FF', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            {cand.username?.charAt(0).toUpperCase()}
+                          </div>
+                          <span>{cand.username}</span>
+                        </div>
+                      </td>
+                      <td style={{ padding: '10px' }}>{cand.email}</td>
+                      <td style={{ padding: '10px' }}>{cand.phone || 'N/A'}</td>
+                      <td style={{ padding: '10px' }}>
+                        <Settings size={16} color="#666" />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
         </main>
       </div>
