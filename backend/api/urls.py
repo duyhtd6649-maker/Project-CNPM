@@ -1,4 +1,4 @@
-from .views import user_views, ai_views, auth_views, cv_views, job_views, application_views, cabinet_views, dashboard_views
+from .views import user_views, ai_views, auth_views, cv_views, job_views, application_views
 from django.urls import path, include
 from rest_framework.views import APIView
 from dj_rest_auth.views import PasswordResetView, PasswordResetConfirmView
@@ -84,4 +84,4 @@ urlpatterns = [
     path("ai/mock-interview/", mock_interview),
 
     path("notification", user_views.notification),
-
+]
