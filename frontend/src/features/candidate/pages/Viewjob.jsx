@@ -66,11 +66,12 @@ const JobDetail = () => {
                     company: data.company_name || data.company || 'Unknown Company',
                     location: data.location || 'Remote',
                     logo: `https://ui-avatars.com/api/?name=${encodeURIComponent(data.company_name || data.company || 'C')}&background=6366f1&color=fff&size=100`,
-                    tags: data.skill || data.skills || [],
+                    tags: Array.isArray(data.skill) ? data.skill : (typeof data.skill === 'string' ? data.skill.split(',') : (data.skills || [])),
                     salary: formatSalary(data.salary_min, data.salary_max),
                     description: data.description || '',
                     salary_min: data.salary_min,
-                    salary_max: data.salary_max
+                    salary_max: data.salary_max,
+                    isAiLogo: data.is_ai_logo || false // Handle potentially missing field
                 });
             } catch (err) {
                 console.error('Error fetching job detail:', err);
@@ -215,37 +216,7 @@ const JobDetail = () => {
 
             <main className="main-layout">
 
-                <aside className="sidebar">
-                    <div
-                        className="card profile-card"
-                        onClick={() => navigate('/job-list')}
-                        style={{ cursor: 'pointer' }}
-                        title="Back to Job List"
-                    >
-                        <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1rem', height: '100%' }}>
-                            <div style={{
-                                width: '64px',
-                                height: '64px',
-                                borderRadius: '50%',
-                                backgroundColor: 'rgba(124, 58, 237, 0.1)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                color: 'var(--primary)',
-                                transition: 'all 0.2s'
-                            }} className="back-icon-circle">
-                                <ArrowLeft size={32} />
-                            </div>
-                            <span style={{
-                                fontWeight: '600',
-                                color: 'var(--text-main)',
-                                fontSize: '0.9rem'
-                            }}>Back to Job List</span>
-                        </div>
-                    </div>
 
-
-                </aside>
 
                 <section className="content-area">
                     <div className="content-top-bar">
@@ -297,19 +268,23 @@ const JobDetail = () => {
                                 <div className="job-description-col">
                                     <section className="section-block">
                                         <h3 className="section-title">Job Description</h3>
-                                        <div className="text-content">
-                                            <p>We are looking for an experienced {displayJob.role} to join our innovative technology team at {displayJob.company}. The ideal candidate will have a strong background in developing scalable applications and a passion for creating seamless user experiences.</p>
-                                            <p>In this role, you will lead the development of new features, mentor junior developers, and collaborate with product managers and designers to deliver high-quality solutions.</p>
+                                        <div className="text-content" style={{ whiteSpace: 'pre-line' }}>
+                                            {displayJob.description || "No description provided."}
                                         </div>
                                     </section>
 
                                     <section className="section-block">
                                         <h3 className="section-title">Key Requirements</h3>
                                         <ul className="requirements-list">
-                                            <li><CheckCircle size={16} className="check-icon" /> 5+ years of experience in software development with JavaScript/TypeScript and React.</li>
-                                            <li><CheckCircle size={16} className="check-icon" /> Strong understanding of backend technologies (Node.js, Python, or Go).</li>
-                                            <li><CheckCircle size={16} className="check-icon" /> Experience with cloud platforms like AWS or Azure.</li>
-                                            <li><CheckCircle size={16} className="check-icon" /> Excellent problem-solving skills and ability to work in an agile environment.</li>
+                                            {displayJob.tags && displayJob.tags.length > 0 ? (
+                                                displayJob.tags.map((skill, index) => (
+                                                    <li key={index}>
+                                                        <CheckCircle size={16} className="check-icon" /> {skill}
+                                                    </li>
+                                                ))
+                                            ) : (
+                                                <li>No specific requirements listed.</li>
+                                            )}
                                         </ul>
                                     </section>
                                 </div>

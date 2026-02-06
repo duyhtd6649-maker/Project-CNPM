@@ -14,7 +14,7 @@
     --border-color: #E5E7EB;
 
     --header-bg: linear-gradient(to right, #2e1065, #7c3aed);
-    --max-width: 1280px;
+    --max-width: 100%;
     --header-height: 80px;
     --radius: 12px;
 }
@@ -193,12 +193,27 @@ button {
 }
 
 
+.app-container {
+    width: 100%;
+    max-width: none;
+}
+
 .main-layout {
     width: 100%;
+    max-width: none;
     padding: 1.5rem 2rem;
-    display: grid;
-    grid-template-columns: 300px 1fr;
-    gap: 1.5rem;
+    display: block;
+    margin: 0;
+}
+
+.content-area {
+    width: 100%;
+    max-width: none;
+}
+
+.job-detail-card {
+    width: 100%;
+    max-width: none;
 }
 
 
