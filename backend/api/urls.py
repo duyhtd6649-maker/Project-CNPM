@@ -83,6 +83,7 @@ urlpatterns = [
     path("ai/cv/analyzer", ai_views.CvAnalyzerAPIView.as_view()),
     path("ai/mock-interview/", mock_interview),
 
+<<<<<<< Updated upstream
     path("notification", user_views.notification),
 
     # ===== DASHBOARD =====
@@ -94,4 +95,7 @@ urlpatterns = [
     path('cabinets/interview-questions/<str:id>/', cabinet_views.InterviewQuestionDetailView.as_view()),
     path('cabinets/resources/', cabinet_views.ResourceListCreateView.as_view()),
     path('cabinets/resources/<str:id>/', cabinet_views.ResourceDetailView.as_view()),
+=======
+    path("notification", user_views.notification)
+>>>>>>> Stashed changes
 ]
