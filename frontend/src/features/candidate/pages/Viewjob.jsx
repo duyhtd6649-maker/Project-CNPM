@@ -40,18 +40,21 @@ const JobDetail = () => {
             setIsLoading(true);
             setError(null);
             try {
-                const response = await axiosClient.get(`/search/job/`);
+                // Gọi API chi tiết job theo ID
+                const response = await axiosClient.get(`/job/${id}/view/`);
                 const data = response.data;
                 // Transform data từ API sang format hiển thị
                 setJob({
                     id: data.id,
-                    role: data.title,
-                    company: data.company || 'Unknown Company',
+                    role: data.title || 'Unknown Job',
+                    company: data.company_name || data.company || 'Unknown Company',
                     location: data.location || 'Remote',
-                    logo: `https://ui-avatars.com/api/?name=${encodeURIComponent(data.company || 'C')}&background=6366f1&color=fff&size=100`,
-                    tags: data.skill || [],
+                    logo: `https://ui-avatars.com/api/?name=${encodeURIComponent(data.company_name || data.company || 'C')}&background=6366f1&color=fff&size=100`,
+                    tags: data.skill || data.skills || [],
                     salary: formatSalary(data.salary_min, data.salary_max),
-                    description: data.description || ''
+                    description: data.description || '',
+                    salary_min: data.salary_min,
+                    salary_max: data.salary_max
                 });
             } catch (err) {
                 console.error('Error fetching job detail:', err);
