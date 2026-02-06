@@ -29,7 +29,7 @@ const JobDetail = () => {
 
     // Filter CVs
     const filteredCVs = cvList.filter(cv =>
-        cv.file_name.toLowerCase().includes(searchTerm.toLowerCase())
+        (cv.file_name || cv.title || cv.name || '').toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     // Format salary từ số thành string hiển thị
@@ -92,16 +92,34 @@ const JobDetail = () => {
         setApplyError(null);
         setApplySuccess(false);
         setSelectedCV(null);
-        setCoverLetter('');
 
         // Fetch CV list
         setIsLoadingCVs(true);
         try {
             const response = await axiosClient.get('/cv/list/');
-            setCvList(response.data || []);
+            // Ensure response.data is an array
+            const data = Array.isArray(response.data) ? response.data : [];
+            setCvList(data);
+
+            // Sync to localStorage for robustness (optional but helpful)
+            if (data.length > 0) {
+                localStorage.setItem('savedCVs', JSON.stringify(data));
+            }
         } catch (err) {
             console.error('Error fetching CVs:', err);
-            setApplyError('Không thể tải danh sách CV. Vui lòng thử lại.');
+            // Fallback to localStorage exactly like SavedCV.jsx
+            try {
+                const savedCVs = JSON.parse(localStorage.getItem('savedCVs') || '[]');
+                if (Array.isArray(savedCVs) && savedCVs.length > 0) {
+                    setCvList(savedCVs);
+                    // Use a warning message instead of error if we successfully loaded from cache
+                    // setApplyError('Using cached CV list due to connection error.'); 
+                } else {
+                    setApplyError('Không thể tải danh sách CV. Vui lòng thử lại.');
+                }
+            } catch (storageErr) {
+                setApplyError('Không thể tải danh sách CV. Vui lòng thử lại.');
+            }
         } finally {
             setIsLoadingCVs(false);
         }

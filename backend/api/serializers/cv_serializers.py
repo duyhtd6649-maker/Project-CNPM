@@ -25,7 +25,7 @@ class CVScanSerializer(CVSerializer):
 class CVListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cvs
-        fields = ['id','file_name']
+        fields = ['id','file_name', 'file_url']
 
 class AnalysisSerializer(serializers.ModelSerializer):
     class Meta:

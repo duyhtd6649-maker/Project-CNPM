@@ -167,6 +167,8 @@ CORS_ALLOW_CREDENTIALS = True
 
 AUTH_USER_MODEL = 'database.Users'
 
+X_FRAME_OPTIONS = 'ALLOWALL'
+
 #luc dang ki, dang nhap, dang xuat thi tro ve....
 LOGIN_REDIRECT_URL = "/swagger/"
 LOGOUT_REDIRECT_URL = "/swagger/"

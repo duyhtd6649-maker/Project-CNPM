@@ -29,6 +29,15 @@ const SavedCV = () => {
   const [isDownloading, setIsDownloading] = useState(false);
   const previewRef = useRef(null);
 
+  // Helper to ensure URL is absolute pointing to backend
+  const getFullFileUrl = (path) => {
+    if (!path) return '';
+    if (path.startsWith('http://') || path.startsWith('https://')) return path;
+    // Remove leading slash if present to avoid double slashes if baseURL has one (though we hardcode here)
+    const cleanPath = path.startsWith('/') ? path : `/${path}`;
+    return `http://127.0.0.1:8000${cleanPath}`;
+  };
+
   // Load saved CVs from API on mount
   useEffect(() => {
     const fetchCVs = async () => {
@@ -92,7 +101,7 @@ const SavedCV = () => {
   const handleDownloadPDF = async (cv) => {
     // Nếu CV có file URL từ server, tải trực tiếp
     if (cv.fileUrl || cv.file_url || cv.file) {
-      const fileUrl = cv.fileUrl || cv.file_url || cv.file;
+      const fileUrl = getFullFileUrl(cv.fileUrl || cv.file_url || cv.file);
       const link = document.createElement('a');
       link.href = fileUrl;
       link.download = `${cv.file_name || cv.title || 'CV'}.pdf`;
@@ -112,7 +121,7 @@ const SavedCV = () => {
 
         if (cvDetail.file) {
           const link = document.createElement('a');
-          link.href = cvDetail.file;
+          link.href = getFullFileUrl(cvDetail.file);
           link.download = `${cvDetail.file_name || 'CV'}.pdf`;
           link.target = '_blank';
           document.body.appendChild(link);
@@ -194,60 +203,71 @@ const SavedCV = () => {
       {/* Modal Preview CV */}
       {showPreview && previewCV && (
         <div className="cv-preview-overlay" onClick={closePreview}>
-          <div className="cv-preview-modal" onClick={(e) => e.stopPropagation()}>
+          <div className="cv-preview-modal" onClick={(e) => e.stopPropagation()} style={{ width: '900px', maxWidth: '95vw', height: '85vh' }}>
             <button className="close-preview-btn" onClick={closePreview}>
               <X size={20} />
             </button>
 
-            <div ref={previewRef} className="preview-paper-layout">
-              {/* Cột trái */}
-              <div className="preview-left-col">
-                <div className="preview-avatar-circle">
-                  {previewCV.avatar ? (
-                    <img src={previewCV.avatar} alt="Avatar" />
-                  ) : (
-                    <UserCircle size={100} color="#ccc" />
-                  )}
+            {(previewCV.file_url || previewCV.file) && (previewCV.file_name?.endsWith('.pdf') || previewCV.file_url?.endsWith('.pdf')) ? (
+              <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <iframe
+                  src={getFullFileUrl(previewCV.file_url || previewCV.file)}
+                  width="100%"
+                  height="100%"
+                  title="CV Preview"
+                  style={{ border: 'none', borderRadius: '8px', flex: 1 }}
+                />
+              </div>
+            ) : (
+              <div ref={previewRef} className="preview-paper-layout">
+                {/* Cột trái */}
+                <div className="preview-left-col">
+                  <div className="preview-avatar-circle">
+                    {previewCV.avatar ? (
+                      <img src={previewCV.avatar} alt="Avatar" />
+                    ) : (
+                      <UserCircle size={100} color="#ccc" />
+                    )}
+                  </div>
+                  <div className="preview-side-content">
+                    <h5 className="preview-side-title">Contact</h5>
+                    <p className="pre-wrap">{previewCV.contactInfo || "Chưa nhập thông tin liên hệ"}</p>
+
+                    <h5 className="preview-side-title">Tools Skill</h5>
+                    <p className="pre-wrap">{previewCV.toolsSkill || "Chưa nhập kỹ năng công cụ"}</p>
+
+                    <h5 className="preview-side-title">Soft Skills</h5>
+                    <p className="pre-wrap">{previewCV.softSkill || "Chưa nhập kỹ năng mềm"}</p>
+
+                    <h5 className="preview-side-title">Education</h5>
+                    <p className="pre-wrap">{previewCV.education || "Chưa nhập thông tin học vấn"}</p>
+                  </div>
                 </div>
-                <div className="preview-side-content">
-                  <h5 className="preview-side-title">Contact</h5>
-                  <p className="pre-wrap">{previewCV.contactInfo || "Chưa nhập thông tin liên hệ"}</p>
 
-                  <h5 className="preview-side-title">Tools Skill</h5>
-                  <p className="pre-wrap">{previewCV.toolsSkill || "Chưa nhập kỹ năng công cụ"}</p>
+                {/* Cột phải */}
+                <div className="preview-right-col">
+                  <h1 className="preview-name">{previewCV.realName || "Họ và Tên"}</h1>
+                  <p className="preview-field">{previewCV.field || "Vị trí ứng tuyển"}</p>
 
-                  <h5 className="preview-side-title">Soft Skills</h5>
-                  <p className="pre-wrap">{previewCV.softSkill || "Chưa nhập kỹ năng mềm"}</p>
+                  <div className="preview-main-section">
+                    <h5 className="preview-main-title">About Me</h5>
+                    <p className="pre-wrap">{previewCV.about || "Chưa nhập phần giới thiệu bản thân"}</p>
+                  </div>
 
-                  <h5 className="preview-side-title">Education</h5>
-                  <p className="pre-wrap">{previewCV.education || "Chưa nhập thông tin học vấn"}</p>
+                  <div className="preview-main-section">
+                    <h5 className="preview-main-title">Experience</h5>
+                    <p className="pre-wrap">{previewCV.experience || "Chưa nhập kinh nghiệm làm việc"}</p>
+                  </div>
                 </div>
               </div>
-
-              {/* Cột phải */}
-              <div className="preview-right-col">
-                <h1 className="preview-name">{previewCV.realName || "Họ và Tên"}</h1>
-                <p className="preview-field">{previewCV.field || "Vị trí ứng tuyển"}</p>
-
-                <div className="preview-main-section">
-                  <h5 className="preview-main-title">About Me</h5>
-                  <p className="pre-wrap">{previewCV.about || "Chưa nhập phần giới thiệu bản thân"}</p>
-                </div>
-
-                <div className="preview-main-section">
-                  <h5 className="preview-main-title">Experience</h5>
-                  <p className="pre-wrap">{previewCV.experience || "Chưa nhập kinh nghiệm làm việc"}</p>
-                </div>
-              </div>
-            </div>
+            )}
 
             {/* Nút Download trong modal */}
             {!isDownloading && (
               <div style={{
                 display: 'flex',
                 justifyContent: 'center',
-                marginTop: '20px',
-                paddingBottom: '10px'
+                marginTop: '10px'
               }}>
                 <button
                   className="btn-save-cv"
@@ -259,7 +279,7 @@ const SavedCV = () => {
               </div>
             )}
             {isDownloading && (
-              <div style={{ textAlign: 'center', marginTop: '20px', color: '#6366f1' }}>
+              <div style={{ textAlign: 'center', marginTop: '10px', color: '#6366f1' }}>
                 <Loader size={24} style={{ animation: 'spin 1s linear infinite' }} />
                 <p>Đang tạo file PDF...</p>
               </div>
