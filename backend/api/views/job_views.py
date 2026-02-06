@@ -1,13 +1,15 @@
 from rest_framework.decorators import api_view, permission_classes, parser_classes
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.parsers import MultiPartParser, FormParser
 from apps.job_services import JobService
 from ..serializers.job_serializers import JobSerializer,JobForFilterSerializer, JobStatusUpdateSerializer
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.exceptions import *
 from drf_yasg import openapi
+from database.models.jobs import Jobs, Categories
+from database.models.users import Companies
 
 
 #Dang Job
@@ -200,4 +202,5 @@ def process_job(request, id):
         return Response({f"{e}"},status=status.HTTP_404_NOT_FOUND)
     except PermissionError as e:
         return Response({f"{e}"},status=status.HTTP_403_FORBIDDEN)
+
 

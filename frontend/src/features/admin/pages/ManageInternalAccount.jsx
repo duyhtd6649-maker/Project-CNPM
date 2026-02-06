@@ -1,337 +1,351 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { 
-  LayoutDashboard, UserCog, X, Bell, ChevronDown, ArrowLeft,
-  MoreVertical, ShieldAlert, Trash2, UserCheck, Search, Mail, 
-  Building2, AlertCircle, Loader2, RefreshCcw, UserPlus, Eye, EyeOff 
+import {
+  LayoutDashboard, Users, Search, Bell, ChevronDown,
+  MoreHorizontal, Shield, Trash2, CheckCircle, XCircle,
+  Plus, X, Mail, Phone, Lock, Eye, EyeOff, Building2, UserCog,
+  ArrowLeft, LogOut, Activity, Library, ShieldCheck, ClipboardList, MessageSquare, Gift, Menu
 } from 'lucide-react';
 import '../components/ManageInternalAccount.css';
 
 const ManageInternalAccount = () => {
   const navigate = useNavigate();
-  
-  // Dữ liệu danh sách
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  // --- STATE QUẢN LÝ DỮ LIỆU ---
   const [accounts, setAccounts] = useState([]);
-  const [selectedAcc, setSelectedAcc] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Trạng thái Modal Thêm thành viên
+  // State tìm kiếm & Giao diện
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedAcc, setSelectedAcc] = useState(null); // User đang xem chi tiết
+
+  // State cho Modal Thêm Mới
   const [showAddModal, setShowAddModal] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     username: '',
     email: '',
-    password1: '',
-    password2: ''
+    password: '',
+    role: 'candidate' // Mặc định là ứng viên
   });
 
-  // --- Cấu hình API ---
-  const API_BASE = "http://127.0.0.1:8000"; 
-  
-  const getHeader = useCallback(() => {
-    const token = localStorage.getItem('access');
-    return {
-      headers: { 
-        Authorization: token ? `Bearer ${token}` : "",
-        "Content-Type": "application/json"
-      }
-    };
-  }, []);
+  // Cấu hình API
+  const API_URL = "http://127.0.0.1:8000/api/users/";
 
-  // --- 1. Lấy danh sách thành viên (Review) ---
-  const fetchAccounts = useCallback(async () => {
+  // --- 1. GỌI API LẤY DATA ---
+  const fetchAccounts = async () => {
     try {
       setLoading(true);
+      const response = await axios.get(API_URL);
+      // Xử lý dữ liệu trả về (nếu API trả về dạng phân trang .results)
+      const data = Array.isArray(response.data) ? response.data : (response.data.results || []);
+      setAccounts(data);
       setError(null);
-      const response = await axios.get(`${API_BASE}/api/recruiters/`, getHeader());
-      // Kết quả trả về từ UserSerializer sẽ có: username, email, company, is_active
-      setAccounts(Array.isArray(response.data) ? response.data : []);
     } catch (err) {
-      setError("Không thể tải danh sách từ Database. Kiểm tra Server hoặc Quyền truy cập.");
+      console.error("Lỗi API:", err);
+      setError("Không thể kết nối đến server. Vui lòng thử lại!");
     } finally {
       setLoading(false);
     }
-  }, [getHeader]);
+  };
 
   useEffect(() => {
     fetchAccounts();
-  }, [fetchAccounts]);
+  }, []);
 
-  // --- 2. Xử lý Thêm thành viên (Đăng ký) ---
-  const handleAddMember = async (e) => {
+  // --- 2. XỬ LÝ FORM THÊM MỚI ---
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleAddSubmit = async (e) => {
     e.preventDefault();
-    if (formData.password1 !== formData.password2) {
-      alert("Mật khẩu xác nhận không khớp!");
-      return;
-    }
-
     try {
-      setIsSubmitting(true);
-      // Payload khớp hoàn toàn với CustomRegisterSerializer bạn đã gửi
-      const payload = {
-        username: formData.username,
-        email: formData.email,
-        password1: formData.password1,
-        password2: formData.password2,
-        role: 'recruiter' 
-      };
-
-      await axios.post(`${API_BASE}/api/auth/registration/`, payload, getHeader());
-      
-      alert("Thành viên mới đã được tạo thành công!");
+      // Gọi API tạo user (Tùy endpoint backend của bạn)
+      await axios.post(API_URL, formData);
+      alert("Thêm thành công!");
       setShowAddModal(false);
-      setFormData({ username: '', email: '', password1: '', password2: '' });
-      fetchAccounts(); // Cập nhật lại danh sách ngay lập tức
+      setFormData({ username: '', email: '', password: '', role: 'candidate' });
+      fetchAccounts(); // Load lại danh sách
     } catch (err) {
-      const serverErr = err.response?.data;
-      alert(serverErr ? JSON.stringify(serverErr) : "Lỗi khi đăng ký thành viên.");
-    } finally {
-      setIsSubmitting(false);
+      alert("Lỗi khi thêm: " + (err.response?.data?.detail || err.message));
     }
   };
 
-  // --- 3. Xử lý Ban/Unban ---
-  const handleToggleStatus = async (user) => {
-    const endpoint = user.is_active ? "api/banuser" : "api/unbanuser";
-    try {
-      // BE yêu cầu UserNameSerializer { username: ... }
-      await axios.post(`${API_BASE}/${endpoint}/`, { username: user.username }, getHeader());
-      
-      // Cập nhật State cục bộ để giao diện mượt mà
-      setAccounts(prev => prev.map(acc => 
-        acc.username === user.username ? { ...acc, is_active: !user.is_active } : acc
-      ));
-      if (selectedAcc?.username === user.username) {
-        setSelectedAcc({ ...selectedAcc, is_active: !user.is_active });
-      }
-    } catch (err) {
-      alert("Lỗi thao tác trên Server.");
-    }
-  };
-
-  // --- 4. Xử lý Xóa thành viên ---
-  const handleDelete = async (username) => {
-    if (!window.confirm(`Bạn có chắc muốn xóa vĩnh viễn tài khoản @${username}?`)) return;
-    try {
-      await axios.post(`${API_BASE}/api/removeuser/`, { username }, getHeader());
-      setAccounts(prev => prev.filter(acc => acc.username !== username));
-      setSelectedAcc(null);
-    } catch (err) {
-      alert("Không thể xóa người dùng này.");
-    }
-  };
+  // --- 3. XỬ LÝ SEARCH ---
+  const filteredAccounts = accounts.filter(acc =>
+    acc.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    acc.email?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="manage-page-container">
-      {/* SIDEBAR TRÁI - NAVY DARK */}
-      <aside className="manage-left-sidebar-navy">
+      {/* --- SIDEBAR TRÁI (Giữ nguyên class cũ để ko lỗi) --- */}
+      {/* --- SIDEBAR TRÁI (Dual Sidebar Pattern) --- */}
+      {isSidebarOpen && <div className="sidebar-overlay" onClick={() => setIsSidebarOpen(false)}></div>}
+
+      {/* 1. Main Admin Sidebar (Collapsed/Expanded logic) */}
+      <aside className={`admin-sidebar ${isSidebarOpen ? 'open' : ''}`}>
+        <div className="sidebar-header-uth">
+          <div className="uth-branding" onClick={() => navigate('/admin')}>
+            <span className="uth-blue-text">UTH</span>
+            <span className="workplace-green-text"> WORKPLACE</span>
+          </div>
+          <button className="close-sidebar-btn" onClick={() => setIsSidebarOpen(false)}><X size={24} /></button>
+        </div>
+        <nav className="sidebar-nav-custom">
+          <div className="nav-item-custom" onClick={() => navigate('/admin')}><LayoutDashboard size={20} /> <span>Dashboard</span></div>
+
+          <div className="sidebar-divider-text">ACCOUNT MANAGEMENT</div>
+          <div className="nav-item-custom active"><ShieldCheck size={20} /> <span>Internal Accounts</span></div>
+          <div className="nav-item-custom" onClick={() => navigate('/manage-candidate')}><Users size={20} /> <span>Candidates</span></div>
+          <div className="nav-item-custom" onClick={() => navigate('/manage-recruiter')}><UserCog size={20} /> <span>Recruiters</span></div>
+          <div className="nav-item-custom" onClick={() => navigate('/manage-admin-acc')}><Activity size={20} /> <span>Admin Accounts</span></div>
+        </nav>
+      </aside>
+
+      {/* 2. Sub Sidebar (Fixed for Account Management context) */}
+      <aside className="manage-left-sidebar">
         <div className="sidebar-blue-header">
-          <div className="uth-branding-box" onClick={() => navigate('/admin')}>
+          <button className="header-menu-btn-white" onClick={() => setIsSidebarOpen(!isSidebarOpen)}><Menu size={20} /></button>
+          <div className="uth-branding-white">
             <span className="uth-text">UTH</span>
             <span className="workplace-text"> WORKPLACE</span>
           </div>
         </div>
 
-        <nav className="manage-nav-list">
-          <div className="nav-group-label">Chính</div>
-          <div className="manage-nav-item" onClick={() => navigate('/admin')}>
-            <LayoutDashboard size={20} /> <span>Dashboard</span>
-          </div>
-
-          <div className="nav-group-label">Quản lý nhân sự</div>
-          <div className="manage-nav-item active">
-            <UserCog size={20} /> <span>Internal Account</span>
-          </div>
+        <nav className="sub-nav-list">
+          <div className="sub-nav-item active">Internal Account</div>
+          <div className="sub-nav-item" onClick={() => navigate('/manage-candidate')}>Candidate Account</div>
+          <div className="sub-nav-item" onClick={() => navigate('/manage-recruiter')}>Recruiter Account</div>
+          <div className="sub-nav-item" onClick={() => navigate('/manage-admin-acc')}>Admin Account</div>
         </nav>
 
-        <div className="manage-sidebar-footer">
-          <div className="back-btn" onClick={() => navigate('/admin')}>
-            <ArrowLeft size={18} /> <span>Quay lại Dashboard</span>
+        <div className="sub-sidebar-footer">
+          <div className="sub-nav-item" onClick={() => navigate('/admin')}>
+            <ArrowLeft size={18} style={{ marginRight: '10px' }} /> Back to menu
           </div>
+          <div className="divider-sub"></div>
+          <div className="sub-nav-item-small">My Profile</div>
+          <div className="sub-nav-item-small">Permissions</div>
+          <div className="sub-nav-item logout-sub" onClick={() => navigate('/login')}>Logout</div>
         </div>
       </aside>
 
-      {/* NỘI DUNG CHÍNH BÊN PHẢI */}
-      <div className="manage-right-content">
-        <header className="manage-top-header">
-          <div className="header-search-box">
-             <Search size={18} color="#8A92A6" />
-             <input 
-                type="text" 
-                placeholder="Tìm username hoặc email..." 
+      {/* --- MAIN CONTENT --- */}
+      <div className="manage-main-content" style={{ flex: 1, display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
+
+        {/* Top Header */}
+        <header className="top-header-area">
+          <div className="header-right-actions">
+            <div className="search-box">
+              <Search size={16} color="#666" />
+              <input
+                type="text"
+                placeholder="Tìm kiếm..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-             />
-          </div>
-          <div className="header-actions">
-            <button className="icon-btn-circle" onClick={fetchAccounts} title="Làm mới">
-              <RefreshCcw size={18} />
-            </button>
-            <div className="icon-badge"><Bell size={22} /></div>
-            <div className="profile-pill">
-              <div className="avatar-sm">AD</div>
-              <ChevronDown size={14} />
+              />
+            </div>
+            <div className="notification"><Bell size={20} /></div>
+            <div className="user-account-box">
+              <div className="avatar-placeholder" style={{ width: 35, height: 35, borderRadius: '50%', background: '#ddd' }}></div>
             </div>
           </div>
         </header>
 
+        {/* View Area */}
         <main className="manage-view-area">
-          <div className="view-header">
-            <div className="title-stack">
-              <h2>Quản lý tài khoản nội bộ</h2>
-              <p>Danh sách thành viên đăng ký từ Database</p>
+          <div className="data-table-container">
+            <div className="table-header-actions">
+              <h2>Danh sách tài khoản ({filteredAccounts.length})</h2>
+              <button className="btn-add-new" onClick={() => setShowAddModal(true)}>
+                <Plus size={18} /> Thêm mới
+              </button>
             </div>
-            <button className="btn-add-new" onClick={() => setShowAddModal(true)}>
-              <UserPlus size={18} /> Thêm thành viên
-            </button>
-          </div>
 
-          <div className="table-card-container">
             {loading ? (
-              <div className="loading-state-box">
-                <Loader2 className="spin-icon" /> <p>Đang đồng bộ Database...</p>
-              </div>
+              <div style={{ padding: 40, textAlign: 'center' }}>Đang tải dữ liệu...</div>
             ) : error ? (
-              <div className="error-state-box">
-                <AlertCircle color="#FF4842" size={40} />
-                <p>{error}</p>
-                <button onClick={fetchAccounts} className="btn-retry">Thử lại</button>
-              </div>
+              <div style={{ padding: 40, textAlign: 'center', color: 'red' }}>{error}</div>
             ) : (
-              <table className="account-table">
-                <thead>
-                  <tr>
-                    <th>Thành viên</th>
-                    <th>Username</th>
-                    <th>Công ty</th>
-                    <th>Trạng thái</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {accounts
-                    .filter(a => a.username.toLowerCase().includes(searchTerm.toLowerCase()))
-                    .map(acc => (
-                      <tr 
-                        key={acc.username} 
-                        onClick={() => setSelectedAcc(acc)} 
-                        className={selectedAcc?.username === acc.username ? 'row-active' : ''}
-                      >
+              <div className="table-responsive">
+                <table className="custom-table">
+                  <thead>
+                    <tr>
+                      <th>Người dùng</th>
+                      <th>Email</th>
+                      <th>Vai trò</th>
+                      <th>Trạng thái</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredAccounts.map((acc) => (
+                      <tr key={acc.id} onClick={() => setSelectedAcc(acc)}>
                         <td>
-                          <div className="user-info-row">
-                            <div className="avatar-box">{acc.username.charAt(0).toUpperCase()}</div>
-                            <div className="text-info">
-                              <span className="name-bold">{acc.username}</span>
-                              <span className="email-small">{acc.email}</span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                            <div style={{ width: 32, height: 32, background: '#E0E7FF', color: '#4880FF', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
+                              {acc.username?.charAt(0).toUpperCase()}
                             </div>
+                            <span style={{ fontWeight: 600 }}>{acc.username}</span>
                           </div>
                         </td>
-                        <td><span className="username-tag">@{acc.username}</span></td>
-                        <td>{acc.company || "N/A"}</td>
+                        <td>{acc.email}</td>
                         <td>
-                          <span className={`status-pill ${acc.is_active ? 'active' : 'banned'}`}>
-                            {acc.is_active ? 'Hoạt động' : 'Bị khóa'}
-                          </span>
+                          {acc.is_superuser ? <span className="status-badge active">Admin</span> :
+                            acc.role === 'recruiter' ? <span className="status-badge inactive">Recruiter</span> :
+                              <span className="status-badge" style={{ background: '#F1F5F9', color: '#64748B' }}>Candidate</span>}
                         </td>
-                        <td><MoreVertical size={18}/></td>
+                        <td>
+                          {acc.is_active ?
+                            <span style={{ color: '#10B981', fontWeight: 600 }}>Active</span> :
+                            <span style={{ color: '#EF4444', fontWeight: 600 }}>Locked</span>}
+                        </td>
+                        <td><MoreHorizontal size={16} color="#999" /></td>
                       </tr>
                     ))}
-                </tbody>
-              </table>
+                  </tbody>
+                </table>
+              </div>
             )}
           </div>
         </main>
       </div>
 
-      {/* MODAL THÊM THÀNH VIÊN - HIỂN THỊ KHI BẤM NÚT */}
+      {/* --- PANEL CHI TIẾT (Trượt phải) --- */}
+      {selectedAcc && (
+        <div className="right-action-panel open" style={{ zIndex: 200 }}>
+          <div className="panel-header">
+            <button className="btn-close-panel" onClick={() => setSelectedAcc(null)}>
+              <X size={20} />
+            </button>
+          </div>
+          <div className="panel-profile">
+            <div className="avatar-lg">{selectedAcc.username?.charAt(0).toUpperCase()}</div>
+            <h4>{selectedAcc.username}</h4>
+            <span style={{ color: '#64748B', fontSize: 14 }}>{selectedAcc.email}</span>
+          </div>
+
+          <div className="detail-list">
+            <div className="detail-item">
+              <Mail size={16} color="#64748B" />
+              <div className="labels">
+                <label>Email</label>
+                <p>{selectedAcc.email}</p>
+              </div>
+            </div>
+            <div className="detail-item">
+              <Shield size={16} color="#64748B" />
+              <div className="labels">
+                <label>Quyền hạn</label>
+                <p>{selectedAcc.is_superuser ? "Administrator" : "User"}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="panel-footer-btns">
+            <button className="btn-panel-act unban">Reset Mật khẩu</button>
+            <button className={`btn-panel-act ${selectedAcc.is_active ? 'ban' : 'unban'}`}>
+              {selectedAcc.is_active ? <XCircle size={18} /> : <CheckCircle size={18} />}
+              {selectedAcc.is_active ? "Khóa tài khoản" : "Mở khóa"}
+            </button>
+            <button className="btn-panel-act delete"><Trash2 size={18} /> Xóa</button>
+          </div>
+        </div>
+      )}
+
+      {/* --- MODAL THÊM MỚI (Popup) --- */}
       {showAddModal && (
         <div className="modal-overlay">
           <div className="modal-content">
             <div className="modal-header">
-              <h3>Tạo tài khoản Recruiter</h3>
-              <button onClick={() => setShowAddModal(false)} className="btn-close-modal"><X /></button>
+              <h3>Thêm người dùng mới</h3>
+              <button onClick={() => setShowAddModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}><X size={24} color="#64748B" /></button>
             </div>
-            <form onSubmit={handleAddMember} className="modal-form">
+            <form onSubmit={handleAddSubmit}>
               <div className="form-group">
                 <label>Tên đăng nhập</label>
-                <input required type="text" value={formData.username}
-                  onChange={e => setFormData({...formData, username: e.target.value})}
-                  placeholder="Nhập username..." />
+                <div className="input-with-icon">
+                  <UserCog size={18} className="input-icon" />
+                  <input
+                    name="username"
+                    className="modern-input"
+                    placeholder="Nhập tên đăng nhập..."
+                    required
+                    value={formData.username}
+                    onChange={handleInputChange}
+                  />
+                </div>
               </div>
+
               <div className="form-group">
-                <label>Email liên kết</label>
-                <input required type="email" value={formData.email}
-                  onChange={e => setFormData({...formData, email: e.target.value})}
-                  placeholder="email@uth.edu.vn" />
-              </div>
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Mật khẩu</label>
-                  <div className="pass-box">
-                    <input required type={showPassword ? "text" : "password"} value={formData.password1}
-                      onChange={e => setFormData({...formData, password1: e.target.value})} />
-                  </div>
-                </div>
-                <div className="form-group">
-                  <label>Xác nhận lại</label>
-                  <input required type={showPassword ? "text" : "password"} value={formData.password2}
-                    onChange={e => setFormData({...formData, password2: e.target.value})} />
+                <label>Email liên hệ</label>
+                <div className="input-with-icon">
+                  <Mail size={18} className="input-icon" />
+                  <input
+                    name="email"
+                    type="email"
+                    className="modern-input"
+                    placeholder="example@uth.edu.vn"
+                    required
+                    value={formData.email}
+                    onChange={handleInputChange}
+                  />
                 </div>
               </div>
-              <div className="modal-footer">
-                <button type="button" className="btn-cancel" onClick={() => setShowAddModal(false)}>Hủy</button>
-                <button type="submit" className="btn-submit" disabled={isSubmitting}>
-                  {isSubmitting ? <Loader2 className="spin-icon" size={16} /> : "Tạo ngay"}
-                </button>
+
+              <div className="form-group">
+                <label>Mật khẩu khởi tạo</label>
+                <div className="input-with-icon">
+                  <Lock size={18} className="input-icon" />
+                  <input
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    className="modern-input"
+                    style={{ paddingRight: '45px' }}
+                    placeholder="••••••••"
+                    required
+                    value={formData.password}
+                    onChange={handleInputChange}
+                  />
+                  <button type="button" className="toggle-pass-btn" onClick={() => setShowPassword(!showPassword)}>
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Phân quyền quản trị</label>
+                <div className="select-wrapper">
+                  <Shield size={18} className="input-icon" style={{ zIndex: 1, left: 15 }} />
+                  <select
+                    name="role"
+                    className="modern-select"
+                    style={{ paddingLeft: '45px' }}
+                    value={formData.role}
+                    onChange={handleInputChange}
+                  >
+                    <option value="candidate">Ứng viên (Candidate)</option>
+                    <option value="recruiter">Nhà tuyển dụng (Recruiter)</option>
+                    <option value="admin">Quản trị viên (Admin)</option>
+                  </select>
+                  <ChevronDown size={16} className="select-arrow" />
+                </div>
+              </div>
+
+              <div className="modal-actions">
+                <button type="button" className="btn-cancel" onClick={() => setShowAddModal(false)}>Hủy bỏ</button>
+                <button type="submit" className="btn-submit">Tạo tài khoản</button>
               </div>
             </form>
           </div>
         </div>
       )}
-
-      {/* ACTION PANEL CHI TIẾT BÊN PHẢI */}
-      <div className={`panel-overlay-right ${selectedAcc ? 'show' : ''}`} onClick={() => setSelectedAcc(null)}></div>
-      <aside className={`action-panel-right ${selectedAcc ? 'open' : ''}`}>
-        {selectedAcc && (
-          <div className="panel-body">
-            <div className="panel-header">
-              <h3>Thông tin thành viên</h3>
-              <button className="btn-close-panel" onClick={() => setSelectedAcc(null)}><X size={20}/></button>
-            </div>
-            <div className="panel-profile">
-               <div className="avatar-lg">{selectedAcc.username.charAt(0).toUpperCase()}</div>
-               <h4>{selectedAcc.username}</h4>
-               <span className="pill-role">Nhà tuyển dụng</span>
-            </div>
-            <div className="detail-list">
-               <div className="detail-item">
-                  <Mail size={16} />
-                  <div className="labels"><label>Email hệ thống</label><p>{selectedAcc.email}</p></div>
-               </div>
-               <div className="detail-item">
-                  <Building2 size={16} />
-                  <div className="labels"><label>Thuộc công ty</label><p>{selectedAcc.company || 'Chưa cập nhật'}</p></div>
-               </div>
-            </div>
-            <div className="panel-footer-btns">
-               <button 
-                  className={`btn-panel-act ${selectedAcc.is_active ? 'ban' : 'unban'}`}
-                  onClick={() => handleToggleStatus(selectedAcc)}
-               >
-                  {selectedAcc.is_active ? <ShieldAlert size={20}/> : <UserCheck size={20}/>}
-                  {selectedAcc.is_active ? "Khóa tài khoản" : "Kích hoạt lại"}
-               </button>
-               <button className="btn-panel-act delete" onClick={() => handleDelete(selectedAcc.username)}>
-                  <Trash2 size={20}/> Xóa vĩnh viễn
-               </button>
-            </div>
-          </div>
-        )}
-      </aside>
     </div>
   );
 };

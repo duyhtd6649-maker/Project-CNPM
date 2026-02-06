@@ -15,6 +15,7 @@ urlpatterns = [
     path('user/<uuid:id>/', user_views.GetUserInforById),
     path('candidate/profile', user_views.update_candidate_profile), #update profile cho candidate
     path('user/profile/myprofile', user_views.view_my_profile), #xem profile của mình
+    path('user/company/profile', user_views.view_user_company_profile), #xem profile công ty của mình
     # ===== CV =====
     path('cv/analyzer/',cv_views.Analyze_Cv), #upload và phân tích cv
     path('cv/upload/', cv_views.Upload_Cv), #phân tích cv
@@ -67,6 +68,7 @@ urlpatterns = [
     path('removeuser/',user_views.RemoveUser), #xóa user
     path('candidates/',user_views.GetCandidatesInfor),
     path('recruiters/',user_views.GetRecruitersInfor),
+    path('admins/dashboard/', user_views.admin_dashboard_stats), #dashboard cho admin
     # ===== AUTH =====
     path("accounts/", include("allauth.urls")),
     # ===== LOGIN / SIGNUP =====
@@ -79,4 +81,6 @@ urlpatterns = [
     path("ai/career/coach", ai_views.CareerCoachAPIView.as_view()),
     path("ai/cv/analyzer", ai_views.CvAnalyzerAPIView.as_view()),
     path("ai/mock-interview/", mock_interview),
+
+    path("notification", user_views.notification)
 ]

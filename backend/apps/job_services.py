@@ -2,6 +2,7 @@ from email.mime import application
 from database.models.jobs import Jobs, Categories
 from database.models.users import Candidates, Recruiters
 from database.models.CV import Cvs, Cvanalysisresult
+from database.models.services import Notifications
 from .users_services import UserService, CompanyService, RecruiterService, AdminService
 from rest_framework.exceptions import *
 from django.db.models import Case, When, Value, IntegerField, F
@@ -165,10 +166,34 @@ class JobService:
             job = Jobs.objects.get(id = job_id)
             job.status = new_status
             job.save()
+            notification_receiver = job.recruiter.user
+            message = f"your job '{job.title}' has been {new_status}"
+            title = NotificationTitle.JOB_STATUS
+            NotificationService.set_notification(
+                receiver= notification_receiver,
+                message= message,
+                title= title
+            )
             return job
         except Jobs.DoesNotExist:
             raise NotFound({"error":"Job not found"})
 
+class NotificationTitle:
+    JOB_STATUS = "Job status has changed"
+    APPLICATION_STATUS = "Application status has changed"
+class NotificationService:
+    @staticmethod
+    def set_notification(receiver, message, title):
+        Notifications.objects.create(
+            receiver = receiver,
+            message = message,
+            title = title
+        )
+        return None
+    
+    @staticmethod
+    def get_user_notification(user):
+        return Notifications.objects.filter(receiver = user)
 
     
         

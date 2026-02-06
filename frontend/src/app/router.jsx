@@ -25,9 +25,14 @@ import ManageInternalAccount from '../features/admin/pages/ManageInternalAccount
 import ManageCandidateAccount from '../features/admin/pages/ManageCandidateAccount';
 import ManageRecruiterAccount from '../features/admin/pages/ManageRecruiterAccount';
 import ManageAdminAccount from '../features/admin/pages/ManageAdminAccount';
+import SystemStatus from '../features/admin/pages/SystemStatus';
+import JobPosts from '../features/admin/pages/JobPosts';
+import CvTemplates from '../features/admin/pages/CvTemplates';
+import InterviewQuestions from '../features/admin/pages/InterviewQuestions';
+import Resources from '../features/admin/pages/Resources';
 
 import RecruiterDashboard from '../features/recruiter/pages/RecruiterDashboard'; // Đảm bảo đường dẫn này đúng
-
+import OrganizationProfile from '../features/recruiter/pages/OrganizationProfile';
 // --- CẬP NHẬT PROTECTED ROUTE THÔNG MINH HƠN ---
 const ProtectedRoute = ({ children }) => {
   const { user } = useAuth();
@@ -90,6 +95,11 @@ export const router = createBrowserRouter([
         path: 'recruiter-dashboard',
         element: <ProtectedRoute><RecruiterDashboard /></ProtectedRoute>
       },
+      // --- [MỚI] THÊM ROUTE VÀO ĐÂY ---
+      {
+        path: 'organization-profile',
+        element: <ProtectedRoute><OrganizationProfile /></ProtectedRoute>
+      },
 
       // --- ROUTE ADMIN ---
       { path: 'admin-login', element: <AdminLogin /> },
@@ -98,6 +108,11 @@ export const router = createBrowserRouter([
       { path: 'manage-candidate', element: <ProtectedRoute><ManageCandidateAccount /></ProtectedRoute> },
       { path: 'manage-recruiter', element: <ProtectedRoute><ManageRecruiterAccount /></ProtectedRoute> },
       { path: 'manage-admin-acc', element: <ProtectedRoute><ManageAdminAccount /></ProtectedRoute> },
+      { path: 'system-status', element: <ProtectedRoute><SystemStatus /></ProtectedRoute> },
+      { path: 'job-posts', element: <ProtectedRoute><JobPosts /></ProtectedRoute> },
+      { path: 'cv-templates', element: <ProtectedRoute><CvTemplates /></ProtectedRoute> },
+      { path: 'interview-questions', element: <ProtectedRoute><InterviewQuestions /></ProtectedRoute> },
+      { path: 'resources', element: <ProtectedRoute><Resources /></ProtectedRoute> },
 
       // Mặc định nếu sai đường dẫn thì về login
       { path: '*', element: <Navigate to="/login" /> },

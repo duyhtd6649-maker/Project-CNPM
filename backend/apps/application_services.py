@@ -3,6 +3,7 @@ from database.models.jobs import Jobs, Applications
 from database.models.users import Candidates, Recruiters
 from database.models.CV import Cvs
 from .users_services import UserService, CompanyService, RecruiterService, AdminService
+from .job_services import NotificationTitle, NotificationService
 from rest_framework.exceptions import *
 
 class ApplicationService:
@@ -132,10 +133,19 @@ class ApplicationService:
                 application.job_status = 'Waiting'
             else:
                 application.job_status = None
+            receiver = application.candidate.user
+            job_name = application.job.title
+            message = f"your application system status to '{job_name}' has changed to {new_status}"
+            title = NotificationTitle.APPLICATION_STATUS
+            NotificationService.set_notification(
+                receiver= receiver,
+                message= message,
+                title= title
+            )
             application.save()
             return application
         else:
-            raise PermissionDenied("User doesn't have permission to update system status")
+            raise PermissionDenied("User doesn't have permission to update application system status")
 
         
     @staticmethod
@@ -153,6 +163,15 @@ class ApplicationService:
             is_recruiter_of_company = RecruiterService.Is_Recruiter_Of_Company(user, company.id)
         if (is_recruiter_of_company or application.job.recruiter == recruiter) and application.system_status == 'Approved':  
             application.job_status = new_status
+            receiver = application.candidate.user
+            job_name = application.job.title
+            message = f"your application system status to '{job_name}' has changed to {new_status}"
+            title = NotificationTitle.APPLICATION_STATUS
+            NotificationService.set_notification(
+                receiver= receiver,
+                message= message,
+                title= title
+            )
             application.save()
             return application
         else:

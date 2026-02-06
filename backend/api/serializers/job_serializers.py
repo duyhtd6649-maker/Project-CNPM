@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from .cv_serializers import CVSerializer
-from database.models.jobs import Jobs, Applications
+from database.models.jobs import Jobs
+from database.models.services import Notifications
 
 class JobSerializer(serializers.ModelSerializer):
     company = serializers.CharField(source="company.name", read_only=True)
@@ -18,3 +18,9 @@ class JobStatusUpdateSerializer(serializers.Serializer):
         ('Open', 'Open'),
         ('Closed', 'Closed')
     ])
+
+class NotificationSerializer(serializers.ModelSerializer):
+    actor = serializers.CharField(source = 'receiver_username', read_only = True)
+    class Meta:
+        model = Notifications
+        fields = ['actor', 'message', 'title']

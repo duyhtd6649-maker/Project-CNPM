@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../app/AppProviders';
-import { 
-  Search, Bell, ChevronDown, Users, FileText, 
-  TrendingUp, LayoutDashboard, UserCog, Activity, 
+import {
+  Search, Bell, ChevronDown, Users, FileText,
+  TrendingUp, LayoutDashboard, UserCog, Activity,
   ShieldCheck, Menu, X, LogOut
 } from 'lucide-react';
-import { 
-  LineChart, Line, XAxis, YAxis, CartesianGrid, 
-  Tooltip, ResponsiveContainer, AreaChart, Area 
+import {
+  LineChart, Line, XAxis, YAxis, CartesianGrid,
+  Tooltip, ResponsiveContainer, AreaChart, Area
 } from 'recharts';
 import "../components/AdminDashboard.css";
 
@@ -53,54 +53,64 @@ const AdminDashboard = () => {
         </div>
 
         <nav className="sidebar-nav-custom">
+          {/* 1. DASHBOARD */}
           <div className="nav-item-custom active" onClick={() => navigate('/admin')}>
-            <LayoutDashboard size={20} /> 
+            <LayoutDashboard size={20} />
             {isSidebarOpen && <span>Dashboard</span>}
           </div>
 
-          {isSidebarOpen && <div className="sidebar-divider-text">MANAGEMENT</div>}
+          {/* 2. ACCOUNT MANAGEMENT */}
+          {isSidebarOpen && <div className="sidebar-divider-text">ACCOUNT MANAGEMENT</div>}
 
           <div className="nav-item-custom" onClick={() => navigate('/manage-internal')}>
-            <ShieldCheck size={20} /> 
-            {isSidebarOpen && <span>Internal Accounts</span>}
-          </div>
-          
-          <div className="nav-item-custom" onClick={() => navigate('/manage-candidate')}>
-            <Users size={20} /> 
-            {isSidebarOpen && <span>Candidates</span>}
+            <UserCog size={20} />
+            {isSidebarOpen && <span>Manage Account</span>}
           </div>
 
-          <div className="nav-item-custom" onClick={() => navigate('/manage-recruiter')}>
-            <UserCog size={20} /> 
-            {isSidebarOpen && <span>Recruiters</span>}
-          </div>
+          {/* 3. FEATURES */}
+          {isSidebarOpen && <div className="sidebar-divider-text">FEATURES</div>}
 
-          <div className="nav-item-custom" onClick={() => navigate('/manage-admin-acc')}>
-            <Activity size={20} /> 
-            {isSidebarOpen && <span>Admin Accounts</span>}
-          </div>
-
-          {isSidebarOpen && <div className="sidebar-divider-text">SYSTEM</div>}
-          
           <div className="nav-item-custom">
-            <FileText size={20} /> 
-            {isSidebarOpen && <span>Job Moderation</span>}
+            <Activity size={20} />
+            {isSidebarOpen && <span>Monitor Logs & Analytics</span>}
+          </div>
+
+          <div className="nav-item-custom" onClick={() => navigate('/cv-templates')}>
+            <FileText size={20} />
+            {isSidebarOpen && <span>Cabinets of Knowledge</span>}
+          </div>
+
+          <div className="nav-item-custom" onClick={() => navigate('/system-status')}>
+            <ShieldCheck size={20} />
+            {isSidebarOpen && <span>System Status Monitor</span>}
+          </div>
+
+          <div className="nav-item-custom">
+            <TrendingUp size={20} />
+            {isSidebarOpen && <span>System Reports</span>}
+          </div>
+
+          <div className="nav-item-custom">
+            <FileText size={20} />
+            {isSidebarOpen && <span>Articles Management</span>}
+          </div>
+
+          <div className="nav-item-custom">
+            <Users size={20} />
+            {isSidebarOpen && <span>User Package Management</span>}
           </div>
         </nav>
 
         <div className="sub-sidebar-footer">
           <div className="nav-item-custom logout-sub" onClick={handleLogout}>
-            <LogOut size={18} /> 
+            <LogOut size={18} />
             {isSidebarOpen && <span>Logout</span>}
           </div>
         </div>
       </aside>
 
       {/* MAIN CONTENT AREA */}
-      <main className="admin-main" style={{ 
-        marginLeft: isSidebarOpen ? '280px' : '80px',
-        width: isSidebarOpen ? 'calc(100% - 280px)' : 'calc(100% - 80px)'
-      }}>
+      <main className="admin-main">
         <header className="admin-navbar">
           <button className="toggle-sidebar" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
             {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
@@ -136,7 +146,7 @@ const AdminDashboard = () => {
               <div className="stat-info">
                 <p className="stat-label">Total Users</p>
                 <h2 className="stat-value">40,689</h2>
-                <p className="stat-change up"><TrendingUp size={14}/> 8.5% Up</p>
+                <p className="stat-change up"><TrendingUp size={14} /> 8.5% Up</p>
               </div>
               <div className="stat-icon blue"><Users size={28} /></div>
             </div>
@@ -144,7 +154,7 @@ const AdminDashboard = () => {
               <div className="stat-info">
                 <p className="stat-label">Active Jobs</p>
                 <h2 className="stat-value">10,293</h2>
-                <p className="stat-change up"><TrendingUp size={14}/> 1.3% Up</p>
+                <p className="stat-change up"><TrendingUp size={14} /> 1.3% Up</p>
               </div>
               <div className="stat-icon green"><FileText size={28} /></div>
             </div>
@@ -152,7 +162,7 @@ const AdminDashboard = () => {
               <div className="stat-info">
                 <p className="stat-label">Pending Approval</p>
                 <h2 className="stat-value">2,040</h2>
-                <p className="stat-change up"><TrendingUp size={14}/> 4.3% Up</p>
+                <p className="stat-change up"><TrendingUp size={14} /> 4.3% Up</p>
               </div>
               <div className="stat-icon red"><Activity size={28} /></div>
             </div>
@@ -160,13 +170,13 @@ const AdminDashboard = () => {
 
           {/* Registration Analytics Chart */}
           <div className="chart-main-card">
-            <h3 style={{fontWeight:800, marginBottom:'20px'}}>Registration Analytics</h3>
+            <h3 style={{ fontWeight: 800, marginBottom: '20px' }}>Registration Analytics</h3>
             <ResponsiveContainer width="100%" height={350}>
               <AreaChart data={cvData}>
                 <defs>
                   <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#4880FF" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#4880FF" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#4880FF" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#4880FF" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
@@ -180,7 +190,7 @@ const AdminDashboard = () => {
 
           <div className="bottom-grid">
             <div className="bottom-card">
-              <h3 style={{fontWeight:800, marginBottom:'20px'}}>User Segments</h3>
+              <h3 style={{ fontWeight: 800, marginBottom: '20px' }}>User Segments</h3>
               <div className="donut-container">
                 <div className="donut-visual">
                   <div className="donut-info">
@@ -196,15 +206,15 @@ const AdminDashboard = () => {
             </div>
 
             <div className="bottom-card">
-              <h3 style={{fontWeight:800, marginBottom:'20px'}}>Platform Growth</h3>
+              <h3 style={{ fontWeight: 800, marginBottom: '20px' }}>Platform Growth</h3>
               <ResponsiveContainer width="100%" height={320}>
                 <LineChart data={spendingData}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
                   <XAxis dataKey="year" axisLine={false} tickLine={false} />
                   <YAxis axisLine={false} tickLine={false} />
                   <Tooltip />
-                  <Line type="monotone" dataKey="user" stroke="#4880FF" strokeWidth={3} dot={{r: 6}} />
-                  <Line type="monotone" dataKey="repeated" stroke="#10B981" strokeWidth={3} dot={{r: 6}} />
+                  <Line type="monotone" dataKey="user" stroke="#4880FF" strokeWidth={3} dot={{ r: 6 }} />
+                  <Line type="monotone" dataKey="repeated" stroke="#10B981" strokeWidth={3} dot={{ r: 6 }} />
                 </LineChart>
               </ResponsiveContainer>
             </div>

@@ -35,7 +35,7 @@ const JobBrowsing = () => {
             setIsLoading(true);
             setError(null);
             try {
-                const response = await axiosClient.get('/api/search/job/');
+                const response = await axiosClient.get('/search/job/');
                 // Transform data từ API sang format hiển thị
                 const formattedJobs = response.data.map(job => ({
                     id: job.id,
