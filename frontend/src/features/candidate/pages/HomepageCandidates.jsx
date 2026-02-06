@@ -69,12 +69,12 @@ const HomepageCandidates = () => {
                     <div className="icon-box"><Bell size={28} /></div>
                     <span>Notification</span>
                   </div>
-                  <div className="mini-item" onClick={() => navigate('/create-cv')}>
+                  <div className="mini-item" onClick={() => navigate('/job-list')}>
                     <div className="icon-box"><FileText size={28} /></div>
                     <span>Jobs</span>
                   </div>
                 </div>
-                <div className="mini-footer"><LogOut size={16} /> Sign out</div>
+                <div className="mini-footer" onClick={() => navigate('/login')}><LogOut size={16} /> Sign out</div>
               </div>
             )}
           </div>

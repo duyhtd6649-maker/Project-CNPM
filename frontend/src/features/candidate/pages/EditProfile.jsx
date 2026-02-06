@@ -24,15 +24,13 @@ const EditProfile = () => {
 
   const [formData, setFormData] = useState({
     avatar: null,
-    userName: '',
+    firstName: '',
+    lastName: '',
     email: '',
-    id: '',
-    country: '',
+    phone: '',
+    address: '',
     dateOfBirth: '',
-    gender: '',
-    jobs: '',
-    achievement: '',
-    package: 'Free'
+    description: ''
   });
 
 
@@ -59,31 +57,19 @@ const EditProfile = () => {
           const data = await response.json();
           setFormData({
             avatar: data.avatar || null,
-            userName: `${data.first_name || ''} ${data.last_name || ''}`.trim() || data.username || '',
+            firstName: data.first_name || '',
+            lastName: data.last_name || '',
             email: data.email || '',
-            id: data.id_number || '',
-            country: data.country || '',
-            dateOfBirth: data.dob || '',
-            gender: data.gender || 'Male',
-            jobs: data.jobs || '',
-            achievement: data.achievement || '',
-            package: 'Free'
+            phone: data.phone || '',
+            address: data.address || '',
+            dateOfBirth: data.date_of_birth || '',
+            description: data.description || ''
           });
         } else {
-          // If API fails, fallback to localStorage username
-          const username = localStorage.getItem('username');
-          setFormData(prev => ({
-            ...prev,
-            userName: username || ''
-          }));
+          console.error('API Error:', response.status);
         }
       } catch (error) {
         console.error('Error fetching profile:', error);
-        const username = localStorage.getItem('username');
-        setFormData(prev => ({
-          ...prev,
-          userName: username || ''
-        }));
       }
     };
 
@@ -116,7 +102,6 @@ const EditProfile = () => {
 
 
   const validateForm = () => {
-
     if (formData.dateOfBirth) {
       const birthYear = new Date(formData.dateOfBirth).getFullYear();
       if (birthYear >= 2018 && birthYear <= 2027) {
@@ -124,15 +109,6 @@ const EditProfile = () => {
         return false;
       }
     }
-
-    if (formData.jobs && formData.jobs.trim().length > 0) {
-
-      if (/^\d/.test(formData.jobs)) {
-        alert("Tên công việc không hợp lệ, không bắt đầu bằng chữ số. Vui lòng nhập lại!");
-        return false;
-      }
-    }
-
     return true;
   };
 
@@ -145,33 +121,13 @@ const EditProfile = () => {
 
     const token = localStorage.getItem('access_token');
 
-    // Prepare data for backend API - split userName into first_name and last_name
-    // Backend requires BOTH first_name AND last_name to not be blank
-    const nameParts = formData.userName.trim().split(' ').filter(p => p.length > 0);
-    let firstName, lastName;
-
-    if (nameParts.length === 0) {
-      // Nếu không có tên, dùng placeholder
-      firstName = 'User';
-      lastName = 'User';
-    } else if (nameParts.length === 1) {
-      // Nếu chỉ có 1 từ, dùng cho cả first_name và last_name
-      firstName = nameParts[0];
-      lastName = nameParts[0];
-    } else {
-      // Nếu có nhiều từ: từ cuối là first_name (tên), còn lại là last_name (họ)
-      firstName = nameParts[nameParts.length - 1];
-      lastName = nameParts.slice(0, -1).join(' ');
-    }
-
     const profileData = {
-      first_name: firstName,
-      last_name: lastName,
-      country: formData.country,
-      dob: formData.dateOfBirth,
-      gender: formData.gender,
-      jobs: formData.jobs,
-      id_number: formData.id
+      first_name: formData.firstName || 'User',
+      last_name: formData.lastName || 'User',
+      phone: formData.phone,
+      address: formData.address,
+      date_of_birth: formData.dateOfBirth,
+      description: formData.description
     };
 
     try {
@@ -186,7 +142,7 @@ const EditProfile = () => {
 
       if (response.ok) {
         // Also update localStorage username for navbar display
-        localStorage.setItem('username', formData.userName);
+        localStorage.setItem('username', `${formData.lastName} ${formData.firstName}`);
         alert('Cập nhật thành công!');
         navigate('/profile');
       } else {
@@ -212,7 +168,7 @@ const EditProfile = () => {
       <header className="profile-top-nav">
         <div className="welcome-section">
           <h1 onClick={handleBack} className="back-home-link">
-            <span className="back-arrow">⬅</span> Welcome, {formData.userName || 'User'}
+            <span className="back-arrow">⬅</span> Welcome, {formData.lastName} {formData.firstName || 'User'}
           </h1>
           <p className="current-date">Hôm nay: {new Date().toLocaleDateString('vi-VN')}</p>
         </div>
@@ -273,52 +229,35 @@ const EditProfile = () => {
           <div className="form-grid">
             <div className="form-column">
               <div className="form-field">
-                <label>User Name</label>
-                <input type="text" name="userName" value={formData.userName} onChange={handleChange} />
+                <label>Last Name (Họ)</label>
+                <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} />
+              </div>
+              <div className="form-field">
+                <label>First Name (Tên)</label>
+                <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} />
               </div>
               <div className="form-field">
                 <label>Email</label>
                 <input type="text" name="email" value={formData.email} onChange={handleChange} disabled style={{ backgroundColor: '#eee' }} />
               </div>
-
               <div className="form-field">
-                <label>ID number or Passport</label>
-                <input type="text" name="id" value={formData.id} onChange={handleChange} />
-              </div>
-
-              <div className="form-field">
-                <label>Country</label>
-                <input type="text" name="country" value={formData.country} onChange={handleChange} />
-              </div>
-              <div className="form-field">
-                <label>Date of Birth</label>
-                <input type="date" name="dateOfBirth" value={formData.dateOfBirth} onChange={handleChange} />
+                <label>Phone</label>
+                <input type="text" name="phone" value={formData.phone} onChange={handleChange} />
               </div>
             </div>
 
             <div className="form-column">
               <div className="form-field">
-                <label>Gender</label>
-                <select name="gender" value={formData.gender} onChange={handleChange}>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                </select>
+                <label>Address</label>
+                <input type="text" name="address" value={formData.address} onChange={handleChange} />
               </div>
               <div className="form-field">
-                <label>Jobs</label>
-                <input type="text" name="jobs" value={formData.jobs} onChange={handleChange} />
+                <label>Date of Birth</label>
+                <input type="date" name="dateOfBirth" value={formData.dateOfBirth} onChange={handleChange} />
               </div>
               <div className="form-field">
-                <label>Achievement</label>
-                <input type="text" name="achievement" value={formData.achievement} onChange={handleChange} />
-              </div>
-              <div className="form-field">
-                <label>Package</label>
-                <select name="package" value={formData.package} onChange={handleChange} className="package-select">
-                  <option value="Free">Free</option>
-                  <option value="Standard">Standard</option>
-                  <option value="Premium">Premium</option>
-                </select>
+                <label>Description</label>
+                <input type="text" name="description" value={formData.description} onChange={handleChange} />
               </div>
             </div>
           </div>
