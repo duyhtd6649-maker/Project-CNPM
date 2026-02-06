@@ -318,6 +318,7 @@ body.dark-mode .divider {
     background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border-color);
+    overflow: visible;
 }
 
 body.dark-mode .top-header {
@@ -330,6 +331,7 @@ body.dark-mode .top-header {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+    overflow: visible;
 }
 
 .header-top {
@@ -396,10 +398,9 @@ body.dark-mode .top-header {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    overflow-x: auto;
+    overflow: visible;
     padding-bottom: 0.25rem;
-    scrollbar-width: none;
-
+    flex-wrap: wrap;
 }
 
 .filters-row::-webkit-scrollbar {
@@ -727,4 +728,166 @@ body.dark-mode .filter-divider {
     font-size: 0.75rem;
     color: #9ca3af;
     padding-bottom: 2.5rem;
+}
+
+/* Filter Dropdown Styles */
+.filter-dropdown-wrapper {
+    position: relative;
+}
+
+.filter-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 0.5rem;
+    min-width: 160px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    z-index: 9999;
+    overflow: hidden;
+    animation: dropdownFade 0.2s ease;
+}
+
+@keyframes dropdownFade {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dropdown-item {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-main);
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.dropdown-item:hover {
+    background: var(--surface-hover);
+}
+
+.dropdown-item.selected {
+    background: rgba(95, 75, 139, 0.1);
+    color: var(--primary);
+}
+
+.dropdown-item.clear {
+    border-top: 1px solid var(--border-color);
+    color: #ef4444;
+    font-weight: 600;
+}
+
+.dropdown-item.clear:hover {
+    background: rgba(239, 68, 68, 0.1);
+}
+
+body.dark-mode .filter-dropdown {
+    background: var(--bg-dark);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Dropdown Input Styles */
+.dropdown-input-wrapper {
+    padding: 0.75rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.dropdown-input-wrapper input {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.dropdown-input-wrapper input:focus {
+    border-color: var(--primary);
+}
+
+.apply-btn {
+    padding: 0.5rem 1rem;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.apply-btn:hover {
+    background: #4a3a8c;
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: #e5e7eb;
+    margin: 0;
+}
+
+/* Salary Dropdown Specific */
+.salary-dropdown {
+    min-width: 220px;
+}
+
+.dropdown-salary-wrapper {
+    padding: 0.75rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.salary-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #6b7280;
+}
+
+.salary-inputs {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.salary-inputs input {
+    width: 70px;
+    padding: 0.5rem 0.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    text-align: center;
+    outline: none;
+}
+
+.salary-inputs input:focus {
+    border-color: var(--primary);
+}
+
+.salary-inputs span {
+    color: #9ca3af;
+}
+
+body.dark-mode .dropdown-input-wrapper input,
+body.dark-mode .salary-inputs input {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+body.dark-mode .dropdown-divider {
+    background: rgba(255, 255, 255, 0.1);
 }
