@@ -480,9 +480,10 @@ class interviewService:
         
         apps = Applications.objects.filter(
             job__recruiter__user=recruiter_user,
-            system_status='approved'
-        ).select_related('candidate__user', 'job')
-        return apps
+            system_status='approved',
+            job_status__in=['Interview Scheduling', 'Interview Scheduled']
+        )
+        return apps 
 
     def create_interview(recruiter_user, application_id, interview_date, location, note=''):
         if getattr(recruiter_user, 'role', '') != 'recruiter':

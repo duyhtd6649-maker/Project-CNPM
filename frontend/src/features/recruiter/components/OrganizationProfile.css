@@ -4,12 +4,13 @@
   gap: 24px;
   width: 100%;
   padding-bottom: 40px;
+  align-items: flex-start; /* Để cột phải không bị giãn theo cột trái */
 }
 
-.left-column { flex: 2; display: flex; flex-direction: column; gap: 24px; }
-.right-column { flex: 1; display: flex; flex-direction: column; gap: 24px; }
+.left-column { flex: 2; display: flex; flex-direction: column; gap: 24px; min-width: 0; }
+.right-column { flex: 1; display: flex; flex-direction: column; gap: 24px; min-width: 0; }
 
-/* --- CARD --- */
+/* --- CARD CHUNG --- */
 .card {
   background: white;
   border-radius: 12px;
@@ -18,124 +19,121 @@
   overflow: hidden;
 }
 
-/* --- HEADER PROFILE (QUAN TRỌNG) --- */
+/* --- HEADER COMPANY CARD --- */
 .company-card { 
-  padding: 0; 
-  position: relative; 
   display: flex;
   flex-direction: column;
 }
 
-/* Ảnh bìa */
 .cover-image {
   height: 200px;
   width: 100%;
   background-color: #f3f4f6;
   position: relative;
 }
-.cover-image img { 
-  width: 100%; 
-  height: 100%; 
-  object-fit: cover; 
-}
+.cover-image img { width: 100%; height: 100%; object-fit: cover; }
 
-/* Nút thay ảnh bìa */
 .btn-cover-edit {
-  position: absolute;
-  bottom: 15px;
-  right: 15px;
-  background: rgba(0,0,0,0.6);
-  color: white;
-  border: none;
-  padding: 8px;
-  border-radius: 8px;
-  cursor: pointer;
-  display: flex; align-items: center; gap: 5px; font-size: 13px;
+  position: absolute; bottom: 15px; right: 15px;
+  background: rgba(0,0,0,0.6); color: white;
+  border: none; padding: 8px 12px; border-radius: 8px;
+  cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 13px;
 }
 
-/* Phần thông tin bên dưới ảnh bìa */
+/* CONTAINER THÔNG TIN CHÍNH */
 .company-info-container {
   padding: 0 24px 24px 24px;
-  position: relative; /* Để căn vị trí nút Edit */
 }
 
-/* AVATAR - CHỈNH LẠI CHO CHUẨN */
+/* Hàng chứa Logo + Info + Nút bấm */
+.header-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+/* LOGO */
 .company-avatar {
-  width: 110px;
-  height: 110px;
-  margin-top: -55px; /* Đẩy lên đè ảnh bìa */
+  width: 100px; height: 100px;
+  margin-top: -40px; /* Đẩy logo lên đè ảnh bìa */
   background: white;
-  border-radius: 16px; /* Bo góc nhẹ cho hiện đại */
-  padding: 5px;
+  border-radius: 16px;
+  padding: 4px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
   position: relative;
   z-index: 10;
-  margin-bottom: 15px;
+  flex-shrink: 0; /* Không bị co lại */
 }
 
 .avatar-placeholder {
   width: 100%; height: 100%;
   background: #4318FF; color: white;
   display: flex; align-items: center; justify-content: center;
-  font-weight: bold; font-size: 30px; border-radius: 12px;
-  overflow: hidden;
+  font-weight: bold; font-size: 32px; border-radius: 12px; overflow: hidden;
 }
 .avatar-placeholder img { width: 100%; height: 100%; object-fit: cover; }
-
-/* NÚT EDIT - ĐẶT GÓC PHẢI */
-.action-buttons {
-  position: absolute;
-  top: 20px; 
-  right: 24px;
-  display: flex;
-  gap: 10px;
+.avatar-overlay {
+  position: absolute; inset: 0; background: rgba(0,0,0,0.5);
+  border-radius: 12px; display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
 }
 
+/* WRAPPER INFO + BUTTON */
+.info-action-wrapper {
+  flex: 1; /* Chiếm hết phần còn lại */
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start; /* Căn nút lên trên cùng */
+  padding-top: 12px; /* Đẩy xuống chút cho cân với logo */
+  gap: 15px;
+  flex-wrap: wrap; /* Xuống dòng nếu màn hình nhỏ */
+}
+
+/* TEXT CONTENT */
+.company-text-content {
+  flex: 1; /* Chiếm không gian bên trái */
+  min-width: 200px;
+}
+
+.company-name { font-size: 24px; font-weight: 700; color: #111827; margin: 0 0 8px 0; }
+.meta-row { display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 8px; }
+.company-meta { color: #6b7280; font-size: 14px; margin: 0; display: flex; align-items: center; gap: 6px; }
+
+/* ACTION BUTTONS - Không dùng absolute nữa */
+.action-buttons {
+  flex-shrink: 0; /* Không bị co lại */
+}
+
+.edit-actions { display: flex; gap: 8px; }
+
+/* BUTTON STYLES */
 .btn {
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  border: none;
-  display: flex; align-items: center; gap: 6px; font-size: 14px;
+  padding: 8px 16px; border-radius: 8px;
+  font-weight: 600; cursor: pointer; border: none;
+  display: flex; align-items: center; gap: 6px; font-size: 14px; white-space: nowrap;
 }
 .btn-primary { background: #4318FF; color: white; }
+.btn-primary:hover { background: #3b82f6; }
 .btn-secondary { background: #f3f4f6; color: #374151; }
 .btn-secondary:hover { background: #e5e7eb; }
 
-/* --- TEXT HIỂN THỊ --- */
-.company-name { font-size: 26px; font-weight: 700; color: #111827; margin-bottom: 6px; }
-.company-meta { color: #6b7280; font-size: 15px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
-
-/* --- FORM EDIT (Để không bị lệch) --- */
+/* FORM EDIT */
 .edit-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-top: 10px;
-  width: 100%;
-  max-width: 600px;
+  display: flex; flex-direction: column; gap: 10px; width: 100%;
 }
+.input-lg { font-size: 18px; font-weight: 700; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; width: 100%; }
+.input-row { display: flex; gap: 10px; }
+.input-md { flex: 1; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; width: 100%; }
+.input-area { width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-family: inherit; line-height: 1.6; resize: vertical; box-sizing: border-box; }
 
-.input-lg {
-  font-size: 20px; font-weight: 700; padding: 10px;
-  border: 1px solid #d1d5db; border-radius: 6px; width: 100%;
-}
-
-.input-row { display: flex; gap: 12px; }
-.input-md { flex: 1; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; }
-
-.input-area {
-  width: 100%; padding: 12px;
-  border: 1px solid #d1d5db; border-radius: 8px;
-  font-family: inherit; line-height: 1.6; resize: vertical;
-}
-
-/* Gallery & Contact */
+/* OVERVIEW CARD */
+.overview-card { padding: 24px; }
 .card-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; color: #111827; }
-.content-text { color: #4b5563; line-height: 1.6; font-size: 15px; }
-.gray-placeholder { background: #f9fafb; border-radius: 8px; color: #9ca3af; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+.content-text { color: #4b5563; line-height: 1.6; font-size: 15px; white-space: pre-line; }
 
-/* Ensure About Company card can expand and wrap long text */
-.overview-card { overflow: visible; padding: 18px; }
-.overview-card .content-text { white-space: pre-wrap; word-break: break-word; line-height: 1.8; }
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .main-layout { flex-direction: column; }
+  .info-action-wrapper { flex-direction: column; } /* Xuống dòng nút bấm khi mobile */
+  .action-buttons { width: 100%; display: flex; justify-content: flex-start; margin-top: 10px; }
+}

@@ -6,6 +6,7 @@ from apps.users_services import UserService, RecruiterService, AdminService, Com
 from apps.job_services import NotificationService
 from ..serializers.user_serializers import InterviewSerializer, InterviewUpdateSerializer, UserSerializer, UserProfileSerializer, CandidateSerializer, UserNameSerializer,RecruiterSerializer, CompanySerializer, applicationListSerializer
 from ..serializers.job_serializers import NotificationSerializer
+from ..serializers.application_serializers import ApplicationSerializer
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.exceptions import *
@@ -404,7 +405,7 @@ def GetRecruitersInfor(request):
 def list_approved_candidates(request):
     try:
         approved_applications = interviewService.get_approved_candidates(recruiter_user=request.user)
-        serializer = applicationListSerializer(approved_applications, many=True)
+        serializer = ApplicationSerializer(approved_applications, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     except PermissionDenied:
         return Response({"error": "User is not a recruiter"}, status=status.HTTP_403_FORBIDDEN)
