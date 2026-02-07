@@ -10,7 +10,6 @@ const adminApi = {
             return response.data;
         } catch (error) {
             console.warn("API Error (getSystemStatus), using mock data:", error);
-            // Dữ liệu giả lập để Dashboard đẹp
             return {
                 uptime: "99.98%",
                 cpu: Math.floor(Math.random() * (65 - 30) + 30),
@@ -38,12 +37,14 @@ const adminApi = {
     // ============================================================
     // 2. QUẢN LÝ BÀI ĐĂNG (JOB POSTS)
     // ============================================================
-    
-    // Lấy danh sách Job
     getJobPosts: async () => {
         try {
-            // Gọi API search để lấy list
+            /** * FIX: Thay đổi endpoint từ "/search/job/" thành "/admin/jobs/"
+             * Đây là endpoint khớp với urls.py: path('admin/jobs/', job_views.admin_job_list)
+             */
             const response = await axiosClient.get("/admin/jobs/");
+            
+            // Xử lý các dạng trả về của DRF (array hoặc object results)
             if (Array.isArray(response.data)) return response.data;
             if (response.data && Array.isArray(response.data.results)) return response.data.results;
             return [];
@@ -53,37 +54,36 @@ const adminApi = {
         }
     },
 
-    // Cập nhật trạng thái (Approve/Reject)
     updateJobStatus: async (id, status) => {
         if (String(id).startsWith('mock-')) return { success: true, job: { id, status } };
+        
         const url = `/job/processjob/${id}/`;
-        const data = { status: status };
+        
+        /**
+         * FIX LỖI 400: Mapping chuẩn theo JobStatusUpdateSerializer trong job_serializers.py
+         * Backend yêu cầu chính xác: 'Open' hoặc 'Closed' (Case-sensitive)
+         */
+        const statusMapping = {
+            'Approved': 'Open',   // Phải viết hoa chữ O
+            'Rejected': 'Closed', // Phải viết hoa chữ C
+            'Pending': 'Open'
+        };
+
+        const finalStatus = statusMapping[status] || status;
+        const data = { new_status: finalStatus }; 
 
         try {
-            // Thử PUT vì đây là phương thức chuẩn của Django REST cho các hàm Update/Process
+            console.log(`📡 Admin sending status update:`, data);
             const response = await axiosClient.put(url, data);
             return response.data;
         } catch (error) {
-            // Fallback sang POST nếu PUT báo 405
-            if (error.response && error.response.status === 405) {
-                console.log(`PATCH failed (405). Retrying with PUT...`);
-                try {
-                    const postRes = await axiosClient.post(url, data);
-                    return postRes.data;
-                } catch (postError) {
-                    handleApiError(postError);
-                    throw postError;
-                }
-            }
             handleApiError(error);
             throw error;
         }
     },
 
-    // Xóa Job
     deleteJobPost: async (id) => {
         if (String(id).startsWith('mock-')) return { success: true };
-
         try {
             await axiosClient.delete(`/job/${id}/delete/`);
             return { success: true };
@@ -94,7 +94,7 @@ const adminApi = {
     },
 
     // ============================================================
-    // 3. QUẢN LÝ TÀI KHOẢN (USERS MANAGEMENT)
+    // 3. QUẢN LÝ NGƯỜI DÙNG (USERS)
     // ============================================================
     getCandidates: async () => {
         try {
@@ -109,6 +109,16 @@ const adminApi = {
     getRecruiters: async () => {
         try {
             const response = await axiosClient.get("/recruiters/");
+            return response.data;
+        } catch (error) {
+            handleApiError(error);
+            return [];
+        }
+    },
+
+    getAllUsers: async () => {
+        try {
+            const response = await axiosClient.get("/users/");
             return response.data;
         } catch (error) {
             handleApiError(error);
@@ -137,7 +147,7 @@ const adminApi = {
     },
 
     // ============================================================
-    // 4. KNOWLEDGE CABINETS (CV, Questions, Resources)
+    // 4. KNOWLEDGE CABINETS
     // ============================================================
     getCVTemplates: async () => {
         try {
@@ -148,7 +158,8 @@ const adminApi = {
 
     createCVTemplate: async (data) => {
         try {
-            return (await axiosClient.post("/cabinets/cv-templates/", data)).data;
+            const response = await axiosClient.post("/cabinets/cv-templates/", data);
+            return response.data;
         } catch (error) {
             handleApiError(error);
             throw error;
@@ -164,7 +175,8 @@ const adminApi = {
 
     createInterviewQuestion: async (data) => {
         try {
-            return (await axiosClient.post("/cabinets/interview-questions/", data)).data;
+            const response = await axiosClient.post("/cabinets/interview-questions/", data);
+            return response.data;
         } catch (error) {
             handleApiError(error);
             throw error;
@@ -180,7 +192,8 @@ const adminApi = {
 
     createResource: async (data) => {
         try {
-            return (await axiosClient.post("/cabinets/resources/", data)).data;
+            const response = await axiosClient.post("/cabinets/resources/", data);
+            return response.data;
         } catch (error) {
             handleApiError(error);
             throw error;
@@ -189,7 +202,8 @@ const adminApi = {
 
     deleteResource: async (id) => {
         try {
-            return await axiosClient.delete(`/cabinets/resources/${id}/`);
+            await axiosClient.delete(`/cabinets/resources/${id}/`);
+            return { success: true };
         } catch (error) {
             handleApiError(error);
             throw error;
@@ -198,54 +212,42 @@ const adminApi = {
 };
 
 // ============================================================
-// HÀM XỬ LÝ LỖI CHI TIẾT (LOGIC MỚI)
+// HÀM XỬ LÝ LỖI CHI TIẾT
 // ============================================================
 const handleApiError = (error) => {
-    let message = "Đã có lỗi xảy ra, vui lòng thử lại sau.";
+    let message = "Đã có lỗi xảy ra.";
     let details = "";
 
     if (error.response) {
-        const status = error.response.status;
         const data = error.response.data;
+        const status = error.response.status;
 
         switch (status) {
             case 400:
-                message = "Dữ liệu gửi đi không hợp lệ (400).";
-                // Lấy chi tiết lỗi từ backend (ví dụ lỗi validate field)
+                message = "Dữ liệu không hợp lệ (400).";
                 if (typeof data === 'object') {
                     details = Object.entries(data)
                         .map(([key, val]) => `${key}: ${Array.isArray(val) ? val.join(", ") : val}`)
                         .join("\n");
                 }
                 break;
-            case 401:
-                message = "Phiên làm việc đã hết hạn. Vui lòng đăng nhập lại.";
-                break;
             case 403:
-                message = "⛔ Bạn không có quyền Admin để thực hiện thao tác này (403).";
+                message = "⛔ Bạn không có quyền thực hiện (403).";
                 break;
             case 404:
-                message = "Không tìm thấy tài nguyên yêu cầu (404). Có thể URL backend đã thay đổi.";
-                break;
-            case 405:
-                message = `Phương thức ${error.config.method.toUpperCase()} không được hỗ trợ (405).`;
+                message = "Không tìm thấy đường dẫn (404). Hãy kiểm tra URL Backend.";
                 break;
             case 500:
-                message = "Lỗi hệ thống từ phía Server (500).";
+                message = "Lỗi hệ thống Server (500).";
                 break;
             default:
                 message = data?.detail || data?.message || message;
         }
     } else if (error.request) {
-        message = "Không thể kết nối tới server. Vui lòng kiểm tra internet.";
+        message = "Không kết nối được server (Hãy kiểm tra Backend).";
     }
 
-    // Hiển thị thông báo
-    console.error("--- API ERROR LOG ---");
-    console.error("Status:", error.response?.status);
-    console.error("Data:", error.response?.data);
-    
-    // Bạn có thể thay alert bằng một thư viện như Toast (ví dụ: toast.error)
+    console.error("--- API ERROR LOG ---", error.response?.status, error.response?.data);
     alert(`${message}${details ? "\n\nChi tiết:\n" + details : ""}`);
 };
 

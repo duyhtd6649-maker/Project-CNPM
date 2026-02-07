@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; 
-// ------------------------------------
-import { useAuth } from '../../../app/AppProviders'; 
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../../app/AppProviders';
 import {
   Search, Bell, ChevronDown, Users, FileText,
   TrendingUp, LayoutDashboard, UserCog, Activity,
-  ShieldCheck, Menu, X, LogOut
+  ShieldCheck, Menu, X, LogOut, FileCheck2
 } from 'lucide-react';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid,
@@ -110,6 +109,7 @@ const AdminDashboard = () => {
             {isSidebarOpen && <span>Logout</span>}
           </div>
         </div>
+        
       </aside>
 
       {/* MAIN CONTENT AREA */}

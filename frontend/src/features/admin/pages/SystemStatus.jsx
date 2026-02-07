@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../app/AppProviders';
+import ApplicationReview from './ApplicationReview';
 import {
     LayoutDashboard, UserCog, Activity, Library,
     ShieldCheck, ClipboardList, MessageSquare, Gift,
