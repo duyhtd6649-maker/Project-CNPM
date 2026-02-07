@@ -128,11 +128,9 @@ class JobService:
         try:
             candidate = Candidates.objects.get(user=user)
             candidate_skills = []
-            cv = Cvs.objects.filter(candidate=candidate, isdeleted=False).first()
-            if cv is not None:
-                cv_analysis = Cvanalysisresult.objects.filter(cv=cv, isdeleted=False).first()
-                if cv_analysis and cv_analysis.extracted_skill:
-                    candidate_skills = cv_analysis.extracted_skill 
+            cv_analysis = Cvanalysisresult.objects.filter(cv__candidate = candidate, isdeleted=False).first()
+            if cv_analysis and cv_analysis.extracted_skill:
+                candidate_skills = cv_analysis.extracted_skill 
             skill_score_expression = Value(0, output_field=IntegerField())
             if candidate_skills:
                 for skill in candidate_skills:

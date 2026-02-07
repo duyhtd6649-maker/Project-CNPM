@@ -103,7 +103,7 @@ def cv_detail(request, id):
 def cv_list(request):
     try:
         cv = cv_services.cv_list(user = request.user)
-        serializer = CVListSerializer(cv, many = True)
+        serializer = CVSerializer(cv, many = True)
         return Response(serializer.data, status= status.HTTP_200_OK)
     except PermissionError as e:
         return Response({f"{e}"},status=status.HTTP_403_FORBIDDEN)

@@ -7,10 +7,11 @@ class ApplicationSerializer(serializers.ModelSerializer):
     user_name = serializers.CharField(source = 'candidate.user.fullname', read_only = True)
     user_phone = serializers.CharField(source = 'candidate.user.phone', read_only = True)
     user_email = serializers.CharField(source = 'candidate.user.email', read_only = True)
-    cv_url = serializers.CharField(source = 'cvsid.file_url')
+    cv_url = serializers.CharField(source = 'cvsid.file_url',required = False)
+
     class Meta:
         model = Applications
-        fields = ['id', 'job_id', 'cv_url', 'job_status','system_status', 'job_title','created_date','company','user_name','user_phone','user_email']
+        fields = ['id', 'job_id', 'cvsid','cv_url', 'job_status','system_status', 'job_title','created_date','company','user_name','user_phone','user_email']
         read_only_fields = ['id','job_status','system_status']
 
 class ApplicationSystemStatusUpdateSerializer(serializers.Serializer):

@@ -7,7 +7,7 @@ class CVSerializer(serializers.ModelSerializer):
     file_url = serializers.FileField(read_only=True)
     class Meta:
         model = Cvs
-        fields = ['id', 'file', 'file_url', 'created_by', 'file_name', 'file_size']
+        fields = ['id', 'file', 'file_url', 'created_by', 'file_name', 'file_size', 'created_date']
         read_only_fields = ['id', 'created_by', 'file_name', 'file_size', 'file_url']
 
     def validate_file(self, value):
