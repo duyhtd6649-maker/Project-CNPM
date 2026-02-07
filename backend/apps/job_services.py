@@ -89,7 +89,7 @@ class JobService:
         
     @staticmethod
     def search_jobs(filters):
-        job_list = Jobs.objects.filter(isdeleted=False)
+        job_list = Jobs.objects.filter(isdeleted=False, status = 'Open')
         if filters.get('title') is not None:
             job_list = job_list.filter(title__icontains=filters.get('title'))
         if filters.get('description') is not None:
@@ -177,6 +177,12 @@ class JobService:
             return job
         except Jobs.DoesNotExist:
             raise NotFound({"error":"Job not found"})
+        
+    @staticmethod
+    def list_all_job(user):
+        if not AdminService.Is_Super_User(user):
+            raise PermissionError({"error":"User don't have permission"})
+        return Jobs.objects.all()
 
 class NotificationTitle:
     JOB_STATUS = "Job status has changed"
