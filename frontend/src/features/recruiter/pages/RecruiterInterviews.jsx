@@ -240,7 +240,7 @@ const RecruiterInterviews = () => {
                                     <button className="btn-approve" onClick={() => openScheduleModal(cand)} style={{ width: '100%', justifyContent: 'center' }}>
                                         <Calendar size={16} /> Schedule Interview
                                     </button>
-                                ) : (cand.status === 'Interview Scheduled' && cand.interviewId) ? (
+                                ) : cand.status === 'Interview Scheduled' ? (
                                     <button className="btn-view-details" onClick={() => openEditModal(cand)} style={{ width: '100%', justifyContent: 'center' }}>
                                         <Calendar size={16} /> Edit Interview
                                     </button>

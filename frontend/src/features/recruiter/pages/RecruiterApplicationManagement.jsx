@@ -127,16 +127,25 @@ const RecruiterApplicationManagement = () => {
     });
 
     const getStatusClass = (status) => {
-        switch (status?.toLowerCase()) {
+        const s = status?.trim().toLowerCase();
+        switch (s) {
             case 'approved':
-            case 'hired': return 'status-approved';
-            case 'rejected': return 'status-rejected';
+            case 'hired':
+            case 'interview scheduling':
+            case 'interview scheduled':
+                return 'status-approved';
+            case 'rejected':
+                return 'status-rejected';
             case 'interviewing':
-            case 'scheduling': return 'status-interviewing';
-            case 'reviewed': return 'status-reviewed';
+            case 'scheduling':
+                return 'status-interviewing';
+            case 'reviewed':
+                return 'status-reviewed';
             case 'waiting':
-            case 'pending': return 'status-pending';
-            default: return 'status-pending';
+            case 'pending':
+                return 'status-pending';
+            default:
+                return 'status-pending';
         }
     };
 
