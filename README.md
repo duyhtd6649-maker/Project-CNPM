@@ -90,7 +90,6 @@ Các tính năng chia làm 3 mức: đã làm - chưa hoàn thiện - chưa làm
 * Candidate:
    - Sign up / Login with Email, Google, or OAuth.
    - Take quizzes (career orientation, skills).
-   - Edit CV based on available CV template.
    - View articles and company satisfaction rating.
    - Do challenges to get a badge(optional).
    - Buy a premium package.
