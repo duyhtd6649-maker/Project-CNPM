@@ -91,10 +91,6 @@ const MyApplications = () => {
                             <div key={app.id} className="app-card">
                                 <div>
                                     <div className="app-header">
-                                        <div className="company-logo-placeholder">
-                                            {/* Use first letter of company or 'C' */}
-                                            {(app.company || 'C').charAt(0).toUpperCase()}
-                                        </div>
                                         <span className={`status-badge ${getStatusClass(app.system_status)}`}>
                                             {app.system_status || 'Pending'}
                                         </span>

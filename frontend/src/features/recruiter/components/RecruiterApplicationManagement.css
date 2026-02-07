@@ -1,0 +1,342 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap');
+
+/* =========================================
+   RECRUITER APPLICATION MANAGEMENT STYLES
+   (Adapted from MyApplications.css & ApplyJobsReview.css)
+   ========================================= */
+
+.recruiter-apps-container {
+    padding: 24px;
+    background-color: #F4F7FE;
+    /* Matches dashboard bg */
+    min-height: 100%;
+    font-family: 'Nunito Sans', sans-serif;
+}
+
+.apps-page-header {
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.apps-page-header h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #2B3674;
+    margin: 0;
+}
+
+.apps-page-header p {
+    font-size: 14px;
+    color: #A3AED0;
+    margin-top: 4px;
+}
+
+/* TOOLBAR */
+.apps-toolbar {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.search-box-custom {
+    display: flex;
+    align-items: center;
+    background: white;
+    padding: 10px 16px;
+    border-radius: 30px;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.02);
+    width: 300px;
+}
+
+.search-box-custom input {
+    border: none;
+    outline: none;
+    margin-left: 10px;
+    width: 100%;
+    color: #2B3674;
+    font-weight: 500;
+}
+
+.filter-select {
+    border: none;
+    background: white;
+    padding: 10px 20px;
+    border-radius: 30px;
+    color: #2B3674;
+    font-weight: 600;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.02);
+    cursor: pointer;
+    outline: none;
+}
+
+/* GRID LAYOUT */
+.recruiter-apps-grid {
+    display: grid;
+    /* Responsive grid similar to MyApplications */
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+    width: 100%;
+}
+
+/* CARD STYLE */
+.ra-card {
+    background: white;
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.ra-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.ra-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.candidate-avatar-placeholder {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: #E0E5F2;
+    color: #4318FF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.status-tag {
+    padding: 4px 12px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    height: fit-content;
+}
+
+.status-pending {
+    background: #FFF7ED;
+    color: #F59E0B;
+}
+
+.status-approved {
+    background: #ECFDF5;
+    color: #059669;
+}
+
+.status-hired {
+    background: #ECFDF5;
+    color: #059669;
+}
+
+.status-rejected {
+    background: #FEF2F2;
+    color: #EF4444;
+}
+
+.status-interviewing {
+    background: #F0FDF4;
+    color: #16A34A;
+}
+
+.status-reviewed {
+    background: #E0E7FF;
+    color: #4F46E5;
+}
+
+.ra-body {
+    flex: 1;
+}
+
+.ra-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #2B3674;
+    margin-bottom: 4px;
+}
+
+.ra-role {
+    font-size: 14px;
+    color: #A3AED0;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.ra-details-row {
+    font-size: 13px;
+    color: #707EAE;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ra-footer {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid #F4F7FE;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-view-details {
+    flex: 1;
+    background: transparent;
+    border: 1px solid #E0E5F2;
+    color: #2B3674;
+    padding: 8px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s;
+}
+
+.btn-view-details:hover {
+    background: #F4F7FE;
+    border-color: #4318FF;
+    color: #4318FF;
+}
+
+/* MODAL */
+.ra-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+}
+
+.ra-modal-content {
+    background: white;
+    width: 600px;
+    max-width: 90vw;
+    border-radius: 24px;
+    padding: 30px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.ra-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+    border-bottom: 1px solid #F4F7FE;
+    padding-bottom: 16px;
+}
+
+.ra-modal-title h2 {
+    font-size: 20px;
+    color: #2B3674;
+    font-weight: 700;
+    margin: 0;
+}
+
+.ra-modal-close {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #A3AED0;
+}
+
+.ra-modal-body {
+    margin-bottom: 24px;
+}
+
+.ra-info-group {
+    margin-bottom: 16px;
+}
+
+.ra-label {
+    font-size: 12px;
+    color: #A3AED0;
+    font-weight: 600;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+}
+
+.ra-value {
+    font-size: 15px;
+    color: #2B3674;
+    font-weight: 500;
+}
+
+.ra-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.btn-reject {
+    background: white;
+    border: 1px solid #EF4444;
+    color: #EF4444;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-approve {
+    background: #4318FF;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-reject:hover {
+    background: #FEF2F2;
+}
+
+.btn-approve:hover {
+    background: #3311CC;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    color: #A3AED0;
+    grid-column: 1 / -1;
+}

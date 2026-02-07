@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import axios from 'axios';
 import OrganizationProfile from './OrganizationProfile';
 import { useNavigate } from 'react-router-dom';
+import RecruiterApplicationManagement from './RecruiterApplicationManagement'; // IMPORT NEW COMPONENT
 
 import {
   LayoutDashboard,
@@ -18,7 +19,8 @@ import {
   CheckCircle,
   Clock,
   MoreHorizontal,
-  Building2
+  Building2,
+  FileText // Added Icon
 } from 'lucide-react';
 
 import {
@@ -97,11 +99,11 @@ const RecruiterDashboard = () => {
       const token = localStorage.getItem('access_token');
       const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000';
       const url = `${API_BASE.replace(/\/$/, '')}/api/recruiter/jobs/`;
-      
+
       const response = await axios.get(url, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      
+
       setJobs(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error("Lỗi khi lấy danh sách job:", error);
@@ -157,6 +159,14 @@ const RecruiterDashboard = () => {
           </div>
 
           <div
+            className={`menu-item ${activeTab === 'applications' ? 'active' : ''}`}
+            onClick={() => setActiveTab('applications')}
+          >
+            <FileText size={22} />
+            <span className="menu-text">Applications</span>
+          </div>
+
+          <div
             className={`menu-item ${activeTab === 'candidates' ? 'active' : ''}`}
             onClick={() => setActiveTab('candidates')}
           >
@@ -198,7 +208,8 @@ const RecruiterDashboard = () => {
               {
                 activeTab === 'dashboard' ? 'Main Dashboard' :
                   activeTab === 'organization' ? 'Organization Profile' :
-                    'Management'
+                    activeTab === 'applications' ? 'Application Management' :
+                      'Management'
               }
             </h2>
           </div>
@@ -270,7 +281,7 @@ const RecruiterDashboard = () => {
             <>
               {/* STATS GRID - CẬP NHẬT DỮ LIỆU TỪ API */}
               <div className="stats-grid">
-                
+
                 {/* 1. Total Jobs */}
                 <div className="stat-card">
                   <div className="stat-icon-box"><Briefcase size={24} /></div>
@@ -380,6 +391,12 @@ const RecruiterDashboard = () => {
                   )}
                 </tbody>
               </table>
+            </div>
+          )}
+
+          {activeTab === 'applications' && (
+            <div className="dashboard-view">
+              <RecruiterApplicationManagement />
             </div>
           )}
 
