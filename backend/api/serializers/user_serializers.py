@@ -59,12 +59,12 @@ class RecruiterSerializer(serializers.ModelSerializer):
         fields = ['id', 'user', 'username', 'email', 'company']
 
 class CompanySerializer(serializers.ModelSerializer):  # Serializer cho Company
-    logo = serializers.ImageField(required = False)
+    logo_url = serializers.ImageField(required = False)
     class Meta:
         model = Companies                        
-        fields = ["id", "name", "description", "website", "logo", "address", "tax_code"]
+        fields = ["id", "name", "description", "website", "logo_url", "address"]
         
-    def validate_logo(self, value):
+    def validate_logo_url(self, value):
         if not value.name.lower().endswith(('.png', '.jpeg', '.jpg')):
             raise serializers.ValidationError("Chỉ chấp nhận file định dạng png/jpeg.")
         if value.size > 5 * 1024 * 1024:

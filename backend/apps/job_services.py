@@ -141,7 +141,7 @@ class JobService:
                         default=Value(0),
                         output_field=IntegerField()
                     )
-            recommended_jobs = Jobs.objects.filter(isdeleted=False).annotate(
+            recommended_jobs = Jobs.objects.filter(isdeleted=False, status = 'Open').annotate(
                 total_score=skill_score_expression
             ).filter(
                 total_score__gt=0

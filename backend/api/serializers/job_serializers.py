@@ -12,7 +12,7 @@ class JobSerializer(serializers.ModelSerializer):
 class JobForFilterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Jobs
-        fields = ['id', 'title', 'status']
+        fields = ['id', 'title', 'status','salary_min','salary_max','location']
 
 class JobStatusUpdateSerializer(serializers.Serializer):
     new_status = serializers.ChoiceField(choices=[

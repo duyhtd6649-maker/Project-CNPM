@@ -204,11 +204,13 @@ def delete_companies(request, id):
 )
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
+@parser_classes([MultiPartParser, FormParser]) 
 def update_company_info(request):
     if not request.user.company:
         return Response({"This user does not belong to any company"}, status=status.HTTP_400_BAD_REQUEST)
     company_id = request.user.company.id
-    serializer = CompanySerializer(data=request.data, partial=True)
+    instance_company = request.user.company
+    serializer = CompanySerializer(instance = instance_company ,data=request.data)
     if serializer.is_valid():
         try:
             updated_company = CompanyService.update_company_info(
@@ -531,6 +533,17 @@ def admin_dashboard_stats(request):
         return Response(dashboard_data, status=status.HTTP_200_OK)
     except PermissionDenied:
         return Response({"error": "User is not an admin"}, status=status.HTTP_403_FORBIDDEN)
+    except Exception as e:
+        return Response({"error": f"{str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def recruiter_dashboard_stats(request):
+    try:
+        dashboard_data = RecruiterService.recruiter_dashboard_stats(request.user)
+        return Response(dashboard_data, status=status.HTTP_200_OK)
+    except PermissionDenied:
+        return Response({"error": "User is not an recruiter"}, status=status.HTTP_403_FORBIDDEN)
     except Exception as e:
         return Response({"error": f"{str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
 

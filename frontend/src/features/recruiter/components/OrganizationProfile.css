@@ -135,3 +135,7 @@
 .card-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; color: #111827; }
 .content-text { color: #4b5563; line-height: 1.6; font-size: 15px; }
 .gray-placeholder { background: #f9fafb; border-radius: 8px; color: #9ca3af; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+
+/* Ensure About Company card can expand and wrap long text */
+.overview-card { overflow: visible; padding: 18px; }
+.overview-card .content-text { white-space: pre-wrap; word-break: break-word; line-height: 1.8; }

@@ -212,3 +212,5 @@ def admin_job_list(resquest):
         return Response(serializer.data, status=status.HTTP_200_OK)
     except PermissionError as e:
         return Response({f"{e}"},status=status.HTTP_403_FORBIDDEN)
+    
+

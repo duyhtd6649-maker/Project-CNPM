@@ -61,10 +61,9 @@ class Companies(AuditableModel):
     name = models.CharField(db_column='Name', max_length=255, unique=True,null=False,blank=False)  # Field name made lowercase.
     description = models.TextField(db_column='Description', blank=True, null=True)  # Field name made lowercase.
     website = models.CharField(db_column='Website', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    logo_url = models.CharField(db_column='LogoUrl', max_length=500, blank=True, null=True)  # Field name made lowercase.
+    logo_url = models.ImageField(upload_to='logo/%Y/%m', null=True, db_column='LogoUrl')  # Field name made lowercase.
     address = models.CharField(db_column='Address', max_length=255, blank=True, null=True)  # Field name made lowercase.
     tax_code = models.CharField(db_column='TaxCode', max_length=50, blank=True, null=True)  # Field name made lowercase.
-
 
     class Meta:
         db_table = 'companies'

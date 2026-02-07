@@ -61,6 +61,7 @@ urlpatterns = [
     path('recruiter/approved_candidates/', user_views.list_approved_candidates),
     path('recruiter/create_interview/', user_views.create_interview), #tạo cuộc phỏng vấn
     path('recruiter/interviews/update/<uuid:interview_id>/', user_views.update_interview), #cập nhật thông tin phỏng vấn (ngày, địa điểm, note)
+    path('recruiter/dashboard', user_views.recruiter_dashboard_stats),
     # ===== ADMIN =====
     path('banuser/',user_views.BanUser), #ban user
     path('unbanuser/',user_views.UnBanUser), #unban user

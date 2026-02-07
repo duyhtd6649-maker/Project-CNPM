@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../../app/AppProviders';
+import { useNavigate } from 'react-router-dom'; 
+// ------------------------------------
+import { useAuth } from '../../../app/AppProviders'; 
 import {
   Search, Bell, ChevronDown, Users, FileText,
   TrendingUp, LayoutDashboard, UserCog, Activity,
@@ -13,27 +14,46 @@ import {
 } from 'recharts';
 import "../components/AdminDashboard.css";
 
-
-
 const AdminDashboard = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate(); 
   const { user, setUser } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  
+  // State đã sửa để khớp với API Backend trả về
   const [dashboardData, setDashboardData] = useState({
-    overview: { total_users: 0, total_questions: 0, total_files: 0, total_jobs: 0 },
-    registration_analytics: [],
+    total_users: 0,
+    total_candidates: 0,
+    total_recruiters: 0,
+    total_companies: 0,
+    total_jobs: 0,
+    total_job_pending: 0,
+    total_applications: 0,
+    
+    // Dữ liệu giả định cho biểu đồ (Vì API chưa trả về phần này)
+    registration_analytics: [
+        { name: 'Jan', value: 40 }, { name: 'Feb', value: 30 }, 
+        { name: 'Mar', value: 60 }, { name: 'Apr', value: 90 }
+    ],
     user_segments: { recruiters: 0, candidates: 0, total: 0 },
-    job_growth: []
+    job_growth: [
+        { year: '2023', jobs: 10 }, { year: '2024', jobs: 25 }, 
+        { year: '2025', jobs: 40 }
+    ]
   });
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
         const token = localStorage.getItem('access_token');
-        const res = await axios.get('http://127.0.0.1:8000/api/dashboard/admin/stats/', {
+        const res = await axios.get('http://127.0.0.1:8000/api/admins/dashboard/', {
           headers: { Authorization: `Bearer ${token}` }
         });
-        setDashboardData(res.data);
+        
+        // Merge dữ liệu từ API vào State
+        setDashboardData(prev => ({
+            ...prev,
+            ...res.data
+        }));
       } catch (error) {
         console.error("Error fetching dashboard stats:", error);
       }
@@ -123,36 +143,39 @@ const AdminDashboard = () => {
         <div className="dashboard-content">
           <h1 className="page-title">Dashboard Overview</h1>
 
-          {/* Stats Grid */}
+          {/* Stats Grid - Đã sửa lỗi undefined */}
           <div className="stats-grid">
             <div className="stat-card">
               <div className="stat-info">
                 <p className="stat-label">Total Users</p>
-                <h2 className="stat-value">{dashboardData.overview.total_users.toLocaleString()}</h2>
+                <h2 className="stat-value">{dashboardData.total_users?.toLocaleString() || 0}</h2>
                 <p className="stat-change up"><TrendingUp size={14} /> --</p>
               </div>
               <div className="stat-icon blue"><Users size={28} /></div>
             </div>
+
             <div className="stat-card">
               <div className="stat-info">
-                <p className="stat-label">Total Questions</p>
-                <h2 className="stat-value">{dashboardData.overview.total_questions.toLocaleString()}</h2>
+                <p className="stat-label">Total Candidates</p>
+                <h2 className="stat-value">{dashboardData.total_candidates?.toLocaleString() || 0}</h2>
                 <p className="stat-change up"><TrendingUp size={14} /> --</p>
               </div>
               <div className="stat-icon green"><Activity size={28} /></div>
             </div>
+
             <div className="stat-card">
               <div className="stat-info">
-                <p className="stat-label">Total Files</p>
-                <h2 className="stat-value">{dashboardData.overview.total_files.toLocaleString()}</h2>
+                <p className="stat-label">Total Companies</p>
+                <h2 className="stat-value">{dashboardData.total_companies?.toLocaleString() || 0}</h2>
                 <p className="stat-change up"><TrendingUp size={14} /> --</p>
               </div>
               <div className="stat-icon red"><FileText size={28} /></div>
             </div>
+
             <div className="stat-card">
               <div className="stat-info">
                 <p className="stat-label">Jobs Quantity</p>
-                <h2 className="stat-value">{dashboardData.overview.total_jobs.toLocaleString()}</h2>
+                <h2 className="stat-value">{dashboardData.total_jobs?.toLocaleString() || 0}</h2>
                 <p className="stat-change up"><TrendingUp size={14} /> --</p>
               </div>
               <div className="stat-icon purple" style={{ background: '#F3E8FF', color: '#9333EA' }}><LayoutDashboard size={28} /></div>
@@ -185,14 +208,14 @@ const AdminDashboard = () => {
               <div className="donut-container">
                 <div className="donut-visual">
                   <div className="donut-info">
-                    <h4>{dashboardData.user_segments.total.toLocaleString()}</h4>
+                    {/* Tính tổng user từ dữ liệu thật */}
+                    <h4>{(dashboardData.total_candidates + dashboardData.total_recruiters)}</h4>
                     <p>Total Users</p>
                   </div>
-                  {/* Simple CSS Pie Chart representation could be added here if needed, keeping it simple for now */}
                 </div>
                 <div className="donut-legend">
-                  <div className="legend-item"><span className="dot blue"></span> <span>Recruiters ({dashboardData.user_segments.recruiters})</span></div>
-                  <div className="legend-item"><span className="dot gray"></span> <span>Candidates ({dashboardData.user_segments.candidates})</span></div>
+                  <div className="legend-item"><span className="dot blue"></span> <span>Recruiters ({dashboardData.total_recruiters || 0})</span></div>
+                  <div className="legend-item"><span className="dot gray"></span> <span>Candidates ({dashboardData.total_candidates || 0})</span></div>
                 </div>
               </div>
             </div>

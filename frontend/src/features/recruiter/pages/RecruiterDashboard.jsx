@@ -18,7 +18,7 @@ import {
   CheckCircle,
   Clock,
   MoreHorizontal,
-  Building2 // Gộp Building2 vào đây cho gọn
+  Building2
 } from 'lucide-react';
 
 import {
@@ -31,9 +31,7 @@ import {
   Tooltip
 } from 'recharts';
 
-// Import CSS
 import '../components/RecruiterDashboard.css';
-// Import component CreateJobPost
 import CreateJobPost from './CreateJobPost';
 
 const RecruiterDashboard = () => {
@@ -44,6 +42,32 @@ const RecruiterDashboard = () => {
 
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
+
+  // --- 1. STATE LƯU THỐNG KÊ DASHBOARD ---
+  const [dashboardStats, setDashboardStats] = useState({
+    total_job: 0,
+    total_application: 0,
+    total_interview: 0
+  });
+
+  // --- 2. HÀM GỌI API THỐNG KÊ ---
+  const fetchDashboardStats = async () => {
+    try {
+      const token = localStorage.getItem('access_token');
+      const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000';
+      const url = `${API_BASE.replace(/\/$/, '')}/api/recruiter/dashboard`; // Gọi đúng endpoint bạn yêu cầu
+
+      const response = await axios.get(url, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (response.data) {
+        setDashboardStats(response.data);
+      }
+    } catch (error) {
+      console.error("Lỗi khi lấy thống kê dashboard:", error);
+    }
+  };
 
   const fetchNotifications = async () => {
     try {
@@ -58,33 +82,26 @@ const RecruiterDashboard = () => {
       if (Array.isArray(response.data) && response.data.length > 0) {
         setNotifications(response.data);
       } else {
-        // Mock Data for Testing
         setNotifications([]);
       }
     } catch (error) {
       console.error("Failed to fetch notifications", error);
-      // Fallback Mock Data
       setNotifications([]);
     }
   };
 
-  // --- LOGIC BACKEND: State lưu danh sách jobs ---
   const [jobs, setJobs] = useState([]);
 
-  // --- LOGIC BACKEND: Hàm lấy danh sách job ---
   const fetchJobs = async () => {
     try {
       const token = localStorage.getItem('access_token');
-      // Use backend base URL from Vite env, fallback to localhost:8000
       const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000';
-      // backend routes are mounted under /api/
       const url = `${API_BASE.replace(/\/$/, '')}/api/recruiter/jobs/`;
-      console.log('Requesting jobs from:', url);
+      
       const response = await axios.get(url, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      console.log('API status:', response.status, 'data:', response.data);
-      // If backend returns a JSON array on success, set it. Otherwise keep empty.
+      
       setJobs(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error("Lỗi khi lấy danh sách job:", error);
@@ -94,9 +111,9 @@ const RecruiterDashboard = () => {
 
   useEffect(() => {
     fetchJobs();
+    fetchDashboardStats(); // Gọi hàm lấy thống kê khi component load
   }, []);
 
-  // Logic Log Out
   const handleLogout = () => {
     localStorage.clear();
     sessionStorage.clear();
@@ -156,7 +173,6 @@ const RecruiterDashboard = () => {
           </div>
         </nav>
 
-        {/* Nút Log Out nằm ở cuối sidebar */}
         <div className="sidebar-footer" style={{ padding: '20px' }}>
           <div className="menu-item logout" onClick={handleLogout} style={{ cursor: 'pointer' }}>
             <LogOut size={22} />
@@ -194,22 +210,18 @@ const RecruiterDashboard = () => {
             </div>
 
             <button className="btn-create" onClick={() => {
-              console.log('🔍 Create Job clicked, showModal:', showModal);
               setShowModal(true);
-              console.log('🔍 showModal state updated to true');
             }}>
               <Plus size={20} />
               <span>Create Job</span>
             </button>
 
-            {/* Notification Logic */}
             <div className="notification-wrapper" style={{ position: 'relative' }}>
               <Bell
                 size={20}
                 color="#A3AED0"
                 style={{ cursor: 'pointer' }}
                 onClick={() => {
-                  // Toggle notification dropdown
                   const newState = !showNotifications;
                   setShowNotifications(newState);
                   if (newState) {
@@ -254,42 +266,43 @@ const RecruiterDashboard = () => {
         {/* CONTENT BODY */}
         <main className="dashboard-content">
 
-          {/* TRƯỜNG HỢP 1: DASHBOARD */}
           {activeTab === 'dashboard' && (
             <>
-              {/* STATS GRID */}
+              {/* STATS GRID - CẬP NHẬT DỮ LIỆU TỪ API */}
               <div className="stats-grid">
+                
+                {/* 1. Total Jobs */}
                 <div className="stat-card">
                   <div className="stat-icon-box"><Briefcase size={24} /></div>
                   <div className="stat-info">
                     <p className="stat-label">Total Jobs</p>
-                    <h3 className="stat-value">{jobs.length || 124}</h3>
+                    {/* Hiển thị dữ liệu từ state dashboardStats */}
+                    <h3 className="stat-value">{dashboardStats.total_job}</h3>
                   </div>
                 </div>
 
+                {/* 2. Applicants */}
                 <div className="stat-card">
                   <div className="stat-icon-box" style={{ color: '#05cd99' }}><Users size={24} /></div>
                   <div className="stat-info">
                     <p className="stat-label">Applicants</p>
-                    <h3 className="stat-value">1,482</h3>
+                    {/* Hiển thị dữ liệu từ state dashboardStats */}
+                    <h3 className="stat-value">{dashboardStats.total_application}</h3>
                   </div>
                 </div>
 
+                {/* 3. Interviews */}
                 <div className="stat-card">
                   <div className="stat-icon-box" style={{ color: '#ffb547' }}><Clock size={24} /></div>
                   <div className="stat-info">
                     <p className="stat-label">Interviews</p>
-                    <h3 className="stat-value">45</h3>
+                    {/* Hiển thị dữ liệu từ state dashboardStats */}
+                    <h3 className="stat-value">{dashboardStats.total_interview}</h3>
                   </div>
                 </div>
 
-                <div className="stat-card">
-                  <div className="stat-icon-box" style={{ color: '#ee5d50' }}><CheckCircle size={24} /></div>
-                  <div className="stat-info">
-                    <p className="stat-label">Hired</p>
-                    <h3 className="stat-value">12</h3>
-                  </div>
-                </div>
+                {/* 4. ĐÃ XÓA CARD "HIRED" TẠI ĐÂY */}
+
               </div>
 
               {/* CHART & STATISTICS */}
@@ -325,7 +338,6 @@ const RecruiterDashboard = () => {
             </>
           )}
 
-          {/* TRƯỜNG HỢP 2: MY JOBS */}
           {activeTab === 'jobs' && (
             <div className="table-card">
               <div className="table-header">
@@ -371,7 +383,6 @@ const RecruiterDashboard = () => {
             </div>
           )}
 
-          {/* TRƯỜNG HỢP 3: CANDIDATES */}
           {activeTab === 'candidates' && (
             <div className="dashboard-view">
               <h3>Candidates Management</h3>
@@ -379,7 +390,6 @@ const RecruiterDashboard = () => {
             </div>
           )}
 
-          {/* TRƯỜNG HỢP 4: ORGANIZATION PROFILE */}
           {activeTab === 'organization' && (
             <div className="dashboard-view">
               <OrganizationProfile />
@@ -389,16 +399,15 @@ const RecruiterDashboard = () => {
         </main>
       </div>
 
-      {/* PORTAL CHO MODAL */}
       {showModal && (
         <>
-          {console.log('📋 Rendering CreateJobPost modal, showModal:', showModal)}
           {ReactDOM.createPortal(
             <CreateJobPost
               onClose={() => setShowModal(false)}
               onSuccess={() => {
                 setShowModal(false);
                 fetchJobs();
+                fetchDashboardStats(); // Refresh lại số liệu khi tạo job thành công
               }}
             />,
             document.body

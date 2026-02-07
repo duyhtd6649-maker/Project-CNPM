@@ -2,10 +2,7 @@
 from database.models.users import Users, Candidates, Companies, Recruiters
 from database.models.jobs import Jobs, Applications
 from database.models.services import Interviews
-from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
-from api.serializers.user_serializers import UserSerializer, RecruiterSerializer, CompanySerializer
-from api.serializers.job_serializers import JobSerializer
 from rest_framework.exceptions import *
 from django.core.files.storage import default_storage
 import os
@@ -279,6 +276,24 @@ class RecruiterService:
             return False
         return (user.company_id is not None) and (user.company_id == company_id)
     
+    @staticmethod
+    def recruiter_dashboard_stats(user):
+        if not RecruiterService.Is_Recruiter(user):
+            raise PermissionError("user not a recruiter")
+        try:
+            recruiter = RecruiterService.Get_recruiter(user)
+        except NotFound as e:
+            raise NotFound(f"{e}")
+        total_job = Jobs.objects.filter(isdeleted = False, recruiter = recruiter).count()
+        total_application = Applications.objects.filter(isdeleted = False, job__recruiter = recruiter).count()
+        total_interview = Interviews.objects.filter(isdeleted = False, recruiter = recruiter).count()
+        stats = {
+                "total_job": total_job,
+                "total_application": total_application,
+                "total_interview" : total_interview,
+            }
+        return stats
+    
 
 class CompanyService:
     @staticmethod
@@ -345,25 +360,24 @@ class CompanyService:
         if 'name' in data: company.name = data['name']
         if 'description' in data: company.description = data['description']
         if 'website' in data: company.website = data['website']
-        if 'address' in data: company.address = data['address']
+        if 'location' in data: company.address = data['address']
         if 'tax_code' in data: company.tax_code = data['tax_code']
-        
         company.save()
+        if 'logo_url' in data:
+            company = CompanyService.upload_logo(
+                user= user,
+                company_id= company_id,
+                file_data= data['logo_url']
+            )
         return company
 
     @staticmethod
     def upload_logo(user, company_id, file_data):
         company = Companies.objects.get(id=company_id)
-
-        is_owner = (user.company == company) if user.company else False
+        is_owner = (user.company == company) if getattr(user, 'company', None) else False
         if not user.is_superuser and not is_owner:
-            raise PermissionDenied({"error": "You don't have permission to update this company logo"})
-
-        file_path = default_storage.save(f"logos/{file_data.name}", file_data)
-        file_url = default_storage.url(file_path)
-        
-        #đường dẫn vào DB
-        company.logo_url = file_url
+             raise PermissionDenied({"error": "You don't have permission to update this company logo"})
+        company.logo_url = file_data 
         company.save()
         return company
 

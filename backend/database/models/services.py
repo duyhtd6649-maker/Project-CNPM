@@ -57,7 +57,7 @@ class Subscriptions(AuditableModel):
 
 class Interviews(AuditableModel):
     id = models.CharField(db_column='Id', primary_key=True, max_length=255,default=uuid.uuid4,editable=False)  # Field name made lowercase.
-    recruiter = models.ForeignKey('Users', on_delete=models.CASCADE, db_column='RecruiterId', blank=True, related_name='interviews_scheduled')  # Field name made lowercase.
+    recruiter = models.ForeignKey('Recruiters', on_delete=models.CASCADE, db_column='RecruiterId', blank=True, related_name='interviews_scheduled')  # Field name made lowercase.
     candidate = models.ForeignKey('Candidates', on_delete=models.CASCADE, db_column='CandidateId', blank=True, related_name='interviews')  # Field name made lowercase.
     job = models.ForeignKey('Jobs', on_delete=models.CASCADE, db_column='JobId', blank=True, related_name='interviews')  # Field name made lowercase.
     scheduled_time = models.DateTimeField(db_column='ScheduledTime', blank=True, null=True)  # Field name made lowercase.
