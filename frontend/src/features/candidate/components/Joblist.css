@@ -891,3 +891,208 @@ body.dark-mode .salary-inputs input {
 body.dark-mode .dropdown-divider {
     background: rgba(255, 255, 255, 0.1);
 }
+
+/* Recommended Jobs Section Styles */
+.recommended-section {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(147, 51, 234, 0.08) 100%);
+    border: 1px solid rgba(99, 102, 241, 0.15);
+    border-radius: 1.25rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.recommended-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #6366f1, #9333ea, #ec4899);
+    border-radius: 1.25rem 1.25rem 0 0;
+}
+
+.recommended-header {
+    margin-bottom: 1.25rem;
+}
+
+.recommended-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.25rem;
+}
+
+.recommended-title h2 {
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: var(--text-main);
+    letter-spacing: -0.025em;
+}
+
+.sparkle-icon {
+    color: #6366f1;
+    animation: sparkle 2s ease-in-out infinite;
+}
+
+@keyframes sparkle {
+
+    0%,
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.1) rotate(5deg);
+        opacity: 0.8;
+    }
+}
+
+.recommended-subtitle {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    padding-left: 2.25rem;
+}
+
+.recommended-jobs-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1rem;
+}
+
+@media (min-width: 640px) {
+    .recommended-jobs-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1280px) {
+    .recommended-jobs-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.recommended-card {
+    background: var(--surface-white) !important;
+    border: 1px solid rgba(99, 102, 241, 0.2) !important;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.1);
+    position: relative;
+}
+
+.recommended-card:hover {
+    border-color: rgba(99, 102, 241, 0.4) !important;
+    box-shadow: 0 8px 25px rgba(99, 102, 241, 0.15);
+}
+
+.recommended-line {
+    background: linear-gradient(to right, #6366f1, #9333ea) !important;
+}
+
+.recommended-badge {
+    position: absolute;
+    top: 0.75rem;
+    right: 3rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.625rem;
+    background: linear-gradient(135deg, #6366f1, #9333ea);
+    color: white;
+    font-size: 0.625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: 999px;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+
+body.dark-mode .recommended-section {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(147, 51, 234, 0.15) 100%);
+    border-color: rgba(99, 102, 241, 0.25);
+}
+
+/* All Jobs Header */
+.all-jobs-header {
+    margin-bottom: 1.25rem;
+}
+
+.all-jobs-header h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Recommended Empty State */
+.recommended-empty-state {
+    text-align: center;
+    padding: 2rem 1.5rem;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 1rem;
+    border: 2px dashed rgba(99, 102, 241, 0.3);
+}
+
+.recommended-empty-state .empty-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(147, 51, 234, 0.1));
+    border-radius: 50%;
+    color: #6366f1;
+}
+
+.recommended-empty-state .empty-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 0.5rem;
+}
+
+.recommended-empty-state .empty-description {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    max-width: 400px;
+    margin: 0 auto 1.25rem;
+    line-height: 1.5;
+}
+
+.upload-cv-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, #6366f1, #9333ea);
+    color: white;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+}
+
+.upload-cv-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+}
+
+body.dark-mode .recommended-empty-state {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(99, 102, 241, 0.4);
+}
