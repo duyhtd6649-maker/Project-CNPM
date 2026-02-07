@@ -12,6 +12,14 @@ from rest_framework.exceptions import *
 from drf_yasg import openapi
 
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_all_user(request):
+    instances = UserService.Get_All_User()
+    serializer = UserSerializer(instances, many = True)
+    return Response(serializer.data, status= status.HTTP_200_OK)
+
+
 @swagger_auto_schema(
     method='get',
     operation_description="Get candidate profile by ID",

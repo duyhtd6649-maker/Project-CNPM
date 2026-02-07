@@ -70,21 +70,20 @@ npm run dev
 # Checklist
 Các tính năng chia làm 3 mức: đã làm - chưa hoàn thiện - chưa làm
 ### Đã làm:
+* Candidate:
    - Receiving Analyzer results.
+   - Create a personal profile and upload CV (PDF).
+   - Using Career AI Coach and receiving a career roadmap.
    - Apply for jobs
+   - Edit CV based on available CV template.
+   - View job recommendations based on skills and job description(Recommendation System).
+* Admin:
    - Admin login and account management (students, recruiters).
+   - Approve/reject/remove job posts or application
+* Recruiter:
    - Post new job.
 ### Chưa hoàn thiện:
-   - Receiving Analyzer results.
-   - Apply for jobs
-   - Admin login and account management (students, recruiters).
-   - Post new job.
    - Search for top companies
-   - Create a personal profile and upload CV (PDF).
-   - View job recommendations based on skills and job description(Recommendation System).
-   - Using Career AI Coach and receiving a career roadmap.   
-   - Edit CV based on available CV template.
-   - Approve/reject/remove job posts or application
    - Create a recruiter organization account.
 ### Chưa làm:
 * Candidate:

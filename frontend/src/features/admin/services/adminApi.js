@@ -6,7 +6,7 @@ const adminApi = {
     // ============================================================
     getSystemStatus: async () => {
         try {
-            const response = await axiosClient.get("/dashboard/admin/stats/");
+            const response = await axiosClient.get("/admins/dashboard/");
             return response.data;
         } catch (error) {
             console.warn("API Error (getSystemStatus), using mock data:", error);
@@ -43,7 +43,7 @@ const adminApi = {
     getJobPosts: async () => {
         try {
             // Gọi API search để lấy list
-            const response = await axiosClient.get("/search/job/");
+            const response = await axiosClient.get("/admin/jobs/");
             if (Array.isArray(response.data)) return response.data;
             if (response.data && Array.isArray(response.data.results)) return response.data.results;
             return [];

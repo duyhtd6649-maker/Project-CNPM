@@ -16,6 +16,7 @@ urlpatterns = [
     path('candidate/profile', user_views.update_candidate_profile), #update profile cho candidate
     path('user/profile/myprofile', user_views.view_my_profile), #xem profile của mình
     path('user/company/profile', user_views.view_user_company_profile), #xem profile công ty của mình
+    path('users/',user_views.get_all_user),
     # ===== CV =====
     path('cv/analyzer/',cv_views.Analyze_Cv), #upload và phân tích cv
     path('cv/upload/', cv_views.Upload_Cv), #phân tích cv
@@ -43,7 +44,7 @@ urlpatterns = [
     path('company/update/info/', user_views.update_company_info), #update thông tin của company
     path('company/<str:id>/delete_logo/', user_views.delete_company_logo), #xóa logo của company
     # ===== APPLICATION =====    
-    #path('applications/<uuid:id>/delete/', application_views.delete_application), #xóa application
+    path('applications/<uuid:id>/delete/', application_views.delete_application), #xóa application
     path('applications/<uuid:id>/UpdateStatus/', application_views.update_application_system_status), #update application status
     path('applications/search/', application_views.applications), #tìm application có filter
     path('applications/<uuid:id>/', application_views.application_by_id), #xem application
@@ -67,6 +68,7 @@ urlpatterns = [
     path('candidates/',user_views.GetCandidatesInfor),
     path('recruiters/',user_views.GetRecruitersInfor),
     path('admins/dashboard/', user_views.admin_dashboard_stats), #dashboard cho admin
+    path('admin/jobs/',job_views.admin_job_list),
     # ===== AUTH =====
     path("accounts/", include("allauth.urls")),
     # ===== LOGIN / SIGNUP =====

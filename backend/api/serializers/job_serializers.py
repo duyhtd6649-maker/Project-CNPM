@@ -23,4 +23,4 @@ class NotificationSerializer(serializers.ModelSerializer):
     actor = serializers.CharField(source = 'receiver_username', read_only = True)
     class Meta:
         model = Notifications
-        fields = ['actor', 'message', 'title']
+        fields = ['actor', 'message', 'title','created_date']
