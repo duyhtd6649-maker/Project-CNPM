@@ -5,7 +5,7 @@ import {
     LayoutDashboard, UserCog, ClipboardList,
     Menu, X, Bell, ChevronDown, Search, Filter,
     Building, User, CheckCircle, XCircle, Clock,
-    MapPin, DollarSign, Briefcase, Eye, Calendar, Globe, FileText
+    MapPin, DollarSign, Briefcase, Eye, Calendar, Globe, FileText, LogOut
 } from 'lucide-react';
 import '../components/JobPosts.css';
 import adminApi from '../services/adminApi';
@@ -129,7 +129,7 @@ const JobPosts = () => {
 
                 <div className="sidebar-footer">
                     <div className="nav-item-custom logout">
-                        <User size={20} /> <span>Logout</span>
+                        <LogOut size={20} /> <span>Logout</span>
                     </div>
                 </div>
             </aside>

@@ -114,9 +114,9 @@ const CandidateNavbar = () => {
                                         <div className="icon-box"><UserCircle size={28} /></div>
                                         <span>Information</span>
                                     </div>
-                                    <div className="mini-item" onClick={() => navigate('/premium')}>
-                                        <div className="icon-box"><CreditCard size={28} /></div>
-                                        <span>Premium</span>
+                                    <div className="mini-item" onClick={() => navigate('/my-applications')}>
+                                        <div className="icon-box"><FileText size={28} /></div>
+                                        <span>My Application</span>
                                     </div>
                                     <div className="mini-item" onClick={() => { setIsNotifyOpen(true); setIsAccountOpen(false); }}>
                                         <div className="icon-box"><Bell size={28} /></div>

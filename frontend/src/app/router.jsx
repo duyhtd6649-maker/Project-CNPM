@@ -18,6 +18,7 @@ import JobBrowsing from '../features/candidate/pages/Joblist';
 import JobDirectory from '../features/candidate/pages/companies';
 import CompanyProfile from '../features/candidate/pages/companyprofile';
 import CVAnalyzer from '../features/candidate/pages/analyzcv';
+import MyApplications from '../features/candidate/pages/MyApplications';
 
 import AdminLogin from '../features/admin/pages/AdminLogin';
 import AdminDashboard from '../features/admin/pages/AdminDashboard';
@@ -76,6 +77,7 @@ export const router = createBrowserRouter([
         element: <ProtectedRoute><HomepageCandidates /></ProtectedRoute>
       },
       { path: 'profile', element: <ProtectedRoute><ViewUserProfile /></ProtectedRoute> },
+      { path: 'my-applications', element: <ProtectedRoute><MyApplications /></ProtectedRoute> },
       { path: 'edit-profile', element: <ProtectedRoute><EditProfile /></ProtectedRoute> },
       { path: 'premium', element: <ProtectedRoute><PremiumPage /></ProtectedRoute> },
       { path: 'saved-cv', element: <ProtectedRoute><SavedCV /></ProtectedRoute> },

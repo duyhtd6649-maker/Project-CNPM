@@ -5,7 +5,7 @@ import {
     LayoutDashboard, UserCog, ClipboardList,
     Menu, X, Bell, ChevronDown, Search, Filter,
     FileText, User, Calendar, Briefcase, Building,
-    Eye, CheckCircle, XCircle
+    Eye, CheckCircle, XCircle, LogOut
 } from 'lucide-react';
 import '../components/ApplyJobsReview.css';
 
@@ -128,7 +128,7 @@ const ApplyJobsReview = () => {
 
                 <div className="sidebar-footer">
                     <div className="nav-item-custom logout">
-                        <User size={20} /> <span>Logout</span>
+                        <LogOut size={20} /> <span>Logout</span>
                     </div>
                 </div>
             </aside>
