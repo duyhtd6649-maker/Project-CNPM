@@ -484,7 +484,8 @@ class interviewService:
             job_status__in=['Interview Scheduling', 'Interview Scheduled']
         )
         return apps 
-
+    
+    @staticmethod
     def create_interview(recruiter_user, application_id, interview_date, location, note=''):
         if getattr(recruiter_user, 'role', '') != 'recruiter':
             raise PermissionDenied("User is not a recruiter")
@@ -493,19 +494,24 @@ class interviewService:
                 id=application_id, 
                 job__company=recruiter_user.company 
             )
+            recruiter = RecruiterService.Get_recruiter(recruiter_user)
         except Applications.DoesNotExist:
             raise NotFound("Application not found or you don't have permission")
+        except NotFound as e:
+            raise PermissionDenied(f"{e}")
+        
         interview = Interviews.objects.create(
-            recruiter=recruiter_user,
+            recruiter=recruiter,
             candidate=application.candidate,
             job=application.job,
+            application = application,
             scheduled_time=interview_date, 
             location=location,             
             note=note,              
             status='scheduled'
         )
 
-        application.system_status = 'interviewing'
+        application.job_status = 'Interview Scheduled'
         application.save()
 
         return interview

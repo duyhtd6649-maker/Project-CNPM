@@ -67,7 +67,7 @@ class ApplicationService:
             if not permission:
                 raise PermissionDenied("User doesn't have permission")
             recruiter = RecruiterService.Get_recruiter(user)
-            applications = Applications.objects.filter(job__recruiter=recruiter, isdeleted=False)
+            applications = Applications.objects.filter(job__recruiter=recruiter, isdeleted=False, system_status = 'Approved')
         if filters.get('job_status') is not None:
             applications = applications.filter(job_status=filters.get('job_status'))
         if filters.get('job_title') is not None:

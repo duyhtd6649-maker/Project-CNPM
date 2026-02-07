@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosClient from '../../../infrastructure/http/axiosClient';
 import { Search, Filter, Eye, X, Check, Calendar, Briefcase, Mail, Phone, Clock, MapPin, Video, Plus } from 'lucide-react';
 import '../components/RecruiterApplicationManagement.css'; // Reusing the same CSS for consistency
 
@@ -114,9 +114,7 @@ const RecruiterInterviews = () => {
                 application: selectedCandidate.id
             };
 
-            await axios.post(`${API_BASE.replace(/\/$/, '')}/api/recruiter/create_interview/`, payload, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
+            await axiosClient.post('/recruiter/create_interview/', payload);
 
             alert("Interview scheduled successfully!");
             fetchApprovedCandidates(); // Refresh list
@@ -169,10 +167,9 @@ const RecruiterInterviews = () => {
                 notes: scheduleForm.notes
             };
 
-            await axios.put(
-                `${API_BASE.replace(/\/$/, '')}/api/recruiter/interviews/update/${editingInterview.interviewId}/`,
-                payload,
-                { headers: { 'Authorization': `Bearer ${token}` } }
+            await axiosClient.put(
+                `/api/recruiter/interviews/update/${editingInterview.interviewId}/`,
+                payload
             );
 
             alert("Interview updated successfully!");
