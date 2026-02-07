@@ -16,6 +16,7 @@ const RecruiterApplicationManagement = () => {
     const [confirmationModal, setConfirmationModal] = useState(null); // { id, status, name }
 
     const fetchApplications = async () => {
+        // Real API code
         try {
             setLoading(true);
             const response = await axiosClient.get('/recruiter/applications/');
@@ -66,28 +67,47 @@ const RecruiterApplicationManagement = () => {
         setProcessingId(id);
 
         try {
-            // Map frontend status to backend status if needed
-            // Backend choices: Waiting, Hired, Rejected, Scheduling
-            let backendStatus = status;
-            if (status === 'Approved') backendStatus = 'Hired'; // Default 'Approved' to 'Hired'
-
+            // Call the correct endpoint based on status
             await axiosClient.put(`/recruiter/applications/${id}/UpdateStatus/`, {
-                new_status: backendStatus
+                new_status: status
             });
 
             setApplications(prev => prev.map(app =>
-                app.id === id ? { ...app, status: backendStatus } : app
+                app.id === id ? { ...app, status: status } : app
             ));
 
             if (selectedApp && selectedApp.id === id) {
-                setSelectedApp(prev => ({ ...prev, status: backendStatus }));
+                setSelectedApp(prev => ({ ...prev, status: status }));
             }
         } catch (err) {
             console.error(`Error updating status to ${status}:`, err);
-            // alert(`Failed to update status. ${err.response?.data?.error || ''}`);
+            alert(`Failed to update status. ${err.response?.data?.error || ''}`);
         } finally {
             setProcessingId(null);
             setConfirmationModal(null);
+        }
+    };
+
+    // Handle Start Interviewing
+    const handleStartInterview = async (appId, candidateName) => {
+        if (!window.confirm(`Start interview process for ${candidateName}?`)) {
+            return;
+        }
+
+        setProcessingId(appId);
+        try {
+            await axiosClient.put(`/recruiter/applications/${appId}/UpdateStatus/`, {
+                new_status: 'Interview Scheduling'
+            });
+
+            // Refresh applications list
+            await fetchApplications();
+            alert('Candidate moved to Interview Scheduling!');
+        } catch (err) {
+            console.error('Error starting interview:', err);
+            alert(`Failed to start interview process. ${err.response?.data?.error || ''}`);
+        } finally {
+            setProcessingId(null);
         }
     };
 
@@ -177,6 +197,7 @@ const RecruiterApplicationManagement = () => {
                                 <button className="btn-view-cv" onClick={(e) => handleViewCV(e, app)} style={{ marginRight: '8px', flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', padding: '8px', border: '1px solid #E2E8F0', borderRadius: '8px', background: 'white', cursor: 'pointer', color: '#475569', fontSize: '13px', fontWeight: '500' }}>
                                     <FileText size={16} /> View CV
                                 </button>
+
                                 <button className="btn-view-details" onClick={() => setSelectedApp(app)} style={{ flex: 1 }}>
                                     <Eye size={16} /> View Details
                                 </button>
@@ -268,6 +289,20 @@ const RecruiterApplicationManagement = () => {
                             >
                                 <X size={16} style={{ marginRight: '6px', display: 'inline', verticalAlign: 'middle' }} /> Reject
                             </button>
+
+                            {(selectedApp.status === 'Waiting' || selectedApp.status === 'Approved' || selectedApp.status === 'Pending') && (
+                                <button
+                                    className="btn-approve"
+                                    onClick={() => {
+                                        setSelectedApp(null);
+                                        handleStartInterview(selectedApp.id, selectedApp.candidateName);
+                                    }}
+                                    disabled={processingId === selectedApp.id}
+                                    style={{ background: '#F59E0B', borderColor: '#F59E0B' }}
+                                >
+                                    <Calendar size={16} style={{ marginRight: '6px', display: 'inline', verticalAlign: 'middle' }} /> Start Interviewing
+                                </button>
+                            )}
 
                             <button
                                 className="btn-approve"
