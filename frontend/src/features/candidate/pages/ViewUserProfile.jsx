@@ -63,6 +63,14 @@ const ViewUserProfile = () => {
     fetchProfileFromDB();
   }, [navigate]);
 
+  // Resolve media URLs returned by backend (they may be relative paths)
+  const resolveMediaUrl = (path) => {
+    if (!path) return null;
+    if (path.startsWith('http://') || path.startsWith('https://')) return path;
+    const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000';
+    return `${API_BASE.replace(/\/$/, '')}${path.startsWith('/') ? path : `/${path}`}`;
+  };
+
   const handleLogout = () => {
     localStorage.clear();
     navigate('/login');
@@ -127,7 +135,7 @@ const ViewUserProfile = () => {
           <div className="avatar-outer-frame">
             <div className="avatar-circle-main">
               {userData?.avatar ? (
-                <img src={userData.avatar} alt="Avatar" className="user-avatar-img" />
+                <img src={resolveMediaUrl(userData.avatar)} alt="Avatar" className="user-avatar-img" />
               ) : (
                 <span className="default-icon-user">👤</span>
               )}

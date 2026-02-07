@@ -28,7 +28,7 @@ const CreateJobPost = ({ onClose, onSuccess }) => {
     try {
       const token = localStorage.getItem('access_token');
       const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000';
-      const url = `${API_BASE.replace(/\/$/, '')}/api/search/job/`;
+      const url = `${API_BASE.replace(/\/$/, '')}/api/recruiter/jobs/`;
       const response = await axios.get(url, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -39,8 +39,10 @@ const CreateJobPost = ({ onClose, onSuccess }) => {
         : [];
       setMyJobs(sortedJobs);
     } catch (error) {
-      console.error("Không thể tải danh sách job:", error);
+      console.error("Không thể tải danh sách job:", error?.response?.data || error.message);
       setMyJobs([]);
+    } finally {
+      setLoadingJobs(false);
     }
   };
 

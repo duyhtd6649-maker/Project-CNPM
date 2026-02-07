@@ -24,7 +24,6 @@ urlpatterns = [
     path('cv/list/',cv_views.cv_list), #Xem danh sách cv của mình
     path('cv/analysisresult/<uuid:id>/',cv_views.cv_analysis_detail), #Xem chi tiết 1 bản phân tích của 1 cv
     path('cv/<uuid:id>/analysisresult',cv_views.cv_analysis_list), #Xem danh sách các bản phân tích của cv
-    
     # ===== JOB =====
     path('job/create', job_views.create_job), #tạo job
     path('job/<uuid:id>/view/', job_views.view_job_detail), #xem chi tiết job
@@ -80,7 +79,6 @@ urlpatterns = [
     path("ai/career/coach", ai_views.CareerCoachAPIView.as_view()),
     path("ai/cv/analyzer", ai_views.CvAnalyzerAPIView.as_view()),
     path("ai/mock-interview/", mock_interview),
-
 
     path("notification", user_views.notification),
 ]

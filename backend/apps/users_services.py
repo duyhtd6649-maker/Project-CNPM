@@ -39,8 +39,8 @@ class UserService:
             user.first_name = validated_data.get('first_name', user.first_name)
             user.last_name = validated_data.get('last_name', user.last_name)
 
-            if 'avatar' in validated_data:
-                user.avatar = validated_data['avatar']
+            if 'avatar_url' in validated_data:
+                user.avatar_url = validated_data['avatar_url']
 
             user.save()
             return user
