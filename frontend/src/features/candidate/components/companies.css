@@ -71,6 +71,14 @@ body:has(.companies-page-container) .app-container {
     padding: 15px 0;
 }
 
+.filter-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 8px;
+}
+
 .filter-header {
     display: flex;
     justify-content: space-between;
@@ -234,7 +242,7 @@ body:has(.companies-page-container) .app-container {
     background: #e5e7eb;
 }
 
-/* Company List */
+/* Company Grid Layout */
 .companies-list-section {
     background: transparent;
     padding: 0;
@@ -270,57 +278,70 @@ body:has(.companies-page-container) .app-container {
     outline: none;
 }
 
-.companies-list {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+.companies-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
 }
 
 .company-card {
-    display: flex;
-    gap: 20px;
+    background: white;
+    border: 1px solid #f3f4f6;
+    border-radius: 16px;
     padding: 24px;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    transition: all 0.3s ease;
+    height: 100%;
+    position: relative;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
 }
 
 .company-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
     border-color: #c4b5fd;
-    box-shadow: 0 4px 15px rgba(124, 58, 237, 0.1);
 }
 
 .company-logo-wrapper {
     width: 64px;
     height: 64px;
-    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    background: white;
     border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-bottom: 16px;
+    border: 1px solid #f3f4f6;
+    overflow: hidden;
     flex-shrink: 0;
 }
 
+.company-logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 4px;
+}
+
 .company-logo-emoji {
-    font-size: 28px;
+    font-size: 32px;
 }
 
 .company-info {
+    width: 100%;
     flex: 1;
-}
-
-.company-header-row {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 12px;
+    flex-direction: column;
 }
 
 .company-name {
     font-size: 18px;
     font-weight: 700;
     color: #1f2937;
-    margin-bottom: 4px;
+    margin-bottom: 8px;
+    line-height: 1.3;
 }
 
 .company-meta {
@@ -329,82 +350,45 @@ body:has(.companies-page-container) .app-container {
     gap: 6px;
     font-size: 13px;
     color: #6b7280;
+    margin-bottom: 12px;
     flex-wrap: wrap;
-}
-
-.company-rating {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-weight: 600;
-    color: #1f2937;
-}
-
-.company-reviews {
-    color: #9ca3af;
 }
 
 .company-dot {
     color: #d1d5db;
 }
 
-.view-profile-btn {
-    background: white;
-    border: 1.5px solid #7c3aed;
-    color: #7c3aed;
-    padding: 8px 20px;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.view-profile-btn:hover {
-    background: #7c3aed;
-    color: white;
-}
-
 .company-desc {
     font-size: 14px;
     color: #4b5563;
     line-height: 1.6;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex: 1;
 }
 
-.hot-jobs {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-}
-
-.hot-jobs-label {
-    font-size: 11px;
-    font-weight: 700;
-    color: #9ca3af;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.hot-jobs-tags {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.job-tag {
-    background: #f3f4f6;
+.view-profile-btn {
+    width: 100%;
+    background: white;
+    border: 1.5px solid #e5e7eb;
     color: #374151;
-    font-size: 13px;
-    padding: 6px 12px;
-    border-radius: 6px;
+    padding: 10px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 14px;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.2s;
+    margin-top: auto;
 }
 
-.job-tag:hover {
-    background: #e5e7eb;
+.view-profile-btn:hover {
+    border-color: #7c3aed;
+    color: #7c3aed;
+    background: #faf5ff;
 }
 
 /* Pagination */

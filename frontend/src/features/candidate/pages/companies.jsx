@@ -20,6 +20,8 @@ const JobDirectory = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [addressFilter, setAddressFilter] = useState('');
     const [sortBy, setSortBy] = useState('recommended'); // Sort option
+    const [companySizeFilter, setCompanySizeFilter] = useState([]);
+    const [industryFilter, setIndustryFilter] = useState([]);
 
     const notifications = [
         { id: 1, type: 'Admin', user: 'System Admin', msg: 'Your account security settings have been updated successfully.', time: '12/26/2026 4:04 PM' },
@@ -110,6 +112,8 @@ const JobDirectory = () => {
 
             // Nếu API trả về data, sử dụng nó; nếu empty, sử dụng mock data
             const apiData = response.data || [];
+            console.log('API Response - Companies loaded:', apiData.length);
+            console.log('Companies data:', apiData);
             setAllCompanies(apiData.length > 0 ? apiData : mockCompanies);
         } catch (err) {
             console.error('Error fetching companies:', err);
@@ -125,15 +129,15 @@ const JobDirectory = () => {
         fetchCompanies();
     }, []);
 
-    // Filter và Sort companies
+    // Filter companies by search query (name) and address
     const companies = React.useMemo(() => {
         let filtered = [...allCompanies];
 
-        // Filter by search query (tên công ty)
+        // Filter by company name
         if (searchQuery.trim()) {
+            const query = searchQuery.toLowerCase();
             filtered = filtered.filter(company =>
-                company.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                (company.description && company.description.toLowerCase().includes(searchQuery.toLowerCase()))
+                company.name.toLowerCase().includes(query)
             );
         }
 
@@ -144,25 +148,8 @@ const JobDirectory = () => {
             );
         }
 
-        // Sort
-        switch (sortBy) {
-            case 'name-asc':
-                filtered.sort((a, b) => a.name.localeCompare(b.name));
-                break;
-            case 'name-desc':
-                filtered.sort((a, b) => b.name.localeCompare(a.name));
-                break;
-            case 'newest':
-                // Mock data không có date, giữ nguyên thứ tự
-                break;
-            case 'recommended':
-            default:
-                // Giữ nguyên thứ tự gốc
-                break;
-        }
-
         return filtered;
-    }, [allCompanies, searchQuery, addressFilter, sortBy]);
+    }, [allCompanies, searchQuery, addressFilter]);
 
     // Handle search on Enter key
     const handleKeyPress = (e) => {
@@ -191,7 +178,12 @@ const JobDirectory = () => {
                     </div>
                     <div className="search-wrapper">
                         <Search size={18} className="search-icon-svg" />
-                        <input type="text" placeholder="Search Companies by Name or Industry" />
+                        <input
+                            type="text"
+                            placeholder="Search Companies by Name or Industry"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
                     </div>
                 </div>
 
@@ -298,104 +290,54 @@ const JobDirectory = () => {
 
             {/* Main Content */}
             <div className="companies-main">
-                {/* Sidebar Filters */}
+                {/* Simple Company Search Sidebar */}
                 <aside className="companies-sidebar">
                     <div className="filters-header">
-                        <h3>Filters</h3>
-                        <button className="clear-all-btn" onClick={() => { setSearchQuery(''); setAddressFilter(''); fetchCompanies(); }}>Clear all</button>
+                        <h3>Tìm kiếm</h3>
                     </div>
 
-                    {/* Location Filter */}
+                    {/* Company Name Search */}
                     <div className="filter-group">
-                        <div className="filter-header" onClick={() => toggleFilter('location')}>
-                            <span>Location</span>
-                            <ChevronDown size={18} className={openFilters.location ? 'rotate-icon' : ''} />
+                        <label className="filter-label">Tên công ty</label>
+                        <div className="filter-search-input">
+                            <Search size={18} className="search-input-icon" />
+                            <input
+                                type="text"
+                                placeholder="Nhập tên công ty..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
                         </div>
-                        {openFilters.location && (
-                            <div className="filter-options">
-                                <div className="filter-search-input">
-                                    <input
-                                        type="text"
-                                        placeholder="Enter address..."
-                                        value={addressFilter}
-                                        onChange={(e) => setAddressFilter(e.target.value)}
-                                        onKeyPress={(e) => { if (e.key === 'Enter') fetchCompanies(searchQuery, addressFilter); }}
-                                    />
-                                </div>
-                            </div>
-                        )}
                     </div>
 
-                    {/* Company Size Filter */}
+                    {/* Location Search */}
                     <div className="filter-group">
-                        <div className="filter-header" onClick={() => toggleFilter('companySize')}>
-                            <span>Company Size</span>
-                            <ChevronDown size={18} className={openFilters.companySize ? 'rotate-icon' : ''} />
+                        <label className="filter-label">Địa điểm</label>
+                        <div className="filter-search-input">
+                            <MapPin size={18} className="search-input-icon" />
+                            <input
+                                type="text"
+                                placeholder="Nhập địa điểm (VD: TP.HCM)..."
+                                value={addressFilter}
+                                onChange={(e) => setAddressFilter(e.target.value)}
+                            />
                         </div>
-                        {openFilters.companySize && (
-                            <div className="filter-options">
-                                <label className="filter-option">
-                                    <input type="checkbox" /> Startup (1-50)
-                                </label>
-                                <label className="filter-option">
-                                    <input type="checkbox" /> Mid-size (51-200)
-                                </label>
-                                <label className="filter-option">
-                                    <input type="checkbox" /> Large (201-1000)
-                                </label>
-                                <label className="filter-option">
-                                    <input type="checkbox" /> Enterprise (1000+)
-                                </label>
-                            </div>
-                        )}
                     </div>
 
-                    {/* Industry Filter */}
-                    <div className="filter-group">
-                        <div className="filter-header" onClick={() => toggleFilter('industry')}>
-                            <span>Industry</span>
-                            <ChevronDown size={18} className={openFilters.industry ? 'rotate-icon' : ''} />
-                        </div>
-                        {openFilters.industry && (
-                            <div className="filter-options">
-                                <label className="filter-option">
-                                    <input type="checkbox" /> Technology
-                                </label>
-                                <label className="filter-option">
-                                    <input type="checkbox" /> Healthcare
-                                </label>
-                                <label className="filter-option">
-                                    <input type="checkbox" /> Finance
-                                </label>
-                                <label className="filter-option">
-                                    <input type="checkbox" /> Education
-                                </label>
-                            </div>
-                        )}
-                    </div>
+                    {(searchQuery || addressFilter) && (
+                        <button
+                            className="clear-search-btn"
+                            onClick={() => { setSearchQuery(''); setAddressFilter(''); }}
+                        >
+                            Xóa tìm kiếm
+                        </button>
+                    )}
 
-                    {/* Benefits Filter */}
+                    {/* Quick Stats */}
                     <div className="filter-group">
-                        <div className="filter-header" onClick={() => toggleFilter('benefits')}>
-                            <span>Benefits</span>
-                            <ChevronDown size={18} className={openFilters.benefits ? 'rotate-icon' : ''} />
-                        </div>
-                        {openFilters.benefits && (
-                            <div className="filter-options">
-                                <label className="filter-option">
-                                    <input type="checkbox" /> Health Insurance
-                                </label>
-                                <label className="filter-option">
-                                    <input type="checkbox" /> Remote Work
-                                </label>
-                                <label className="filter-option">
-                                    <input type="checkbox" /> Stock Options
-                                </label>
-                                <label className="filter-option">
-                                    <input type="checkbox" /> 401k Match
-                                </label>
-                            </div>
-                        )}
+                        <p className="search-result-count">
+                            Hiển thị <strong>{companies.length}</strong> công ty
+                        </p>
                     </div>
                 </aside>
 
@@ -472,9 +414,9 @@ const JobDirectory = () => {
                                     </div>
                                 </div>
 
-                                <div className="companies-list">
+                                <div className="companies-grid">
                                     {companies.map(company => (
-                                        <div key={company.id} className="company-card">
+                                        <div key={company.id} className="company-card" onClick={() => navigate(`/company-profile/${company.id}`)} style={{ cursor: 'pointer' }}>
                                             <div className="company-logo-wrapper">
                                                 {company.logo ? (
                                                     <img src={company.logo} alt={company.name} className="company-logo-img" />
@@ -483,24 +425,13 @@ const JobDirectory = () => {
                                                 )}
                                             </div>
                                             <div className="company-info">
-                                                <div className="company-header-row">
-                                                    <div>
-                                                        <h3 className="company-name">{company.name}</h3>
-                                                        <div className="company-meta">
-                                                            <span><MapPin size={14} /> {company.address || 'N/A'}</span>
-                                                            {company.website && (
-                                                                <>
-                                                                    <span className="company-dot">•</span>
-                                                                    <a href={company.website.startsWith('http') ? company.website : `https://${company.website}`} target="_blank" rel="noopener noreferrer">
-                                                                        {company.website}
-                                                                    </a>
-                                                                </>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                    <button className="view-profile-btn" onClick={() => navigate(`/company-profile/${company.id}`)}>View Profile</button>
+                                                <h3 className="company-name">{company.name}</h3>
+                                                <div className="company-meta">
+                                                    <span><MapPin size={14} /> {company.address || 'Chưa cập nhật địa điểm'}</span>
                                                 </div>
-                                                <p className="company-desc">{company.description || 'No description available.'}</p>
+                                                <p className="company-desc">{company.description || 'Chưa có mô tả về công ty này.'}</p>
+
+                                                <button className="view-profile-btn">Xem hồ sơ</button>
                                             </div>
                                         </div>
                                     ))}
@@ -510,7 +441,7 @@ const JobDirectory = () => {
                     )}
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 
