@@ -34,21 +34,34 @@ const CandidateNavbar = () => {
 
                 if (response.ok) {
                     const data = await response.json();
-                    // Map API data to UI format
-                    const mappedData = data.map((item, index) => ({
-                        id: index, // No ID in serializer, using index
-                        type: 'System', // Default type as API doesn't return type yet, or infer from title? 
-                        // Serializer returns: actor, message, title, created_date
-                        // Let's use 'title' as type if it fits, or just 'System'
-                        title: item.title || 'Notification',
-                        user: item.actor || 'System',
-                        msg: item.message,
-                        time: new Date(item.created_date).toLocaleString()
-                    }));
+                    let mappedData = [];
+
+                    if (Array.isArray(data) && data.length > 0) {
+                        // Map API data to UI format
+                        mappedData = data.map((item, index) => ({
+                            id: index,
+                            type: 'System',
+                            title: item.title || 'Notification',
+                            user: item.actor || 'System',
+                            msg: item.message,
+                            time: new Date(item.created_date).toLocaleString()
+                        }));
+                    } else {
+                        // Mock Data for Testing
+                        mappedData = [
+                            { id: 101, type: 'Admin', title: 'System Update', user: 'System Admin', msg: 'Your profile has been approved.', time: new Date().toLocaleString() },
+                            { id: 102, type: 'Recruiter', title: 'Application Viewed', user: 'Tech Corp', msg: 'Your application for Senior Dev was viewed.', time: new Date(Date.now() - 86400000).toLocaleString() },
+                        ];
+                    }
                     setNotifications(mappedData);
                 }
             } catch (error) {
                 console.error("Failed to fetch notifications", error);
+                // Fallback Mock Data on Error
+                setNotifications([
+                    { id: 101, type: 'Admin', title: 'System Update', user: 'System Admin', msg: 'Your profile has been approved.', time: new Date().toLocaleString() },
+                    { id: 102, type: 'Recruiter', title: 'Application Viewed', user: 'Tech Corp', msg: 'Your application for Senior Dev was viewed.', time: new Date(Date.now() - 86400000).toLocaleString() },
+                ]);
             }
         };
 
