@@ -3,7 +3,8 @@ import ReactDOM from 'react-dom';
 import axios from 'axios';
 import OrganizationProfile from './OrganizationProfile';
 import { useNavigate } from 'react-router-dom';
-import RecruiterApplicationManagement from './RecruiterApplicationManagement'; // IMPORT NEW COMPONENT
+import RecruiterApplicationManagement from './RecruiterApplicationManagement';
+import RecruiterInterviews from './RecruiterInterviews'; // IMPORT NEW COMPONENT
 
 import {
   LayoutDashboard,
@@ -20,7 +21,8 @@ import {
   Clock,
   MoreHorizontal,
   Building2,
-  FileText // Added Icon
+  FileText,
+  Calendar // Added Calendar Icon
 } from 'lucide-react';
 
 import {
@@ -167,11 +169,11 @@ const RecruiterDashboard = () => {
           </div>
 
           <div
-            className={`menu-item ${activeTab === 'candidates' ? 'active' : ''}`}
-            onClick={() => setActiveTab('candidates')}
+            className={`menu-item ${activeTab === 'interviews' ? 'active' : ''}`}
+            onClick={() => setActiveTab('interviews')}
           >
-            <Users size={22} />
-            <span className="menu-text">Candidates</span>
+            <Calendar size={22} />
+            <span className="menu-text">Interviews</span>
           </div>
 
           <div
@@ -209,7 +211,8 @@ const RecruiterDashboard = () => {
                 activeTab === 'dashboard' ? 'Main Dashboard' :
                   activeTab === 'organization' ? 'Organization Profile' :
                     activeTab === 'applications' ? 'Application Management' :
-                      'Management'
+                      activeTab === 'interviews' ? 'Interview Management' :
+                        'Management'
               }
             </h2>
           </div>
@@ -312,8 +315,6 @@ const RecruiterDashboard = () => {
                   </div>
                 </div>
 
-                {/* 4. ĐÃ XÓA CARD "HIRED" TẠI ĐÂY */}
-
               </div>
 
               {/* CHART & STATISTICS */}
@@ -400,10 +401,9 @@ const RecruiterDashboard = () => {
             </div>
           )}
 
-          {activeTab === 'candidates' && (
+          {activeTab === 'interviews' && (
             <div className="dashboard-view">
-              <h3>Candidates Management</h3>
-              <p>Tính năng đang phát triển...</p>
+              <RecruiterInterviews />
             </div>
           )}
 

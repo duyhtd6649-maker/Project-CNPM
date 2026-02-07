@@ -10,6 +10,7 @@ const RecruiterApplicationManagement = () => {
     const [filterStatus, setFilterStatus] = useState('All');
     const [selectedApp, setSelectedApp] = useState(null);
     const [processingId, setProcessingId] = useState(null);
+    const [viewingCv, setViewingCv] = useState(null); // URL string
 
     // Confirmation Modal State
     const [confirmationModal, setConfirmationModal] = useState(null); // { id, status, name }
@@ -30,7 +31,10 @@ const RecruiterApplicationManagement = () => {
                 phone: app.user_phone || 'N/A',
                 // Experience and cover letter are not currently returned by this endpoint
                 experience: 'N/A',
-                coverLetter: 'Details not available.'
+                coverLetter: 'Details not available.',
+                // Ideally backend sends CV URL or ID to construct URL. For now using placeholder or if cvsid exists maybe construct URL? 
+                // But for now, we rely on mock data button for testing the view.
+                cvUrl: app.cv_url || null
             }));
 
             setApplications(mappedData);
@@ -85,6 +89,14 @@ const RecruiterApplicationManagement = () => {
             setProcessingId(null);
             setConfirmationModal(null);
         }
+    };
+
+    // View CV Handler
+    const handleViewCV = (e, app) => {
+        e.stopPropagation(); // Prevent opening detail modal
+        // For testing/mock, use a default CV image if no URL is present
+        const cvUrlToUse = app.cvUrl || "https://marketplace.canva.com/EAFRuCp3DcY/1/0/1131w/canva-black-white-minimalist-cv-resume-f5JNR-K5jjw.jpg";
+        setViewingCv(cvUrlToUse);
     };
 
     const filteredApps = applications.filter(app => {
@@ -162,14 +174,19 @@ const RecruiterApplicationManagement = () => {
                             </div>
 
                             <div className="ra-footer">
-                                <button className="btn-view-details" onClick={() => setSelectedApp(app)}>
+                                <button className="btn-view-cv" onClick={(e) => handleViewCV(e, app)} style={{ marginRight: '8px', flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', padding: '8px', border: '1px solid #E2E8F0', borderRadius: '8px', background: 'white', cursor: 'pointer', color: '#475569', fontSize: '13px', fontWeight: '500' }}>
+                                    <FileText size={16} /> View CV
+                                </button>
+                                <button className="btn-view-details" onClick={() => setSelectedApp(app)} style={{ flex: 1 }}>
                                     <Eye size={16} /> View Details
                                 </button>
                             </div>
                         </div>
                     ))
                 ) : (
-                    <div className="empty-state">No applications found.</div>
+                    <div className="empty-state">
+                        <p>No applications found.</p>
+                    </div>
                 )}
             </div>
 
@@ -210,7 +227,36 @@ const RecruiterApplicationManagement = () => {
                                 </div>
                             </div>
 
-                            {/* Experience and Cover Letter removed as they aren't in the API */}
+                            {/* CV Button in Modal too */}
+                            <div className="ra-info-group">
+                                <label className="ra-label">Resume / CV</label>
+                                <div style={{ marginTop: '8px' }}>
+                                    <button
+                                        className="btn-view-cv"
+                                        onClick={(e) => handleViewCV(e, selectedApp)}
+                                        style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '8px 16px', border: '1px solid #E2E8F0', borderRadius: '8px', background: 'white', cursor: 'pointer', color: '#475569', fontSize: '14px', fontWeight: '500' }}
+                                    >
+                                        <FileText size={16} /> Preview CV
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Experience and Cover Letter removed as they aren't in the API, but exist in mock data */}
+                            {selectedApp.experience !== 'N/A' && (
+                                <div className="ra-info-group">
+                                    <label className="ra-label">Experience</label>
+                                    <div className="ra-value">{selectedApp.experience}</div>
+                                </div>
+                            )}
+
+                            {selectedApp.coverLetter && selectedApp.coverLetter !== 'Details not available.' && (
+                                <div className="ra-info-group">
+                                    <label className="ra-label">Cover Letter / Note</label>
+                                    <div className="ra-value" style={{ background: '#f9fafb', padding: '12px', borderRadius: '8px', fontSize: '14px' }}>
+                                        {selectedApp.coverLetter}
+                                    </div>
+                                </div>
+                            )}
 
                         </div>
 
@@ -229,6 +275,38 @@ const RecruiterApplicationManagement = () => {
                                 disabled={processingId === selectedApp.id}
                             >
                                 <Check size={16} style={{ marginRight: '6px', display: 'inline', verticalAlign: 'middle' }} /> Approve (Hire)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* VIEW CV MODAL */}
+            {viewingCv && (
+                <div className="ra-modal-overlay" style={{ zIndex: 10001 }} onClick={() => setViewingCv(null)}>
+                    <div className="ra-modal-content" style={{ width: '600px', maxWidth: '90vw', height: '85vh', display: 'flex', flexDirection: 'column' }} onClick={e => e.stopPropagation()}>
+                        <div className="ra-modal-header" style={{ borderBottom: '1px solid #eee', paddingBottom: '15px', marginBottom: '15px' }}>
+                            <div className="ra-modal-title">
+                                <h2>Candidate CV</h2>
+                            </div>
+                            <button className="ra-modal-close" onClick={() => setViewingCv(null)}>
+                                <X size={24} />
+                            </button>
+                        </div>
+                        <div className="ra-modal-body" style={{ flex: 1, overflow: 'hidden', padding: 0, display: 'flex', justifyContent: 'center', alignItems: 'center', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                            {/* Displaying Image for now as requested */}
+                            <img
+                                src={viewingCv}
+                                alt="CV Preview"
+                                style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
+                            />
+                        </div>
+                        <div className="ra-modal-actions" style={{ justifyContent: 'flex-end', marginTop: '15px' }}>
+                            <button
+                                className="btn-view-details"
+                                onClick={() => setViewingCv(null)}
+                            >
+                                Close
                             </button>
                         </div>
                     </div>
