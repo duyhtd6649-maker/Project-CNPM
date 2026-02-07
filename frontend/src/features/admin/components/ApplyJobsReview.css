@@ -1,0 +1,715 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap');
+
+/* =========================================
+   1. VARIABLES & RESET
+   ========================================= */
+:root {
+    /* Brand Colors */
+    --primary-blue: #4880FF;
+    --primary-blue-hover: #3a6dcc;
+    --primary-green: #10B981;
+    --primary-green-hover: #059669;
+    --navy-dark: #101935;
+
+    /* Backgrounds */
+    --bg-body: #F5F6FA;
+    --bg-white: #FFFFFF;
+    --bg-card: #FFFFFF;
+    --bg-input: #F8FAFC;
+
+    /* Text Colors */
+    --text-dark: #202224;
+    --text-medium: #475569;
+    --text-light: #94A3B8;
+    --text-placeholder: #CBD5E1;
+
+    /* Status Colors */
+    --status-pending-bg: #FFF7ED;
+    --status-pending-text: #F59E0B;
+    --status-reviewed-bg: #E0E7FF;
+    --status-reviewed-text: #4F46E5;
+    --status-interview-bg: #F0FDF4;
+    --status-interview-text: #16A34A;
+    --status-rejected-bg: #FEF2F2;
+    --status-rejected-text: #EF4444;
+    --status-hired-bg: #ECFDF5;
+    --status-hired-text: #059669;
+
+    /* Borders & Shadows */
+    --border-color: #E2E8F0;
+    --border-focus: rgba(72, 128, 255, 0.4);
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.02);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.05);
+    --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.08);
+    --shadow-modal: 0 20px 50px rgba(0, 0, 0, 0.25);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+/* =========================================
+   2. MAIN LAYOUT STRUCTURE
+   ========================================= */
+.apply-jobs-container {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    background: var(--bg-body);
+    font-family: 'Nunito Sans', sans-serif;
+    overflow: hidden;
+    /* Prevent body scroll */
+}
+
+/* FIX: Override global fixed positioning issues specifically for this page */
+.apply-jobs-container .admin-sidebar {
+    position: relative !important;
+    transform: none !important;
+    left: auto;
+    top: auto;
+    width: 280px;
+    height: 100vh;
+    flex-shrink: 0;
+    z-index: 50;
+    transition: margin-left 0.3s ease;
+}
+
+/* Sidebar Styles Internal */
+.admin-sidebar {
+    background: var(--navy-dark);
+    color: white;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-header-uth {
+    height: 80px;
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.uth-branding {
+    font-size: 22px;
+    font-weight: 900;
+    cursor: pointer;
+    letter-spacing: -0.5px;
+}
+
+.uth-blue-text {
+    color: var(--primary-blue);
+}
+
+.workplace-green-text {
+    color: var(--primary-green);
+}
+
+.sidebar-nav-custom {
+    flex: 1;
+    padding: 24px 0;
+    overflow-y: auto;
+}
+
+.nav-group-label {
+    padding: 0 24px;
+    margin-top: 24px;
+    margin-bottom: 12px;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #64748B;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+}
+
+.nav-item-custom {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 24px;
+    color: #A3AED0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 600;
+    font-size: 15px;
+    border-right: 3px solid transparent;
+}
+
+.nav-item-custom:hover,
+.nav-item-custom.active {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    border-right-color: var(--primary-blue);
+}
+
+.nav-item-custom svg {
+    opacity: 0.8;
+}
+
+.nav-item-custom:hover svg,
+.nav-item-custom.active svg {
+    opacity: 1;
+    color: var(--primary-blue);
+}
+
+.sidebar-footer {
+    padding: 20px 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* =========================================
+   3. MAIN CONTENT AREA
+   ========================================= */
+.apply-jobs-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Header */
+.apply-jobs-header {
+    height: 80px;
+    background: var(--bg-white);
+    padding: 0 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    z-index: 40;
+}
+
+.header-left h2 {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--text-dark);
+    margin: 0;
+}
+
+.header-subtitle {
+    font-size: 14px;
+    color: var(--text-light);
+    margin-top: 4px;
+    font-weight: 500;
+}
+
+.header-right-actions {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.notification {
+    position: relative;
+    cursor: pointer;
+    color: var(--text-light);
+    transition: color 0.2s;
+}
+
+.notification:hover {
+    color: var(--primary-blue);
+}
+
+.badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: #FF4842;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid white;
+}
+
+.user-account-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 12px;
+    transition: background 0.2s;
+}
+
+.user-account-box:hover {
+    background: #F8FAFC;
+}
+
+.avatar-placeholder {
+    width: 42px;
+    height: 42px;
+    background: #EEF2FF;
+    color: var(--primary-blue);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 18px;
+}
+
+.user-info-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.user-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.user-role {
+    font-size: 12px;
+    color: var(--text-light);
+    font-weight: 600;
+}
+
+/* =========================================
+   4. CONTENT & TOOLBAR
+   ========================================= */
+.apply-jobs-content {
+    flex: 1;
+    padding: 32px;
+    overflow-y: auto;
+    background: var(--bg-body);
+}
+
+.toolbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+/* Search Box */
+.search-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--bg-white);
+    padding: 12px 20px;
+    border-radius: 14px;
+    width: 380px;
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-sm);
+}
+
+.search-box:focus-within {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 4px rgba(72, 128, 255, 0.1);
+}
+
+.search-icon {
+    color: var(--text-light);
+}
+
+.search-box input {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 14px;
+    color: var(--text-dark);
+    font-weight: 500;
+}
+
+.search-box input::placeholder {
+    color: var(--text-placeholder);
+}
+
+/* Filter Box */
+.filter-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--bg-white);
+    padding: 10px 20px;
+    border-radius: 14px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s;
+}
+
+.filter-box:hover {
+    border-color: #CBD5E1;
+}
+
+.filter-icon {
+    color: var(--text-medium);
+}
+
+.status-select {
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-dark);
+    cursor: pointer;
+    min-width: 140px;
+}
+
+/* =========================================
+   5. LIST/TABLE SYSTEM
+   ========================================= */
+/* We'll use a card-based list for consistency with JobPosts, but tailored for applications */
+.applications-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-bottom: 40px;
+}
+
+.application-card {
+    background: var(--bg-white);
+    border-radius: 16px;
+    padding: 20px 24px;
+    border: 1px solid transparent;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.2s ease;
+}
+
+.application-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: #E2E8F0;
+}
+
+.app-info-group {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex: 2;
+}
+
+.candidate-avatar {
+    width: 48px;
+    height: 48px;
+    background: #EEF2FF;
+    color: var(--primary-blue);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 18px;
+    border: 1px solid #E0E7FF;
+}
+
+.app-details h4 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 0 0 4px 0;
+}
+
+.app-meta {
+    font-size: 13px;
+    color: var(--text-medium);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.job-info-group {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.job-title {
+    font-weight: 700;
+    color: var(--text-dark);
+    font-size: 15px;
+    margin-bottom: 4px;
+}
+
+.company-name {
+    font-size: 13px;
+    color: var(--text-light);
+}
+
+.status-group {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.actions-group {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Status Badges */
+.status-badge {
+    font-size: 12px;
+    font-weight: 800;
+    padding: 6px 14px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.status-badge.pending {
+    background: var(--status-pending-bg);
+    color: var(--status-pending-text);
+}
+
+.status-badge.reviewed {
+    background: var(--status-reviewed-bg);
+    color: var(--status-reviewed-text);
+}
+
+.status-badge.interviewing {
+    background: var(--status-interview-bg);
+    color: var(--status-interview-text);
+}
+
+.status-badge.rejected {
+    background: var(--status-rejected-bg);
+    color: var(--status-rejected-text);
+}
+
+.status-badge.hired {
+    background: var(--status-hired-bg);
+    color: var(--status-hired-text);
+}
+
+.btn-view-app {
+    background: transparent;
+    color: var(--primary-blue);
+    border: 1px solid #E0E7FF;
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.btn-view-app:hover {
+    background: #EEF2FF;
+    border-color: var(--primary-blue);
+}
+
+/* =========================================
+   6. MODAL STYLING
+   ========================================= */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.6);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(5px);
+    animation: fadeIn 0.2s ease-out;
+}
+
+.modal-content-large {
+    background: white;
+    width: 700px;
+    max-width: 90vw;
+    height: auto;
+    max-height: 90vh;
+    border-radius: 24px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: var(--shadow-modal);
+    animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-header {
+    padding: 24px 32px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #FAFAFA;
+}
+
+.modal-title-box h2 {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text-dark);
+    margin: 0;
+}
+
+.close-modal-btn {
+    background: white;
+    border: 1px solid var(--border-color);
+    color: var(--text-light);
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.close-modal-btn:hover {
+    background: var(--status-rejected-bg);
+    color: var(--status-rejected-text);
+    border-color: transparent;
+    transform: rotate(90deg);
+}
+
+.modal-body-scroll {
+    padding: 32px;
+    overflow-y: auto;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #F1F5F9;
+}
+
+.detail-item {
+    flex: 1;
+}
+
+.detail-item label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: #94A3B8;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.detail-item p {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin: 0;
+}
+
+.cv-preview {
+    background: #F8FAFC;
+    border: 1px path #E2E8F0;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    color: var(--text-medium);
+    margin-bottom: 20px;
+}
+
+.modal-footer-actions {
+    padding: 20px 32px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    background: white;
+}
+
+.btn-secondary {
+    background: white;
+    border: 1px solid #CBD5E1;
+    color: var(--text-dark);
+    padding: 10px 24px;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: var(--primary-blue);
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(40px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .apply-jobs-container .admin-sidebar {
+        position: fixed !important;
+        transform: translateX(-100%) !important;
+    }
+
+    .apply-jobs-container .admin-sidebar.open {
+        transform: translateX(0) !important;
+    }
+
+    .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 45;
+    }
+
+    .application-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .actions-group {
+        width: 100%;
+        justify-content: flex-start;
+    }
+}

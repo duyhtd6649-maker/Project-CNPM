@@ -5,7 +5,7 @@ import {
     LayoutDashboard, UserCog, ClipboardList,
     Menu, X, Bell, ChevronDown, Search, Filter,
     Building, User, CheckCircle, XCircle, Clock,
-    MapPin, DollarSign, Briefcase, Eye, Calendar, Globe
+    MapPin, DollarSign, Briefcase, Eye, Calendar, Globe, FileText
 } from 'lucide-react';
 import '../components/JobPosts.css';
 import adminApi from '../services/adminApi';
@@ -19,9 +19,9 @@ const JobPosts = () => {
     const [jobs, setJobs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    
+
     // --- UI State ---
-    const [filterStatus, setFilterStatus] = useState('All'); 
+    const [filterStatus, setFilterStatus] = useState('All');
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedJob, setSelectedJob] = useState(null); // State để hiện Modal xem chi tiết
 
@@ -59,9 +59,9 @@ const JobPosts = () => {
         try {
             // Gọi API cập nhật
             await adminApi.updateJobStatus(jobId, newStatus);
-            
+
             // Cập nhật State Local để UI đổi màu ngay lập tức
-            setJobs(prevJobs => prevJobs.map(job => 
+            setJobs(prevJobs => prevJobs.map(job =>
                 job.id === jobId ? { ...job, status: newStatus } : job
             ));
 
@@ -78,8 +78,8 @@ const JobPosts = () => {
     // --- 3. Filter Logic ---
     const filteredJobs = jobs.filter(job => {
         const matchesStatus = filterStatus === 'All' || job.status === filterStatus;
-        const matchesSearch = job.title?.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                              job.company?.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesSearch = job.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            job.company?.toLowerCase().includes(searchTerm.toLowerCase());
         return matchesStatus && matchesSearch;
     });
 
@@ -93,7 +93,7 @@ const JobPosts = () => {
         <div className="job-posts-container">
             {/* --- SIDEBAR NAVIGATION --- */}
             {isSidebarOpen && <div className="sidebar-overlay" onClick={toggleSidebar}></div>}
-            
+
             <aside className={`admin-sidebar ${isSidebarOpen ? 'open' : ''}`}>
                 <div className="sidebar-header-uth">
                     <div className="uth-branding" onClick={() => navigate('/admin')}>
@@ -102,26 +102,29 @@ const JobPosts = () => {
                     </div>
                     <button className="close-sidebar-btn" onClick={toggleSidebar}><X size={24} /></button>
                 </div>
-                
-                <nav className="sidebar-nav-custom">
-                     <div className="nav-group-label">OVERVIEW</div>
-                     <div className="nav-item-custom" onClick={() => navigate('/admin')}>
-                        <LayoutDashboard size={20} /> <span>Dashboard</span>
-                     </div>
-                     <div className="nav-item-custom active">
-                        <ClipboardList size={20} /> <span>Job Posts Review</span>
-                     </div>
 
-                     <div className="nav-group-label">MANAGEMENT</div>
-                     <div className="nav-item-custom" onClick={() => navigate('/admin/candidates')}>
+                <nav className="sidebar-nav-custom">
+                    <div className="nav-group-label">OVERVIEW</div>
+                    <div className="nav-item-custom" onClick={() => navigate('/admin')}>
+                        <LayoutDashboard size={20} /> <span>Dashboard</span>
+                    </div>
+                    <div className="nav-item-custom active">
+                        <ClipboardList size={20} /> <span>Job Posts Review</span>
+                    </div>
+                    <div className="nav-item-custom" onClick={() => navigate('/apply-jobs-review')}>
+                        <FileText size={20} /> <span>Apply Jobs Review</span>
+                    </div>
+
+                    <div className="nav-group-label">MANAGEMENT</div>
+                    <div className="nav-item-custom" onClick={() => navigate('/admin/candidates')}>
                         <UserCog size={20} /> <span>Candidates</span>
-                     </div>
-                     <div className="nav-item-custom" onClick={() => navigate('/admin/recruiters')}>
+                    </div>
+                    <div className="nav-item-custom" onClick={() => navigate('/admin/recruiters')}>
                         <UserCog size={20} /> <span>Recruiters</span>
-                     </div>
-                     <div className="nav-item-custom" onClick={() => navigate('/admin/accounts')}>
-                         <UserCog size={20} /> <span>Internal Accounts</span>
-                     </div>
+                    </div>
+                    <div className="nav-item-custom" onClick={() => navigate('/admin/accounts')}>
+                        <UserCog size={20} /> <span>Internal Accounts</span>
+                    </div>
                 </nav>
 
                 <div className="sidebar-footer">
@@ -141,18 +144,18 @@ const JobPosts = () => {
                         <p className="header-subtitle">Review, approve, or reject job postings from recruiters.</p>
                     </div>
                     <div className="header-right-actions">
-                         <div className="notification">
+                        <div className="notification">
                             <Bell size={22} />
                             <span className="badge">3</span>
-                         </div>
-                         <div className="user-account-box">
-                             <div className="avatar-placeholder">{user?.username?.charAt(0) || 'A'}</div>
-                             <div className="user-info-text">
+                        </div>
+                        <div className="user-account-box">
+                            <div className="avatar-placeholder">{user?.username?.charAt(0) || 'A'}</div>
+                            <div className="user-info-text">
                                 <span className="user-name">{user?.username || 'Admin'}</span>
                                 <span className="user-role">Super Admin</span>
-                             </div>
-                             <ChevronDown size={16} color="#94a3b8" />
-                         </div>
+                            </div>
+                            <ChevronDown size={16} color="#94a3b8" />
+                        </div>
                     </div>
                 </header>
 
@@ -161,19 +164,19 @@ const JobPosts = () => {
                     {/* Toolbar: Search & Filter */}
                     <div className="toolbar-container">
                         <div className="search-box">
-                            <Search size={18} className="search-icon"/>
-                            <input 
-                                placeholder="Search by Job Title or Company..." 
+                            <Search size={18} className="search-icon" />
+                            <input
+                                placeholder="Search by Job Title or Company..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
-                        
+
                         <div className="filter-actions">
                             <div className="filter-box">
                                 <Filter size={18} className="filter-icon" />
-                                <select 
-                                    value={filterStatus} 
+                                <select
+                                    value={filterStatus}
                                     onChange={(e) => setFilterStatus(e.target.value)}
                                     className="status-select"
                                 >
@@ -227,19 +230,19 @@ const JobPosts = () => {
                                             <button className="btn-view-details" onClick={() => setSelectedJob(job)}>
                                                 <Eye size={16} /> View Details
                                             </button>
-                                            
+
                                             {/* Action Buttons (Chỉ hiện Approve/Reject nếu cần thiết) */}
                                             <div className="quick-actions">
-                                                <button 
-                                                    className="btn-icon approve" 
+                                                <button
+                                                    className="btn-icon approve"
                                                     title="Quick Approve"
                                                     onClick={(e) => { e.stopPropagation(); handleStatusChange(job.id, 'Approved'); }}
                                                     disabled={job.status === 'Approved'}
                                                 >
                                                     <CheckCircle size={18} />
                                                 </button>
-                                                <button 
-                                                    className="btn-icon reject" 
+                                                <button
+                                                    className="btn-icon reject"
                                                     title="Quick Reject"
                                                     onClick={(e) => { e.stopPropagation(); handleStatusChange(job.id, 'Rejected'); }}
                                                     disabled={job.status === 'Rejected'}
@@ -285,21 +288,21 @@ const JobPosts = () => {
                                 <div className="detail-grid-4">
                                     <div className="detail-box">
                                         <span className="label">Location</span>
-                                        <p><MapPin size={14}/> {selectedJob.location || 'Unknown'}</p>
+                                        <p><MapPin size={14} /> {selectedJob.location || 'Unknown'}</p>
                                     </div>
                                     <div className="detail-box">
                                         <span className="label">Salary</span>
-                                        <p><DollarSign size={14}/> {selectedJob.salary_min && selectedJob.salary_max 
-                                            ? `$${selectedJob.salary_min} - $${selectedJob.salary_max}` 
+                                        <p><DollarSign size={14} /> {selectedJob.salary_min && selectedJob.salary_max
+                                            ? `$${selectedJob.salary_min} - $${selectedJob.salary_max}`
                                             : 'Negotiable'}</p>
                                     </div>
                                     <div className="detail-box">
                                         <span className="label">Job Type</span>
-                                        <p><Briefcase size={14}/> {selectedJob.job_type || 'Full Time'}</p>
+                                        <p><Briefcase size={14} /> {selectedJob.job_type || 'Full Time'}</p>
                                     </div>
                                     <div className="detail-box">
                                         <span className="label">Posted By</span>
-                                        <p><User size={14}/> {selectedJob.recruiter_name || 'Recruiter'}</p>
+                                        <p><User size={14} /> {selectedJob.recruiter_name || 'Recruiter'}</p>
                                     </div>
                                 </div>
                             </div>
