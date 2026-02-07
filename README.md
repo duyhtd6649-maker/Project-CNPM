@@ -69,20 +69,21 @@ npm run dev
 
 # Checklist
 Các tính năng chia làm 3 mức: đã làm - chưa hoàn thiện - chưa làm
+## Functional requirement
 ### Đã làm:
 * Candidate:
+   - Create a personal profile and upload CV (PDF/DOCX).
    - Receiving Analyzer results.
-   - Create a personal profile and upload CV (PDF).
    - Using Career AI Coach and receiving a career roadmap.
-   - Apply for jobs
-   - View job recommendations based on skills and job description(Recommendation System).
+   - Apply for jobs and view job recommendations based on skills and job description(Recommendation System).
    - Search for top companies
 * Admin:
-   - Admin login and account management (students, recruiters).
-   - Approve/reject/remove job posts or application
+   - Admin login and account management (students, recruiters, admins).
+   - Monitor system status, job posts, and approve/remove inappropriate content.
 * Recruiter:
-   - Post new job.
+   - Post new job openings.
    - Create a recruiter organization account.
+   - Shortlist, interview, and offer candidates.
 ### Chưa hoàn thiện:
    - Edit CV based on available CV template.
 ### Chưa làm:
@@ -94,14 +95,22 @@ Các tính năng chia làm 3 mức: đã làm - chưa hoàn thiện - chưa làm
    - Do challenges to get a badge(optional).
    - Buy a premium package.
 * Admin Web System
+   - Manage cabinets of knowledge (CV templates, interview questions, resources).
+   - User package Management.
    - Generate system reports: users, jobs, skills in demand, application traffic.
    - Create Articles for Candidates to reference.
    - Monitor logs and analytics.
-   - User package Management.
 * Recruiter Dashboard
    - View candidate pipelines and job matching scores.
    - Finding appropriate candidates based on job description.
- 
+  
+## Non-functional requirement:
+   - CV upload and AI analysis completed in < 5 seconds (P95).
+   - AI response time ≤ 3.5 seconds.
+   - API response latency ≤ 400ms.
+   - Security: JWT.
+
+
 ## Kế hoạch hoàn thiện
 - Ưu tiên hoàn thiện UI cho các tính năng cốt lõi chưa hoàn thiện (core của dự án)
 - Tích hợp đăng nhập bằng Email, Google, OAuth nhằm giúp người dùng dễ dàng trong khâu đăng nhập và quản lí tài khoản
