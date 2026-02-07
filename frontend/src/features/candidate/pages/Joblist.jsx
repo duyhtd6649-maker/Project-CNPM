@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     Search, Bookmark, MessageCircle, ChevronLeft, ChevronRight, ChevronDown,
-    ArrowRight, Briefcase, LogOut, MoreHorizontal, Bell, FileText, User
+    ArrowRight, Briefcase, LogOut, MoreHorizontal, Bell, FileText, User, Sparkles
 } from 'lucide-react';
 import CandidateNavbar from '../components/CandidateNavbar';
 import axiosClient from '../../../infrastructure/http/axiosClient';
@@ -15,6 +15,11 @@ const JobBrowsing = () => {
     const [allJobs, setAllJobs] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    // Recommended Jobs states
+    const [recommendedJobs, setRecommendedJobs] = useState([]);
+    const [isLoadingRecommended, setIsLoadingRecommended] = useState(true);
+    const [recommendedError, setRecommendedError] = useState(null);
 
     // Filter states
     const [searchTerm, setSearchTerm] = useState('');
@@ -85,6 +90,37 @@ const JobBrowsing = () => {
             }
         };
         fetchJobs();
+    }, []);
+
+    // Fetch recommended jobs
+    useEffect(() => {
+        const fetchRecommendedJobs = async () => {
+            setIsLoadingRecommended(true);
+            setRecommendedError(null);
+            try {
+                const response = await axiosClient.get('/job/recommended/');
+                const formattedJobs = response.data.map(job => ({
+                    id: job.id,
+                    role: job.title,
+                    company: job.company || 'Unknown Company',
+                    location: job.location || 'Remote',
+                    logo: `https://ui-avatars.com/api/?name=${encodeURIComponent(job.company || 'C')}&background=6366f1&color=fff&size=100`,
+                    tags: Array.isArray(job.skill) ? job.skill : (typeof job.skill === 'string' ? job.skill.split(',') : []),
+                    salary: formatSalary(job.salary_min, job.salary_max),
+                    salary_min: job.salary_min,
+                    salary_max: job.salary_max,
+                    description: job.description,
+                    category: job.category || ''
+                }));
+                setRecommendedJobs(formattedJobs);
+            } catch (err) {
+                console.error('Error fetching recommended jobs:', err);
+                setRecommendedError('Không thể tải danh sách công việc đề xuất.');
+            } finally {
+                setIsLoadingRecommended(false);
+            }
+        };
+        fetchRecommendedJobs();
     }, []);
 
     // Apply filters whenever filter state changes
@@ -402,7 +438,94 @@ const JobBrowsing = () => {
                     </header>
 
                     <div className="content-scroll">
+                        {/* Recommended Jobs Section - Always show when not loading */}
+                        {!isLoadingRecommended && (
+                            <div className="recommended-section">
+                                <div className="recommended-header">
+                                    <div className="recommended-title">
+                                        <Sparkles size={24} className="sparkle-icon" />
+                                        <h2>Việc làm đề xuất cho bạn</h2>
+                                    </div>
+                                    <p className="recommended-subtitle">Dựa trên hồ sơ và kỹ năng của bạn</p>
+                                </div>
+
+                                {recommendedJobs.length > 0 ? (
+                                    <div className="recommended-jobs-grid">
+                                        {recommendedJobs.slice(0, 4).map((job) => (
+                                            <div key={job.id} className="job-card recommended-card group">
+                                                <div className="card-hover-line recommended-line"></div>
+                                                <div className="recommended-badge">
+                                                    <Sparkles size={12} /> Đề xuất
+                                                </div>
+                                                <div className="card-header">
+                                                    <div className="company-logo-box">
+                                                        <img src={job.logo} alt={`${job.company} Logo`} />
+                                                    </div>
+                                                    <button className="bookmark-btn">
+                                                        <Bookmark size={20} />
+                                                    </button>
+                                                </div>
+                                                <div className="card-body">
+                                                    <h3>{job.role}</h3>
+                                                    <p className="company-location">{job.company} • {job.location}</p>
+                                                    <div className="tags-list">
+                                                        {job.tags.slice(0, 3).map((tag, index) => (
+                                                            <span key={index} className="tag">{tag}</span>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                                <div className="card-footer">
+                                                    <p className="salary">{job.salary} <span>/ year</span></p>
+                                                    <button
+                                                        className="details-btn"
+                                                        onClick={() => navigate(`/view-job/${job.id}`)}
+                                                    >
+                                                        Details <ArrowRight size={18} />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="recommended-empty-state">
+                                        <div className="empty-icon">
+                                            <FileText size={40} />
+                                        </div>
+                                        <p className="empty-title">Chưa có việc làm đề xuất</p>
+                                        <p className="empty-description">
+                                            Upload CV của bạn để chúng tôi phân tích kỹ năng và đề xuất công việc phù hợp nhất!
+                                        </p>
+                                        <button
+                                            className="upload-cv-btn"
+                                            onClick={() => navigate('/create-cv')}
+                                        >
+                                            <FileText size={18} /> Upload CV ngay
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Loading state for recommended jobs */}
+                        {isLoadingRecommended && (
+                            <div className="recommended-section">
+                                <div className="recommended-header">
+                                    <div className="recommended-title">
+                                        <Sparkles size={24} className="sparkle-icon" />
+                                        <h2>Việc làm đề xuất cho bạn</h2>
+                                    </div>
+                                </div>
+                                <div className="loading-state" style={{ textAlign: 'center', padding: '30px 20px' }}>
+                                    <div className="loading-spinner" style={{ width: '32px', height: '32px', border: '3px solid #e5e7eb', borderTop: '3px solid #6366f1', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto 12px' }}></div>
+                                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>Đang tìm việc làm phù hợp...</p>
+                                </div>
+                            </div>
+                        )}
+
                         <div className="jobs-container">
+                            <div className="all-jobs-header">
+                                <h2>Tất cả công việc</h2>
+                            </div>
                             {isLoading && (
                                 <div className="loading-state" style={{ textAlign: 'center', padding: '60px 20px' }}>
                                     <div className="loading-spinner" style={{ width: '48px', height: '48px', border: '4px solid #e5e7eb', borderTop: '4px solid #6366f1', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto 16px' }}></div>
