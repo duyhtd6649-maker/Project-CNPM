@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Building, Calendar, FileText, MapPin, Clock } from 'lucide-react';
+import { ArrowLeft, Building, Calendar, FileText, Eye, Briefcase } from 'lucide-react';
+import CandidateNavbar from '../components/CandidateNavbar';
 import '../components/MyApplications.css';
 
 const MyApplications = () => {
@@ -43,62 +44,79 @@ const MyApplications = () => {
     const getStatusClass = (status) => {
         switch (status?.toLowerCase()) {
             case 'approved': return 'status-approved';
+            case 'hired': return 'status-hired';
             case 'rejected': return 'status-rejected';
             case 'interviewing': return 'status-interviewing';
+            case 'reviewed': return 'status-reviewed';
             default: return 'status-pending';
         }
     };
 
     return (
-        <div className="my-applications-container">
-            <div className="applications-frame">
-                <div className="page-header">
+        <div className="hp-container">
+            {/* Added CandidateNavbar for consistent navigation */}
+            <CandidateNavbar />
+
+            <div className="my-applications-body">
+                <div className="applications-page-header">
                     <div className="page-title">
                         <h2>My Applications</h2>
+                        <p className="page-subtitle">Track and manage your job applications.</p>
                     </div>
-                    <button className="btn-back" onClick={() => navigate('/homepage')}>
-                        <ArrowLeft size={18} /> Back to Homepage
+                    {/* navigate back to Homepage or Job List */}
+                    <button className="btn-back-home" onClick={() => navigate('/homepage')}>
+                        <ArrowLeft size={18} /> Back to Dashboard
                     </button>
                 </div>
 
                 {loading ? (
-                    <div className="loading-container">Loading your applications...</div>
+                    <div className="loading-container">
+                        <p>Loading your applications...</p>
+                    </div>
                 ) : error ? (
-                    <div className="error-message">{error}</div>
+                    <div className="error-message">
+                        <p>{error}</p>
+                    </div>
                 ) : applications.length === 0 ? (
                     <div className="empty-state">
-                        <FileText size={48} style={{ marginBottom: '1rem', opacity: 0.5 }} />
+                        <FileText size={64} color="#CBD5E1" strokeWidth={1.5} />
                         <p>You haven't applied to any jobs yet.</p>
-                        <button className="btn-primary" onClick={() => navigate('/job-list')} style={{ marginTop: '1rem' }}>
+                        <button className="btn-browse" onClick={() => navigate('/job-list')}>
                             Browse Jobs
                         </button>
                     </div>
                 ) : (
                     <div className="applications-grid">
                         {applications.map((app) => (
-                            <div key={app.id} className={`app-card ${getStatusClass(app.system_status).replace('status-', '')}`}>
-                                <div className="app-header">
-                                    <div className="company-logo-placeholder">
-                                        <Building size={20} />
+                            <div key={app.id} className="app-card">
+                                <div>
+                                    <div className="app-header">
+                                        <div className="company-logo-placeholder">
+                                            {/* Use first letter of company or 'C' */}
+                                            {(app.company || 'C').charAt(0).toUpperCase()}
+                                        </div>
+                                        <span className={`status-badge ${getStatusClass(app.system_status)}`}>
+                                            {app.system_status || 'Pending'}
+                                        </span>
                                     </div>
-                                    <span className={`app-status ${getStatusClass(app.system_status)}`}>
-                                        {app.system_status || 'Pending'}
-                                    </span>
+
+                                    <div className="app-main-info">
+                                        <div className="app-job-title">{app.job_title || 'Unknown Role'}</div>
+                                        <div className="app-company-name">
+                                            <Building size={16} /> {app.company || 'Unknown Company'}
+                                        </div>
+                                    </div>
+
+                                    <div className="app-meta-info">
+                                        <Calendar size={14} />
+                                        <span>Applied: {new Date(app.created_date || app.created_at).toLocaleDateString()}</span>
+                                    </div>
                                 </div>
 
-                                <div className="app-body">
-                                    <h3>{app.job_title || 'Unknown Job Title'}</h3>
-                                    <div className="company-name">
-                                        <Building size={14} /> {app.company_name || 'Unknown Company'}
-                                    </div>
-                                </div>
-
-                                <div className="app-footer">
-                                    <div className="applied-date">
-                                        <Calendar size={14} style={{ marginRight: '4px' }} />
-                                        {new Date(app.created_at).toLocaleDateString()}
-                                    </div>
-                                    {/* Additional info can go here */}
+                                <div className="app-card-footer">
+                                    <button className="btn-view-job" onClick={() => navigate(`/view-job/${app.job_id}`)}>
+                                        <Eye size={16} /> View Job
+                                    </button>
                                 </div>
                             </div>
                         ))}
