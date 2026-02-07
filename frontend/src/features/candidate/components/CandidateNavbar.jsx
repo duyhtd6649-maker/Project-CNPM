@@ -12,16 +12,61 @@ const CandidateNavbar = () => {
     const [isAccountOpen, setIsAccountOpen] = useState(false);
     const [isNotifyOpen, setIsNotifyOpen] = useState(false);
     const [activeTab, setActiveTab] = useState('All');
+    const [notifications, setNotifications] = useState([]);
 
-    const notifications = [
-        { id: 1, type: 'Admin', user: 'System Admin', msg: 'Your account security settings have been updated successfully.', time: '12/26/2026 4:04 PM' },
-        { id: 2, type: 'Recruiter', user: 'Techcombank HR', msg: 'We have received your application for Senior Frontend Developer position.', time: '12/27/2026 9:15 AM' },
-        { id: 3, type: 'Recruiter', user: 'FPT Software', msg: 'Invitation to interview: Monday at 2:00 PM via Google Meet.', time: '12/28/2026 10:30 AM' }
-    ];
+    // Fetch Notifications from API
+    useEffect(() => {
+        const fetchNotifications = async () => {
+            try {
+                const token = localStorage.getItem('access_token');
+                // Use the same base URL logic as other parts of the app or relative path if proxy is set up
+                // Assuming axios or fetch. Since we want to use existing files, let's use standard fetch or imported axios if available.
+                // The previous files used 'axios', let's stick to that or 'axiosClient' if we import it.
+                // To be safe and self-contained as requested, I'll use fetch with the token.
+
+                const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000';
+                const response = await fetch(`${API_BASE.replace(/\/$/, '')}/api/notification`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    // Map API data to UI format
+                    const mappedData = data.map((item, index) => ({
+                        id: index, // No ID in serializer, using index
+                        type: 'System', // Default type as API doesn't return type yet, or infer from title? 
+                        // Serializer returns: actor, message, title, created_date
+                        // Let's use 'title' as type if it fits, or just 'System'
+                        title: item.title || 'Notification',
+                        user: item.actor || 'System',
+                        msg: item.message,
+                        time: new Date(item.created_date).toLocaleString()
+                    }));
+                    setNotifications(mappedData);
+                }
+            } catch (error) {
+                console.error("Failed to fetch notifications", error);
+            }
+        };
+
+        if (isNotifyOpen) {
+            fetchNotifications();
+        }
+    }, [isNotifyOpen]);
+
 
     const filteredNotifications = notifications.filter(item => {
         if (activeTab === 'All') return true;
-        return item.type === activeTab;
+        // Adjust filtering logic based on available data. 
+        // Since we don't have a specific 'type' field from backend corresponding to 'Admin'/'Recruiter' tabs exactly as before,
+        // we might want to relax this or map titles to types.
+        // For now, let's keep 'All' working and maybe 'System' if we use that.
+        // If the user wants specific tabs, we'd need logic to derive type.
+        // Let's assume for now we just show all under 'All' and maybe try to guess type.
+        return true; // Simplified for now to ensure data shows up.
     });
 
     const isActive = (path) => location.pathname === path;
@@ -104,7 +149,8 @@ const CandidateNavbar = () => {
                             <div className="header-title"><span>Inbox</span> <ChevronDown size={14} /></div>
                         </div>
                         <div className="notify-tabs">
-                            {['All', 'Admin', 'Recruiter'].map(tab => (
+                            {/* Keep tabs mainly for UI consistency, but functionality might be limited to 'All' unless we parse types */}
+                            {['All'].map(tab => (
                                 <div key={tab} className={`tab ${activeTab === tab ? 'active' : ''}`} onClick={() => setActiveTab(tab)}>{tab}</div>
                             ))}
                         </div>
@@ -112,16 +158,16 @@ const CandidateNavbar = () => {
                             {filteredNotifications.length > 0 ? (
                                 filteredNotifications.map(item => (
                                     <div key={item.id} className="notify-item">
-                                        <div className="notify-avatar"><UserCircle size={32} color={item.type === 'Admin' ? '#4b49ac' : '#666'} /></div>
+                                        <div className="notify-avatar"><UserCircle size={32} color={'#4b49ac'} /></div>
                                         <div className="notify-info">
-                                            <div className="notify-user">{item.user} <span className={`type-tag-small ${item.type.toLowerCase()}`}>{item.type}</span></div>
+                                            <div className="notify-user">{item.user} <span className="type-tag-small admin">{item.title}</span></div>
                                             <div className="notify-msg">{item.msg}</div>
                                             <div className="notify-time">{item.time}</div>
                                         </div>
                                     </div>
                                 ))
                             ) : (
-                                <div className="empty-state-notify">No notifications in {activeTab}</div>
+                                <div className="empty-state-notify">No notifications</div>
                             )}
                         </div>
                     </div>
