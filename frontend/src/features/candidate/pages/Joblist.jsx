@@ -497,9 +497,9 @@ const JobBrowsing = () => {
                                         </p>
                                         <button
                                             className="upload-cv-btn"
-                                            onClick={() => navigate('/create-cv')}
+                                            onClick={() => navigate('/analyze-cv')}
                                         >
-                                            <FileText size={18} /> Upload CV ngay
+                                            <FileText size={18} /> Upload và phân tích CV ngay
                                         </button>
                                     </div>
                                 )}

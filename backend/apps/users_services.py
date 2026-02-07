@@ -439,7 +439,7 @@ class CompanyService:
         if filters.get('name'):
             company_list = company_list.filter(name__icontains = filters.get('name'))
         if filters.get('address'):
-            company_list = company_list.filter(address = filters.get('address'))
+            company_list = company_list.filter(address__icontains = filters.get('address'))
         return company_list
     
     @staticmethod
