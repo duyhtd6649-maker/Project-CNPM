@@ -171,10 +171,6 @@ const ViewUserProfile = () => {
               <input type="text" value={userData?.date_of_birth || 'N/A'} readOnly />
             </div>
             <div className="form-group-item">
-              <label>Current Job Title</label>
-              <input type="text" value={userData?.current_job_title || 'N/A'} readOnly />
-            </div>
-            <div className="form-group-item">
               <label>Description</label>
               <input type="text" value={userData?.description || 'N/A'} readOnly />
             </div>

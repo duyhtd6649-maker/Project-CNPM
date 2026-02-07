@@ -49,13 +49,20 @@ const RecruiterDashboard = () => {
   const fetchJobs = async () => {
     try {
       const token = localStorage.getItem('access_token');
-      // Chỉnh lại URL đúng endpoint job list của bạn nếu cần
-      const response = await axios.get('http://127.0.0.1:8000/api/recruiter/jobs/', { 
+      // Use backend base URL from Vite env, fallback to localhost:8000
+      const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000';
+      // backend routes are mounted under /api/
+      const url = `${API_BASE.replace(/\/$/, '')}/api/recruiter/jobs/`;
+      console.log('Requesting jobs from:', url);
+      const response = await axios.get(url, { 
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      setJobs(response.data);
+      console.log('API status:', response.status, 'data:', response.data);
+      // If backend returns a JSON array on success, set it. Otherwise keep empty.
+      setJobs(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error("Lỗi khi lấy danh sách job:", error);
+      setJobs([]);
     }
   };
 
@@ -160,7 +167,11 @@ const RecruiterDashboard = () => {
               <input type="text" placeholder="Search..." />
             </div>
             
-            <button className="btn-create" onClick={() => setShowModal(true)}>
+            <button className="btn-create" onClick={() => {
+              console.log('🔍 Create Job clicked, showModal:', showModal);
+              setShowModal(true);
+              console.log('🔍 showModal state updated to true');
+            }}>
               <Plus size={20} />
               <span>Create Job</span>
             </button>
@@ -268,43 +279,30 @@ const RecruiterDashboard = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {jobs.map((job) => (
-                    <tr key={job.id}>
-                      <td><span className="job-name-text">{job.title}</span></td>
-                      <td>
-                        <div className="status-badge pending">
-                          <Clock size={14}/> Pending
-                        </div>
-                      </td>
-                      <td>{new Date(job.created_at || Date.now()).toLocaleDateString('en-GB')}</td>
-                      <td>
-                        <div className="progress-container">
-                          <div className="progress-bar" style={{ width: '10%' }}></div>
-                        </div>
+                  {jobs.length > 0 ? (
+                    jobs.map((job) => (
+                      <tr key={job.id}>
+                        <td><span className="job-name-text">{job.title}</span></td>
+                        <td>
+                          <div className={`status-badge ${job.status === 'Open' ? 'active' : job.status === 'Pending' ? 'pending' : 'pending'}`}>
+                            {job.status === 'Open' ? <CheckCircle size={14}/> : <Clock size={14}/>} {job.status || 'Pending'}
+                          </div>
+                        </td>
+                        <td>{new Date().toLocaleDateString('en-GB')}</td>
+                        <td>
+                          <div className="progress-container">
+                            <div className="progress-bar" style={{ width: '10%' }}></div>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="4" style={{ textAlign: 'center', padding: '20px', color: '#A3AED0' }}>
+                        Không có job postings
                       </td>
                     </tr>
-                  ))}
-                  {/* Dữ liệu mẫu giữ nguyên */}
-                  <tr>
-                    <td><span className="job-name-text">Senior React Developer</span></td>
-                    <td><div className="status-badge active"><CheckCircle size={14}/> Approved</div></td>
-                    <td>12.Jan.2026</td>
-                    <td>
-                      <div className="progress-container">
-                        <div className="progress-bar" style={{ width: '70%' }}></div>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td><span className="job-name-text">UI/UX Designer</span></td>
-                    <td><div className="status-badge active"><CheckCircle size={14}/> Approved</div></td>
-                    <td>08.Jan.2026</td>
-                    <td>
-                      <div className="progress-container">
-                        <div className="progress-bar" style={{ width: '45%' }}></div>
-                      </div>
-                    </td>
-                  </tr>
+                  )}
                 </tbody>
               </table>
             </div>
@@ -329,15 +327,20 @@ const RecruiterDashboard = () => {
       </div>
 
       {/* PORTAL CHO MODAL */}
-      {showModal && ReactDOM.createPortal(
-        <CreateJobPost 
-          onClose={() => setShowModal(false)} 
-          onSuccess={() => {
-            setShowModal(false);
-            fetchJobs();
-          }} 
-        />,
-        document.body
+      {showModal && (
+        <>
+          {console.log('📋 Rendering CreateJobPost modal, showModal:', showModal)}
+          {ReactDOM.createPortal(
+            <CreateJobPost 
+              onClose={() => setShowModal(false)} 
+              onSuccess={() => {
+                setShowModal(false);
+                fetchJobs();
+              }} 
+            />,
+            document.body
+          )}
+        </>
       )}
     </div>
   );

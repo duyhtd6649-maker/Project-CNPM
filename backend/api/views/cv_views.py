@@ -104,7 +104,7 @@ def cv_list(request):
     try:
         cv = cv_services.cv_list(user = request.user)
         serializer = CVListSerializer(cv, many = True)
-        return Response(serializer.data, status= status.HTTP_302_FOUND)
+        return Response(serializer.data, status= status.HTTP_200_OK)
     except PermissionError as e:
         return Response({f"{e}"},status=status.HTTP_403_FORBIDDEN)
 
@@ -125,6 +125,6 @@ def cv_analysis_list(request, id):
     try:
         analysis_list = cv_services.analysis_list(user = request.user, cv_id = id)
         serializer = AnalysisSerializer(analysis_list, many = True)
-        return Response(serializer.data, status=status.HTTP_302_FOUND)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     except PermissionError as e:
         return Response({f"{e}"},status=status.HTTP_403_FORBIDDEN)

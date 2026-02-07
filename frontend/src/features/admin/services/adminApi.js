@@ -2,7 +2,7 @@ import axiosClient from "../../../infrastructure/http/axiosClient";
 
 const adminApi = {
     // ============================================================
-    // 1. SYSTEM STATUS (DASHBOARD)
+    // 1. DASHBOARD & SYSTEM STATUS
     // ============================================================
     getSystemStatus: async () => {
         try {
@@ -25,8 +25,18 @@ const adminApi = {
         }
     },
 
+    getAdminStats: async () => {
+        try {
+            const response = await axiosClient.get("/admins/dashboard/");
+            return response.data;
+        } catch (error) {
+            handleApiError(error);
+            throw error;
+        }
+    },
+
     // ============================================================
-    // 2. JOB POSTS MANAGEMENT
+    // 2. QUẢN LÝ BÀI ĐĂNG (JOB POSTS)
     // ============================================================
     
     // Lấy danh sách Job
@@ -34,96 +44,39 @@ const adminApi = {
         try {
             // Gọi API search để lấy list
             const response = await axiosClient.get("/search/job/");
-            
-            if (!Array.isArray(response.data)) return [];
-            
-            // MAP DỮ LIỆU: Backend trả về 'Open', ta đổi thành 'Approved' để hiện màu xanh
-            return response.data.map(job => {
-                let displayStatus = job.status;
-                if (job.status === 'Open') displayStatus = 'Approved';
-
-                return {
-                    id: job.id,
-                    title: job.title,
-                    company: job.company_name || job.company || "Unknown Company",
-                    postedDate: job.created_date ? new Date(job.created_date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-                    status: displayStatus, // UI dùng status này
-                    location: job.location,
-                    salary_min: job.salary_min,
-                    salary_max: job.salary_max,
-                    description: job.description
-                };
-            });
+            if (Array.isArray(response.data)) return response.data;
+            if (response.data && Array.isArray(response.data.results)) return response.data.results;
+            return [];
         } catch (error) {
-            console.warn("API Error (getJobPosts), using mock data.", error);
-            // Mock data phòng khi lỗi
-            return [
-                { id: 'mock-1', title: 'Frontend Dev (Mock)', company: 'Tech Mock', postedDate: '2023-10-25', status: 'Pending', location: 'Remote' },
-                { id: 'mock-2', title: 'Backend Dev (Mock)', company: 'Data Mock', postedDate: '2023-10-24', status: 'Approved', location: 'Hanoi' },
-            ];
+            handleApiError(error);
+            return [];
         }
     },
 
     // Cập nhật trạng thái (Approve/Reject)
     updateJobStatus: async (id, status) => {
-        // 1. Chặn job giả (Mock)
-        if (String(id).startsWith('mock-')) {
-            console.log(`[MOCK] Updated Job ${id} to ${status}`);
-            return { success: true }; 
-        }
-
-        // 2. MAP DỮ LIỆU: Approved -> Open (Để Backend hiểu)
-        let backendStatus = status;
-        if (status === 'Approved') backendStatus = 'Open';
-        
-        // Payload gửi đi (dùng key 'new_status' theo yêu cầu backend của bạn)
-        const payload = { new_status: backendStatus };
-        console.log(`Sending update to Job ${id}:`, payload);
+        if (String(id).startsWith('mock-')) return { success: true, job: { id, status } };
+        const url = `/job/processjob/${id}/`;
+        const data = { status: status };
 
         try {
-            // [Chiến thuật]: Thử PATCH trước (chuẩn REST), nếu 405 thì dùng PUT
-            const response = await axiosClient.patch(`/job/processjob/${id}/`, payload);
-            return { success: true, data: response.data };
-
+            // Thử PUT vì đây là phương thức chuẩn của Django REST cho các hàm Update/Process
+            const response = await axiosClient.put(url, data);
+            return response.data;
         } catch (error) {
-            // Nếu lỗi 405 (Method Not Allowed) -> Thử lại bằng PUT
+            // Fallback sang POST nếu PUT báo 405
             if (error.response && error.response.status === 405) {
                 console.log(`PATCH failed (405). Retrying with PUT...`);
                 try {
-                    const resPut = await axiosClient.put(`/job/processjob/${id}/`, payload);
-                    return { success: true, data: resPut.data };
-                } catch (errPut) {
-                    handleApiError(errPut); // Xử lý lỗi của PUT
+                    const postRes = await axiosClient.post(url, data);
+                    return postRes.data;
+                } catch (postError) {
+                    handleApiError(postError);
+                    throw postError;
                 }
-            } else {
-                handleApiError(error); // Xử lý các lỗi khác (400, 403, 500)
             }
-        }
-    },
-
-    // Tạo Job mới (Admin tạo hộ)
-    createJobPost: async (jobData) => {
-        try {
-            const response = await axiosClient.post("/job/create", {
-                title: jobData.title,
-                company_name: jobData.company, 
-                description: jobData.description || "No description provided",
-                location: jobData.location || "Unknown",
-                skill: jobData.skill || "",
-                salary_min: jobData.salary_min || 0,
-                salary_max: jobData.salary_max || 0,
-                status: 'Open' // Admin tạo thì Open luôn
-            });
-            return {
-                id: response.data.id,
-                title: response.data.title,
-                company: response.data.company_name,
-                postedDate: new Date().toISOString().split('T')[0],
-                status: 'Approved' // Map sang Approved cho đẹp
-            };
-        } catch (error) {
-            console.error("API Error (createJobPost):", error);
             handleApiError(error);
+            throw error;
         }
     },
 
@@ -135,34 +88,165 @@ const adminApi = {
             await axiosClient.delete(`/job/${id}/delete/`);
             return { success: true };
         } catch (error) {
-            console.error("API Error (deleteJobPost):", error);
-            // Nếu 404 nghĩa là đã xóa rồi hoặc không tồn tại -> coi như thành công
-            if (error.response && error.response.status === 404) return { success: true };
+            handleApiError(error);
+            throw error;
+        }
+    },
+
+    // ============================================================
+    // 3. QUẢN LÝ TÀI KHOẢN (USERS MANAGEMENT)
+    // ============================================================
+    getCandidates: async () => {
+        try {
+            const response = await axiosClient.get("/candidates/");
+            return response.data;
+        } catch (error) {
+            handleApiError(error);
+            return [];
+        }
+    },
+
+    getRecruiters: async () => {
+        try {
+            const response = await axiosClient.get("/recruiters/");
+            return response.data;
+        } catch (error) {
+            handleApiError(error);
+            return [];
+        }
+    },
+
+    banUser: async (userId) => {
+        try {
+            const response = await axiosClient.post("/banuser/", { user_id: userId });
+            return response.data;
+        } catch (error) {
+            handleApiError(error);
+            throw error;
+        }
+    },
+
+    unbanUser: async (userId) => {
+        try {
+            const response = await axiosClient.post("/unbanuser/", { user_id: userId });
+            return response.data;
+        } catch (error) {
+            handleApiError(error);
+            throw error;
+        }
+    },
+
+    // ============================================================
+    // 4. KNOWLEDGE CABINETS (CV, Questions, Resources)
+    // ============================================================
+    getCVTemplates: async () => {
+        try {
+            const response = await axiosClient.get("/cabinets/cv-templates/");
+            return response.data;
+        } catch (error) { return []; }
+    },
+
+    createCVTemplate: async (data) => {
+        try {
+            return (await axiosClient.post("/cabinets/cv-templates/", data)).data;
+        } catch (error) {
+            handleApiError(error);
+            throw error;
+        }
+    },
+
+    getInterviewQuestions: async () => {
+        try {
+            const response = await axiosClient.get("/cabinets/interview-questions/");
+            return response.data;
+        } catch (error) { return []; }
+    },
+
+    createInterviewQuestion: async (data) => {
+        try {
+            return (await axiosClient.post("/cabinets/interview-questions/", data)).data;
+        } catch (error) {
+            handleApiError(error);
+            throw error;
+        }
+    },
+
+    getResources: async () => {
+        try {
+            const response = await axiosClient.get("/cabinets/resources/");
+            return response.data;
+        } catch (error) { return []; }
+    },
+
+    createResource: async (data) => {
+        try {
+            return (await axiosClient.post("/cabinets/resources/", data)).data;
+        } catch (error) {
+            handleApiError(error);
+            throw error;
+        }
+    },
+
+    deleteResource: async (id) => {
+        try {
+            return await axiosClient.delete(`/cabinets/resources/${id}/`);
+        } catch (error) {
+            handleApiError(error);
             throw error;
         }
     }
 };
 
-// --- HÀM XỬ LÝ LỖI CHUNG ---
+// ============================================================
+// HÀM XỬ LÝ LỖI CHI TIẾT (LOGIC MỚI)
+// ============================================================
 const handleApiError = (error) => {
+    let message = "Đã có lỗi xảy ra, vui lòng thử lại sau.";
+    let details = "";
+
     if (error.response) {
-        // Lỗi 403: Không có quyền Admin
-        if (error.response.status === 403) {
-            alert("⛔ LỖI PHÂN QUYỀN (403):\nTài khoản của bạn không có quyền Admin để thực hiện thao tác này.\nVui lòng kiểm tra lại 'is_staff' và 'is_superuser' trong Database.");
+        const status = error.response.status;
+        const data = error.response.data;
+
+        switch (status) {
+            case 400:
+                message = "Dữ liệu gửi đi không hợp lệ (400).";
+                // Lấy chi tiết lỗi từ backend (ví dụ lỗi validate field)
+                if (typeof data === 'object') {
+                    details = Object.entries(data)
+                        .map(([key, val]) => `${key}: ${Array.isArray(val) ? val.join(", ") : val}`)
+                        .join("\n");
+                }
+                break;
+            case 401:
+                message = "Phiên làm việc đã hết hạn. Vui lòng đăng nhập lại.";
+                break;
+            case 403:
+                message = "⛔ Bạn không có quyền Admin để thực hiện thao tác này (403).";
+                break;
+            case 404:
+                message = "Không tìm thấy tài nguyên yêu cầu (404). Có thể URL backend đã thay đổi.";
+                break;
+            case 405:
+                message = `Phương thức ${error.config.method.toUpperCase()} không được hỗ trợ (405).`;
+                break;
+            case 500:
+                message = "Lỗi hệ thống từ phía Server (500).";
+                break;
+            default:
+                message = data?.detail || data?.message || message;
         }
-        // Lỗi 400: Dữ liệu gửi đi sai
-        else if (error.response.data) {
-            const errorData = JSON.stringify(error.response.data, null, 2);
-            console.error("Backend Error Detail:", errorData);
-            alert(`LỖI DỮ LIỆU (400):\n${errorData}`);
-        }
-        else {
-            alert(`Lỗi Server (${error.response.status}). Vui lòng thử lại.`);
-        }
-    } else {
-        alert("Không thể kết nối tới Server. Vui lòng kiểm tra mạng hoặc Backend.");
+    } else if (error.request) {
+        message = "Không thể kết nối tới server. Vui lòng kiểm tra internet.";
     }
-    throw error; // Ném lỗi để component bên ngoài biết mà dừng loading
+
+    // Hiển thị thông báo
+    console.error("--- API ERROR LOG ---");
+    console.error("Status:", error.response?.status);
+    console.error("Data:", error.response?.data);
+    
+    // Bạn có thể thay alert bằng một thư viện như Toast (ví dụ: toast.error)
+    alert(`${message}${details ? "\n\nChi tiết:\n" + details : ""}`);
 };
 
 export default adminApi;

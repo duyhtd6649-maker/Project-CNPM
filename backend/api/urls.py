@@ -1,4 +1,4 @@
-from .views import user_views, ai_views, auth_views, cv_views, job_views, application_views, cabinet_views, dashboard_views
+from .views import user_views, ai_views, auth_views, cv_views, job_views, application_views
 from django.urls import path, include
 from rest_framework.views import APIView
 from dj_rest_auth.views import PasswordResetView, PasswordResetConfirmView
@@ -11,7 +11,6 @@ from api.views.ai_views import mock_interview
 
 urlpatterns = [
     # ===== USER =====
-    path('users/', user_views.GetUserInfor),
     path('user/candidate/<uuid:id>/', user_views.GetCandidateProfile),
     path('user/<uuid:id>/', user_views.GetUserInforById),
     path('candidate/profile', user_views.update_candidate_profile), #update profile cho candidate
@@ -55,7 +54,6 @@ urlpatterns = [
     path('user/<uuid:id>/applications/', application_views.applications_of_user), #candidate tự xem application
     path('user/profile/<uuid:id>', user_views.profile_view),
     path('user/profile/update/<uuid:id>', user_views.update_profile), #update profile cho admin, recruiter
-    path('user/upload_avatar/', user_views.upload_avatar), #update avatar
     # ===== RECRUITER =====
     path('recruiter/delete_recruiter_from_company/<uuid:recruiter_id>/', user_views.delete_recruiter_from_company), #xóa 1 recruiter khỏi company
     path('recruiter/recruiters_of_company/',user_views.list_recruiters_company), #xem tất cả recruiter của company đó
@@ -83,19 +81,6 @@ urlpatterns = [
     path("ai/cv/analyzer", ai_views.CvAnalyzerAPIView.as_view()),
     path("ai/mock-interview/", mock_interview),
 
-<<<<<<< Updated upstream
-    path("notification", user_views.notification),
 
-    # ===== DASHBOARD =====
-    path("dashboard/admin/stats/", dashboard_views.AdminDashboardStatsView.as_view()),
-    # ===== KNOWLEDGE CABINETS =====
-    path('cabinets/cv-templates/', cabinet_views.CvTemplateListCreateView.as_view()),
-    path('cabinets/cv-templates/<str:id>/', cabinet_views.CvTemplateDetailView.as_view()),
-    path('cabinets/interview-questions/', cabinet_views.InterviewQuestionListCreateView.as_view()),
-    path('cabinets/interview-questions/<str:id>/', cabinet_views.InterviewQuestionDetailView.as_view()),
-    path('cabinets/resources/', cabinet_views.ResourceListCreateView.as_view()),
-    path('cabinets/resources/<str:id>/', cabinet_views.ResourceDetailView.as_view()),
-=======
-    path("notification", user_views.notification)
->>>>>>> Stashed changes
+    path("notification", user_views.notification),
 ]

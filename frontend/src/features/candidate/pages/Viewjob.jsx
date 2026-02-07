@@ -5,8 +5,9 @@ import CandidateNavbar from '../components/CandidateNavbar';
 import axiosClient from '../../../infrastructure/http/axiosClient';
 import {
     Search, ChevronRight, Clock, Globe, Banknote, MapPin,
-    CheckCircle, Send, Bookmark, Briefcase, ArrowLeft
+    CheckCircle, Send, Bookmark, Briefcase, ArrowLeft, X, FileText, Loader
 } from 'lucide-react';
+import '../components/ApplyModal.css';
 
 
 const JobDetail = () => {
@@ -15,6 +16,21 @@ const JobDetail = () => {
     const [job, setJob] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    // Apply popup states
+    const [showApplyModal, setShowApplyModal] = useState(false);
+    const [cvList, setCvList] = useState([]);
+    const [selectedCV, setSelectedCV] = useState(null);
+    const [isLoadingCVs, setIsLoadingCVs] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [applyError, setApplyError] = useState(null);
+    const [applySuccess, setApplySuccess] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
+
+    // Filter CVs
+    const filteredCVs = cvList.filter(cv =>
+        (cv.file_name || cv.title || cv.name || '').toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     // Format salary từ số thành string hiển thị
     const formatSalary = (min, max) => {
@@ -40,18 +56,22 @@ const JobDetail = () => {
             setIsLoading(true);
             setError(null);
             try {
-                const response = await axiosClient.get(`/search/job/`);
+                // Gọi API chi tiết job theo ID
+                const response = await axiosClient.get(`/job/${id}/view/`);
                 const data = response.data;
                 // Transform data từ API sang format hiển thị
                 setJob({
                     id: data.id,
-                    role: data.title,
-                    company: data.company || 'Unknown Company',
+                    role: data.title || 'Unknown Job',
+                    company: data.company_name || data.company || 'Unknown Company',
                     location: data.location || 'Remote',
-                    logo: `https://ui-avatars.com/api/?name=${encodeURIComponent(data.company || 'C')}&background=6366f1&color=fff&size=100`,
-                    tags: data.skill || [],
+                    logo: `https://ui-avatars.com/api/?name=${encodeURIComponent(data.company_name || data.company || 'C')}&background=6366f1&color=fff&size=100`,
+                    tags: Array.isArray(data.skill) ? data.skill : (typeof data.skill === 'string' ? data.skill.split(',') : (data.skills || [])),
                     salary: formatSalary(data.salary_min, data.salary_max),
-                    description: data.description || ''
+                    description: data.description || '',
+                    salary_min: data.salary_min,
+                    salary_max: data.salary_max,
+                    isAiLogo: data.is_ai_logo || false // Handle potentially missing field
                 });
             } catch (err) {
                 console.error('Error fetching job detail:', err);
@@ -66,6 +86,92 @@ const JobDetail = () => {
         };
         fetchJobDetail();
     }, [id]);
+
+    // Open apply modal and fetch CVs
+    const openApplyModal = async () => {
+        setShowApplyModal(true);
+        setApplyError(null);
+        setApplySuccess(false);
+        setSelectedCV(null);
+
+        // Fetch CV list
+        setIsLoadingCVs(true);
+        try {
+            const response = await axiosClient.get('/cv/list/');
+            // Ensure response.data is an array
+            const data = Array.isArray(response.data) ? response.data : [];
+            setCvList(data);
+
+            // Sync to localStorage for robustness (optional but helpful)
+            if (data.length > 0) {
+                localStorage.setItem('savedCVs', JSON.stringify(data));
+            }
+        } catch (err) {
+            console.error('Error fetching CVs:', err);
+            // Fallback to localStorage exactly like SavedCV.jsx
+            try {
+                const savedCVs = JSON.parse(localStorage.getItem('savedCVs') || '[]');
+                if (Array.isArray(savedCVs) && savedCVs.length > 0) {
+                    setCvList(savedCVs);
+                    // Use a warning message instead of error if we successfully loaded from cache
+                    // setApplyError('Using cached CV list due to connection error.'); 
+                } else {
+                    setApplyError('Không thể tải danh sách CV. Vui lòng thử lại.');
+                }
+            } catch (storageErr) {
+                setApplyError('Không thể tải danh sách CV. Vui lòng thử lại.');
+            }
+        } finally {
+            setIsLoadingCVs(false);
+        }
+    };
+
+    // Close apply modal
+    const closeApplyModal = () => {
+        setShowApplyModal(false);
+        setApplyError(null);
+        setApplySuccess(false);
+    };
+
+    // Handle apply job submission
+    const handleApply = async () => {
+        if (!selectedCV) {
+            setApplyError('Vui lòng chọn một CV để ứng tuyển.');
+            return;
+        }
+
+        setIsSubmitting(true);
+        setApplyError(null);
+
+        try {
+            await axiosClient.post(`/job/${id}/apply/`, {
+                cvsid: selectedCV.id
+            });
+            setApplySuccess(true);
+            // Close modal after 2 seconds
+            setTimeout(() => {
+                closeApplyModal();
+            }, 2000);
+        } catch (err) {
+            console.error('Error applying job:', err);
+            if (err.response?.status === 400) {
+                setApplyError(err.response.data?.error || 'Bạn đã ứng tuyển công việc này rồi.');
+            } else if (err.response?.status === 403) {
+                setApplyError('Bạn không có quyền ứng tuyển. Hãy đảm bảo đã đăng nhập với tài khoản Candidate.');
+            } else {
+                setApplyError('Lỗi khi ứng tuyển. Vui lòng thử lại.');
+            }
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    // Close modal background click handler
+    const handleOverlayClick = (e) => {
+        if (e.target.className === 'apply-modal-overlay') {
+            closeApplyModal();
+        }
+    };
 
     // Loading state
     if (isLoading) {
@@ -110,37 +216,7 @@ const JobDetail = () => {
 
             <main className="main-layout">
 
-                <aside className="sidebar">
-                    <div
-                        className="card profile-card"
-                        onClick={() => navigate('/job-list')}
-                        style={{ cursor: 'pointer' }}
-                        title="Back to Job List"
-                    >
-                        <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1rem', height: '100%' }}>
-                            <div style={{
-                                width: '64px',
-                                height: '64px',
-                                borderRadius: '50%',
-                                backgroundColor: 'rgba(124, 58, 237, 0.1)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                color: 'var(--primary)',
-                                transition: 'all 0.2s'
-                            }} className="back-icon-circle">
-                                <ArrowLeft size={32} />
-                            </div>
-                            <span style={{
-                                fontWeight: '600',
-                                color: 'var(--text-main)',
-                                fontSize: '0.9rem'
-                            }}>Back to Job List</span>
-                        </div>
-                    </div>
 
-
-                </aside>
 
                 <section className="content-area">
                     <div className="content-top-bar">
@@ -192,19 +268,23 @@ const JobDetail = () => {
                                 <div className="job-description-col">
                                     <section className="section-block">
                                         <h3 className="section-title">Job Description</h3>
-                                        <div className="text-content">
-                                            <p>We are looking for an experienced {displayJob.role} to join our innovative technology team at {displayJob.company}. The ideal candidate will have a strong background in developing scalable applications and a passion for creating seamless user experiences.</p>
-                                            <p>In this role, you will lead the development of new features, mentor junior developers, and collaborate with product managers and designers to deliver high-quality solutions.</p>
+                                        <div className="text-content" style={{ whiteSpace: 'pre-line' }}>
+                                            {displayJob.description || "No description provided."}
                                         </div>
                                     </section>
 
                                     <section className="section-block">
                                         <h3 className="section-title">Key Requirements</h3>
                                         <ul className="requirements-list">
-                                            <li><CheckCircle size={16} className="check-icon" /> 5+ years of experience in software development with JavaScript/TypeScript and React.</li>
-                                            <li><CheckCircle size={16} className="check-icon" /> Strong understanding of backend technologies (Node.js, Python, or Go).</li>
-                                            <li><CheckCircle size={16} className="check-icon" /> Experience with cloud platforms like AWS or Azure.</li>
-                                            <li><CheckCircle size={16} className="check-icon" /> Excellent problem-solving skills and ability to work in an agile environment.</li>
+                                            {displayJob.tags && displayJob.tags.length > 0 ? (
+                                                displayJob.tags.map((skill, index) => (
+                                                    <li key={index}>
+                                                        <CheckCircle size={16} className="check-icon" /> {skill}
+                                                    </li>
+                                                ))
+                                            ) : (
+                                                <li>No specific requirements listed.</li>
+                                            )}
                                         </ul>
                                     </section>
                                 </div>
@@ -212,13 +292,9 @@ const JobDetail = () => {
                                 <div className="job-action-col">
                                     <div className="action-box">
                                         <h4>Interested?</h4>
-                                        <button className="btn btn-primary">
+                                        <button className="btn btn-primary" onClick={openApplyModal}>
                                             <span>Apply Now</span>
                                             <Send size={18} />
-                                        </button>
-                                        <button className="btn btn-outline">
-                                            <Bookmark size={18} />
-                                            <span>Save Job</span>
                                         </button>
                                         <hr className="divider" />
                                         <div className="company-info">
@@ -237,29 +313,89 @@ const JobDetail = () => {
                         </div>
                     </div>
 
-                    <div className="similar-jobs-section">
-                        <h3>Similar Opportunities</h3>
-                        <div className="similar-grid">
-                            <div className="card similar-item">
-                                <div className="similar-logo blue-logo">S</div>
-                                <div className="similar-info">
-                                    <h4>Frontend Developer</h4>
-                                    <p>Sony Group • Tokyo</p>
-                                </div>
-                                <span className="mini-tag green-tag">Full-time</span>
-                            </div>
-                            <div className="card similar-item">
-                                <div className="similar-logo red-logo">R</div>
-                                <div className="similar-info">
-                                    <h4>UI/UX Designer</h4>
-                                    <p>Rakuten • Tokyo</p>
-                                </div>
-                                <span className="mini-tag purple-tag">Contract</span>
-                            </div>
-                        </div>
-                    </div>
+
                 </section>
             </main>
+
+            {/* Apply Modal */}
+            {showApplyModal && (
+                <div className="apply-modal-overlay" onClick={handleOverlayClick}>
+                    <div className="apply-modal-container">
+                        <div className="apply-modal-header">
+                            <h2>Apply for {displayJob?.role}</h2>
+                            <button className="close-button" onClick={closeApplyModal}>
+                                <X size={20} />
+                            </button>
+                        </div>
+                        <div className="apply-modal-content">
+                            {/* CV Selection */}
+                            <div className="form-group">
+                                <label className="form-label">Select Resume <span style={{ color: '#dc2626' }}>*</span></label>
+                                <input
+                                    type="text"
+                                    className="cv-search-input"
+                                    placeholder="Search your CVs..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                />
+
+                                {isLoadingCVs ? (
+                                    <div style={{ textAlign: 'center', padding: '20px' }}>
+                                        <Loader className="spin-animation" size={24} style={{ animation: 'spin 1s linear infinite' }} />
+                                    </div>
+                                ) : (
+                                    <div className="cv-selection-list">
+                                        {filteredCVs.length > 0 ? (
+                                            filteredCVs.map(cv => (
+                                                <div
+                                                    key={cv.id}
+                                                    className={`cv-item ${selectedCV?.id === cv.id ? 'selected' : ''}`}
+                                                    onClick={() => setSelectedCV(cv)}
+                                                >
+                                                    <FileText size={20} className="cv-icon" />
+                                                    <div className="cv-info">
+                                                        <div className="cv-name">{cv.file_name}</div>
+                                                    </div>
+                                                    {selectedCV?.id === cv.id && <CheckCircle size={18} color="#6366f1" />}
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <div className="empty-cvs">
+                                                {cvList.length === 0 ? "You haven't uploaded any CVs yet." : "No CVs match your search."}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Cover Letter - Removed */}
+
+                            {/* Messages */}
+                            {applyError && (
+                                <div className="error-message">
+                                    <X size={16} /> {applyError}
+                                </div>
+                            )}
+                            {applySuccess && (
+                                <div className="success-message">
+                                    <CheckCircle size={16} /> Application sent successfully!
+                                </div>
+                            )}
+                        </div>
+                        <div className="apply-modal-footer">
+                            <button className="btn-cancel" onClick={closeApplyModal}>Cancel</button>
+                            <button
+                                className="btn-submit"
+                                onClick={handleApply}
+                                disabled={isSubmitting || !selectedCV || applySuccess}
+                            >
+                                {isSubmitting ? 'Sending...' : 'Send Application'}
+                                {!isSubmitting && <Send size={16} />}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div >
     );
 };

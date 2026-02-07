@@ -212,7 +212,7 @@ const CompanyProfile = () => {
                                         <span>Jobs</span>
                                     </div>
                                 </div>
-                                <div className="mini-footer"><LogOut size={16} /> Sign out</div>
+                                <div className="mini-footer" onClick={() => navigate('/login')}><LogOut size={16} /> Sign out</div>
                             </div>
                         )}
                     </div>

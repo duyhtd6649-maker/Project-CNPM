@@ -33,7 +33,7 @@ class CandidateSerializer(serializers.ModelSerializer):
     description = serializers.CharField(required = False, allow_blank=True)
     address = serializers.CharField(required = False, allow_blank=True)
     date_of_birth = serializers.DateField(required = False, allow_null=True)
-    avatar = serializers.ImageField(source="user.avatar", required = False)
+    avatar = serializers.ImageField(source="user.avatar_url", required = False)
     username = serializers.CharField(source="user.username", read_only = True)
     email =serializers.EmailField(source="user.email", read_only = True)
     phone =serializers.CharField(source="user.phone")

@@ -84,7 +84,7 @@ const CandidateNavbar = () => {
                                         <div className="icon-box"><Bell size={28} /></div>
                                         <span>Notification</span>
                                     </div>
-                                    <div className="mini-item" onClick={() => navigate('/create-cv')}>
+                                    <div className="mini-item" onClick={() => navigate('/job-list')}>
                                         <div className="icon-box"><FileText size={28} /></div>
                                         <span>Jobs</span>
                                     </div>

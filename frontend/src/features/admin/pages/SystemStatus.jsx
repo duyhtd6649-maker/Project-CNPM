@@ -67,6 +67,9 @@ const SystemStatus = () => {
                     <div className="sub-nav-item active">
                         <Activity size={18} /> Monitor System Status
                     </div>
+                    <div className="sub-nav-item" onClick={() => navigate('/job-posts')}>
+                        <ClipboardList size={18} /> Monitor Job Post
+                    </div>
                 </nav>
 
                 <div className="sub-sidebar-footer">
