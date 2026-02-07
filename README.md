@@ -75,16 +75,16 @@ Các tính năng chia làm 3 mức: đã làm - chưa hoàn thiện - chưa làm
    - Create a personal profile and upload CV (PDF).
    - Using Career AI Coach and receiving a career roadmap.
    - Apply for jobs
-   - Edit CV based on available CV template.
    - View job recommendations based on skills and job description(Recommendation System).
+   - Search for top companies
 * Admin:
    - Admin login and account management (students, recruiters).
    - Approve/reject/remove job posts or application
 * Recruiter:
    - Post new job.
-### Chưa hoàn thiện:
-   - Search for top companies
    - Create a recruiter organization account.
+### Chưa hoàn thiện:
+   - Edit CV based on available CV template.
 ### Chưa làm:
 * Candidate:
    - Sign up / Login with Email, Google, or OAuth.
