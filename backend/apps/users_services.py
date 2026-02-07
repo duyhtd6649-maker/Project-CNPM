@@ -39,8 +39,8 @@ class UserService:
             user.first_name = validated_data.get('first_name', user.first_name)
             user.last_name = validated_data.get('last_name', user.last_name)
 
-            if 'avatar_url' in validated_data:
-                user.avatar_url = validated_data['avatar_url']
+            if 'avatar' in validated_data:
+                user.avatar = validated_data['avatar']
 
             user.save()
             return user
@@ -51,20 +51,12 @@ class UserService:
     @staticmethod
     def update_candidate_profile(user, validated_data):
         try:
-            # Removed isdeleted=False to allow soft-deleted candidates to update profile (consistent with view_my_profile)
-            candidate = Candidates.objects.get(user = user) 
-            
-            # Extract user fields that might be at root level due to serializer flattening (FormData usage)
+            candidate = Candidates.objects.get(user = user, isdeleted = False)
             user_data = validated_data.pop('user', {})
-            user_fields = ['first_name', 'last_name', 'phone', 'avatar']
-            for field in user_fields:
-                if field in validated_data:
-                    user_data[field] = validated_data.pop(field)
-            
             instance = UserService.update_profile(user_id=user.id, validated_data=user_data)
-            candidate.description = validated_data.get('description', candidate.description)
-            candidate.address = validated_data.get('address', candidate.address)
-            candidate.date_of_birth = validated_data.get('date_of_birth', candidate.date_of_birth)
+            candidate.description = validated_data.get('description')
+            candidate.address = validated_data.get('address')
+            candidate.date_of_birth = validated_data.get('date_of_birth')
             candidate.save()
             return candidate
         except Candidates.DoesNotExist:

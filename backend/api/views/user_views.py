@@ -12,23 +12,6 @@ from rest_framework.exceptions import *
 from drf_yasg import openapi
 
 
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def GetUserProfile(request):
-    try:
-        instance = UserService.Get_user_profile(request.user)
-        
-        if request.user.role == 'candidate':
-            serializer = CandidateSerializer(instance)
-        elif request.user.role == 'recruiter':
-            serializer = RecruiterSerializer(instance)
-        else:
-            serializer = UserSerializer(instance)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    except NotFound as e:
-        return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
-
 @swagger_auto_schema(
     method='get',
     operation_description="Get candidate profile by ID",
@@ -44,17 +27,6 @@ def GetCandidateProfile(request, id):
     except NotFound as e:
         return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
 
-@swagger_auto_schema(
-    method='get',
-    operation_description="Get all users' information",
-    responses={200: UserSerializer(many=True)}
-)
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def GetUserInfor(request):
-    user = UserService.Get_All_User()
-    serializer = UserSerializer(user, many = True)
-    return Response(serializer.data)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -70,20 +42,6 @@ def GetUserInforById(request, id):
         return Response(serializer.data, status= status.HTTP_200_OK)
     except NotFound as e:
         return Response({f"{e}"},status= status.HTTP_404_NOT_FOUND)
-
-@swagger_auto_schema(
-    method='get',
-    operation_description="Get user information by username",
-    responses={200: UserSerializer}
-)
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def GetUserbyUsername(request,username):
-    user = UserService.Get_user_profile_by_username(username)
-    if user == None:
-        return Response({"detail":"User not found"},status=status.HTTP_404_NOT_FOUND)
-    serializer = UserSerializer(user)
-    return Response(serializer.data,status=status.HTTP_200_OK)
 
 #Lay thong tin profile
 @swagger_auto_schema(
@@ -132,69 +90,14 @@ def update_profile(request, id):
 @permission_classes([IsAuthenticated])
 @parser_classes([MultiPartParser, FormParser, JSONParser])
 def update_candidate_profile(request):
-    # Manual handling for flat FormData structure common in frontend file uploads
-    # If basic user info is present in request.data, update it directly via User Service
-    user_fields = ['first_name', 'last_name', 'phone']
-    user_data = {}
-    for field in user_fields:
-        if field in request.data:
-            user_data[field] = request.data[field]
-    
-    # Explicitly handle avatar only from FILES to avoid string URL issues
-    if 'avatar' in request.FILES:
-        user_data['avatar'] = request.FILES['avatar']
-    
-    if user_data:
-        try:
-            # Ensure avatar file is handled if present in FILES
-            if 'avatar' in request.FILES:
-                user_data['avatar'] = request.FILES['avatar']
-
-            # We use a serializer to validate partial user update
-            user_serializer = UserProfileSerializer(data=user_data, partial=True)
-            if user_serializer.is_valid():
-                UserService.update_profile(user_id=request.user.id, validated_data=user_serializer.validated_data)
-            else:
-                return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            return Response({"error": f"{str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
-
     serializer = CandidateSerializer(data = request.data, partial = True)
     serializer.is_valid(raise_exception=True)
     try:
         instance = UserService.update_candidate_profile(user=request.user, validated_data=serializer.validated_data)
-        serializer = CandidateSerializer(instance, context={'request': request})
+        serializer = CandidateSerializer(instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
     except NotFound as e:
-        return Response({"error": str(e)}, status= status.HTTP_404_NOT_FOUND)
-    
-@swagger_auto_schema(
-    method='post',
-    operation_description="Upload avatar",
-    manual_parameters=[
-        openapi.Parameter(name='avatar', in_=openapi.IN_FORM, type=openapi.TYPE_FILE, required=True, description='File jpg, png')
-    ]
-)
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-@parser_classes([MultiPartParser, FormParser])
-def upload_avatar(request):
-    serializer = UserProfileSerializer(data = request.data)
-    serializer.is_valid(raise_exception=True)
-    file_obj = serializer.validated_data.get('avatar_url')
-    if not file_obj:
-        return Response({"error": "No avatar file selected"}, status=status.HTTP_400_BAD_REQUEST)
-        
-    try:
-        updated_user = UserService.upload_avatar(request.user, file_obj)
-        serializer = UserProfileSerializer(updated_user, context={'request': request})
-        return Response({
-            "message": "Avatar uploaded successfully", 
-            "avatar_url": serializer.data.get('avatar')
-        }, status=status.HTTP_200_OK)
-    except Exception as e:
-        return Response({"error": f"{str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
-
+        return Response({f"e"}, status= status.HTTP_404_NOT_FOUND)
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
@@ -399,12 +302,6 @@ def add_recruiter_to_company(request, recruiter_id):
     except Exception as e:
         return Response({"error": f"{str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
 
-
-
-
-
-
-
 @swagger_auto_schema(
     method='put',
     operation_description="ban",
@@ -474,14 +371,12 @@ def RemoveUser(request):
         return Response({"error":f"{str(e)}"},status=status.HTTP_400_BAD_REQUEST)
     
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
 def GetCandidatesInfor(request):
     candidate = UserService.Get_All_Candidates()
     serializer = CandidateSerializer(candidate, many = True)
     return Response(serializer.data)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
 def GetRecruitersInfor(request):
     recruiters = RecruiterService.Get_All_Recruiters()
     serializer = RecruiterSerializer(recruiters, many = True)
@@ -585,11 +480,11 @@ def view_my_profile(request):
         instance = UserService.view_my_profile(request.user)
 
         if request.user.role == 'candidate':
-            serializer = CandidateSerializer(instance, context={'request': request})
+            serializer = CandidateSerializer(instance)
         elif request.user.role == 'recruiter':
-            serializer = RecruiterSerializer(instance, context={'request': request})
+            serializer = RecruiterSerializer(instance)
         else:
-            serializer = UserSerializer(instance, context={'request': request})
+            serializer = UserSerializer(instance)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
         

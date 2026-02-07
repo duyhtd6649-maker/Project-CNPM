@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../app/AppProviders';
 import {
-    LayoutDashboard, UserCog, Activity, Library,
-    ShieldCheck, ClipboardList, MessageSquare, Gift,
-    Menu, X, Bell, ChevronDown, ArrowLeft,
-    Plus, Edit, Trash2, Users, Briefcase, Building
+    LayoutDashboard, UserCog, ClipboardList,
+    Menu, X, Bell, ChevronDown, Search, Filter,
+    Building, User, CheckCircle, XCircle, Clock,
+    MapPin, DollarSign, Briefcase, Eye, Calendar, Globe
 } from 'lucide-react';
 import '../components/JobPosts.css';
 import adminApi from '../services/adminApi';
@@ -15,22 +15,33 @@ const JobPosts = () => {
     const { user } = useAuth();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-    // Data State
+    // --- Data State ---
     const [jobs, setJobs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    
+    // --- UI State ---
+    const [filterStatus, setFilterStatus] = useState('All'); 
+    const [searchTerm, setSearchTerm] = useState('');
+    const [selectedJob, setSelectedJob] = useState(null); // State để hiện Modal xem chi tiết
 
     const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
+    // --- 1. Fetch Data ---
     const fetchJobs = async () => {
         setLoading(true);
-        setError(null);
         try {
             const data = await adminApi.getJobPosts();
-            setJobs(data);
+            // Sort: Pending lên đầu, sau đó đến mới nhất
+            const sortedData = data.sort((a, b) => {
+                if (a.status === 'Pending' && b.status !== 'Pending') return -1;
+                if (a.status !== 'Pending' && b.status === 'Pending') return 1;
+                return new Date(b.created_at || Date.now()) - new Date(a.created_at || Date.now());
+            });
+            setJobs(sortedData);
         } catch (err) {
             console.error("Failed to fetch jobs:", err);
-            setError("Failed to load job posts. Please try again later.");
+            setError("Failed to load job posts. Please check your connection.");
         } finally {
             setLoading(false);
         }
@@ -40,183 +51,289 @@ const JobPosts = () => {
         fetchJobs();
     }, []);
 
-    const handleDelete = async (id) => {
-        if (window.confirm('Are you sure you want to delete this job post?')) {
-            try {
-                await adminApi.deleteJobPost(id);
-                // Optimistically update or refetch
-                setJobs(jobs.filter(job => job.id !== id));
-            } catch (err) {
-                alert("Failed to delete job post.");
-            }
-        }
-    };
+    // --- 2. Action Handlers (Approve / Reject) ---
+    const handleStatusChange = async (jobId, newStatus) => {
+        const actionName = newStatus === 'Approved' ? 'APPROVE' : 'REJECT';
+        if (!window.confirm(`Are you sure you want to ${actionName} this job post?`)) return;
 
-
-    // Modal State
-    const [showAddModal, setShowAddModal] = useState(false);
-    const [newJob, setNewJob] = useState({ title: '', company: '' });
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setNewJob(prev => ({ ...prev, [name]: value }));
-    };
-
-    const handleAddSubmit = async (e) => {
-        e.preventDefault();
         try {
-            const createdJob = await adminApi.createJobPost(newJob);
-            setJobs([createdJob, ...jobs]);
-            setShowAddModal(false);
-            setNewJob({ title: '', company: '' });
+            // Gọi API cập nhật
+            await adminApi.updateJobStatus(jobId, newStatus);
+            
+            // Cập nhật State Local để UI đổi màu ngay lập tức
+            setJobs(prevJobs => prevJobs.map(job => 
+                job.id === jobId ? { ...job, status: newStatus } : job
+            ));
+
+            // Nếu đang mở modal thì đóng lại
+            if (selectedJob && selectedJob.id === jobId) {
+                setSelectedJob(null);
+            }
         } catch (err) {
-            console.error("Create Job Error:", err);
-            alert("Failed to create job. Ensure you have Recruiter permissions.");
+            console.error(`Failed to ${newStatus} job:`, err);
+            alert(`Error: Could not ${newStatus.toLowerCase()} this job.`);
         }
+    };
+
+    // --- 3. Filter Logic ---
+    const filteredJobs = jobs.filter(job => {
+        const matchesStatus = filterStatus === 'All' || job.status === filterStatus;
+        const matchesSearch = job.title?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                              job.company?.toLowerCase().includes(searchTerm.toLowerCase());
+        return matchesStatus && matchesSearch;
+    });
+
+    // --- 4. Render Helper: Status Badge ---
+    const renderStatusBadge = (status) => {
+        const statusClass = status?.toLowerCase() || 'pending';
+        return <span className={`status-badge ${statusClass}`}>{status || 'Pending'}</span>;
     };
 
     return (
         <div className="job-posts-container">
-            {/* ... Sidebar and other existing code ... */}
-            {/* Same Sidebars as before... skipping to Main Content update to keep context minimal if possible, but replace_file_content needs context. */}
-            {/* Actually, I need to wrap the WHOLE return to be safe or target specific blocks. */}
-            {/* Let's target the btn-add-job and the end of file to insert modal. */}
-
-
-
-            <aside className="manage-left-sidebar">
-                <div className="sidebar-blue-header">
-                    <button className="header-menu-btn-white" onClick={toggleSidebar} style={{ background: 'transparent', border: 'none', color: 'white' }}><Menu size={20} /></button>
-                    <div className="uth-branding" style={{ color: 'white' }}>
-                        <span>SYSTEM</span><span> MONITOR</span>
+            {/* --- SIDEBAR NAVIGATION --- */}
+            {isSidebarOpen && <div className="sidebar-overlay" onClick={toggleSidebar}></div>}
+            
+            <aside className={`admin-sidebar ${isSidebarOpen ? 'open' : ''}`}>
+                <div className="sidebar-header-uth">
+                    <div className="uth-branding" onClick={() => navigate('/admin')}>
+                        <span className="uth-blue-text">UTH</span>
+                        <span className="workplace-green-text"> WORKPLACE</span>
                     </div>
+                    <button className="close-sidebar-btn" onClick={toggleSidebar}><X size={24} /></button>
                 </div>
-                <nav className="sub-nav-list">
-                    <div className="sub-nav-item" onClick={() => navigate('/admin')}>
-                        <LayoutDashboard size={18} /> Dashboard
-                    </div>
-                    <div className="sub-nav-item" onClick={() => navigate('/system-status')}>
-                        <Activity size={18} /> Monitor System Status
-                    </div>
-                    <div className="sub-nav-item active">
-                        <ClipboardList size={18} /> Monitor Job Post
-                    </div>
+                
+                <nav className="sidebar-nav-custom">
+                     <div className="nav-group-label">OVERVIEW</div>
+                     <div className="nav-item-custom" onClick={() => navigate('/admin')}>
+                        <LayoutDashboard size={20} /> <span>Dashboard</span>
+                     </div>
+                     <div className="nav-item-custom active">
+                        <ClipboardList size={20} /> <span>Job Posts Review</span>
+                     </div>
+
+                     <div className="nav-group-label">MANAGEMENT</div>
+                     <div className="nav-item-custom" onClick={() => navigate('/admin/candidates')}>
+                        <UserCog size={20} /> <span>Candidates</span>
+                     </div>
+                     <div className="nav-item-custom" onClick={() => navigate('/admin/recruiters')}>
+                        <UserCog size={20} /> <span>Recruiters</span>
+                     </div>
+                     <div className="nav-item-custom" onClick={() => navigate('/admin/accounts')}>
+                         <UserCog size={20} /> <span>Internal Accounts</span>
+                     </div>
                 </nav>
-                <div className="sub-sidebar-footer">
-                    <div className="sub-nav-item" onClick={() => navigate('/admin')}>
-                        <ArrowLeft size={18} style={{ marginRight: '10px' }} /> Back to menu
+
+                <div className="sidebar-footer">
+                    <div className="nav-item-custom logout">
+                        <User size={20} /> <span>Logout</span>
                     </div>
-                    <div className="divider-sub"></div>
-                    <div className="sub-nav-item-small">Admin Profile</div>
-                    <div className="sub-nav-item logout-sub">Logout</div>
                 </div>
             </aside>
 
-            <div className="job-right-content">
-                <header className="job-top-header">
-                    <div className="header-right-actions" style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-                        <div className="notification" style={{ position: 'relative' }}>
-                            <Bell size={22} color="#64748b" />
-                            <span style={{ position: 'absolute', top: '-5px', right: '-5px', background: 'red', color: 'white', fontSize: '10px', padding: '2px 5px', borderRadius: '10px' }}>3</span>
-                        </div>
-                        <div className="user-account-box" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.username || 'Admin')}&background=4880FF&color=fff&bold=true`} alt="Avatar" style={{ width: '35px', height: '35px', borderRadius: '50%' }} />
-                            <ChevronDown size={16} color="#94a3b8" />
-                        </div>
+            {/* --- MAIN CONTENT AREA --- */}
+            <main className="job-posts-main">
+                {/* Header */}
+                <header className="job-posts-header">
+                    <button className="menu-btn-mobile" onClick={toggleSidebar}><Menu size={24} /></button>
+                    <div className="header-left">
+                        <h2>Job Post Moderation</h2>
+                        <p className="header-subtitle">Review, approve, or reject job postings from recruiters.</p>
+                    </div>
+                    <div className="header-right-actions">
+                         <div className="notification">
+                            <Bell size={22} />
+                            <span className="badge">3</span>
+                         </div>
+                         <div className="user-account-box">
+                             <div className="avatar-placeholder">{user?.username?.charAt(0) || 'A'}</div>
+                             <div className="user-info-text">
+                                <span className="user-name">{user?.username || 'Admin'}</span>
+                                <span className="user-role">Super Admin</span>
+                             </div>
+                             <ChevronDown size={16} color="#94a3b8" />
+                         </div>
                     </div>
                 </header>
 
-                <main className="job-view-area">
-                    <div className="job-view-header">
-                        <h2>Job Posts Management</h2>
-                        <button className="btn-add-job" onClick={() => setShowAddModal(true)}>
-                            <Plus size={18} /> Add New Job Post
-                        </button>
+                {/* Content Body */}
+                <div className="job-posts-content">
+                    {/* Toolbar: Search & Filter */}
+                    <div className="toolbar-container">
+                        <div className="search-box">
+                            <Search size={18} className="search-icon"/>
+                            <input 
+                                placeholder="Search by Job Title or Company..." 
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                        </div>
+                        
+                        <div className="filter-actions">
+                            <div className="filter-box">
+                                <Filter size={18} className="filter-icon" />
+                                <select 
+                                    value={filterStatus} 
+                                    onChange={(e) => setFilterStatus(e.target.value)}
+                                    className="status-select"
+                                >
+                                    <option value="All">All Status</option>
+                                    <option value="Pending">Pending Review</option>
+                                    <option value="Approved">Approved</option>
+                                    <option value="Rejected">Rejected</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
 
+                    {/* Job Grid List */}
                     {loading ? (
-                        <div style={{ padding: '40px', textAlign: 'center', color: '#64748b' }}>Loading job posts...</div>
+                        <div className="loading-state">
+                            <div className="spinner"></div>
+                            <p>Loading job postings...</p>
+                        </div>
                     ) : (
-                        <div className="job-table-card">
-                            <table className="job-table">
-                                <thead>
-                                    <tr>
-                                        <th>Job Detail</th>
-                                        <th>Posted Date</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {jobs.map((job) => (
-                                        <tr key={job.id}>
-                                            <td>
-                                                <span className="job-title-cell">{job.title}</span>
-                                                <span className="job-company-cell">{job.company}</span>
-                                            </td>
-                                            <td>{job.postedDate}</td>
-                                            <td>
-                                                <span className={`status-chip ${job.status === 'Active' ? 'status-active' : job.status === 'Closed' ? 'status-closed' : 'status-draft'}`}>
-                                                    {job.status}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <div className="action-btn-group">
-                                                    <button className="action-btn btn-edit"><Edit size={16} /></button>
-                                                    <button className="action-btn btn-delete" onClick={() => handleDelete(job.id)}><Trash2 size={16} /></button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                        <div className="jobs-grid">
+                            {filteredJobs.length > 0 ? (
+                                filteredJobs.map(job => (
+                                    <div key={job.id} className={`job-card ${job.status?.toLowerCase() || 'pending'}`}>
+                                        <div className="job-card-header">
+                                            <div className="company-logo-stub">
+                                                <Building size={24} />
+                                            </div>
+                                            <div className="job-title-group">
+                                                <h3>{job.title}</h3>
+                                                <span className="company-name">{job.company_name || job.company}</span>
+                                            </div>
+                                            {renderStatusBadge(job.status)}
+                                        </div>
+
+                                        <div className="job-card-info-grid">
+                                            <div className="info-item">
+                                                <MapPin size={14} /> <span>{job.location || 'N/A'}</span>
+                                            </div>
+                                            <div className="info-item">
+                                                <DollarSign size={14} /> <span>{job.salary_range || 'Negotiable'}</span>
+                                            </div>
+                                            <div className="info-item">
+                                                <Briefcase size={14} /> <span>{job.job_type || 'Full-time'}</span>
+                                            </div>
+                                            <div className="info-item">
+                                                <Clock size={14} /> <span>{job.created_at ? new Date(job.created_at).toLocaleDateString() : 'Just now'}</span>
+                                            </div>
+                                        </div>
+
+                                        <div className="job-card-footer">
+                                            <button className="btn-view-details" onClick={() => setSelectedJob(job)}>
+                                                <Eye size={16} /> View Details
+                                            </button>
+                                            
+                                            {/* Action Buttons (Chỉ hiện Approve/Reject nếu cần thiết) */}
+                                            <div className="quick-actions">
+                                                <button 
+                                                    className="btn-icon approve" 
+                                                    title="Quick Approve"
+                                                    onClick={(e) => { e.stopPropagation(); handleStatusChange(job.id, 'Approved'); }}
+                                                    disabled={job.status === 'Approved'}
+                                                >
+                                                    <CheckCircle size={18} />
+                                                </button>
+                                                <button 
+                                                    className="btn-icon reject" 
+                                                    title="Quick Reject"
+                                                    onClick={(e) => { e.stopPropagation(); handleStatusChange(job.id, 'Rejected'); }}
+                                                    disabled={job.status === 'Rejected'}
+                                                >
+                                                    <XCircle size={18} />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="empty-state">
+                                    <ClipboardList size={48} />
+                                    <p>No job posts found matching your criteria.</p>
+                                </div>
+                            )}
                         </div>
                     )}
-                </main>
-            </div>
+                </div>
+            </main>
 
-            {/* --- ADD JOB MODAL --- */}
-            {showAddModal && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
+            {/* --- MODAL: VIEW JOB DETAILS (NEW FEATURE) --- */}
+            {selectedJob && (
+                <div className="modal-overlay" onClick={() => setSelectedJob(null)}>
+                    <div className="modal-content-large" onClick={e => e.stopPropagation()}>
                         <div className="modal-header">
-                            <h3>Add New Job Post</h3>
-                            <button onClick={() => setShowAddModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}><X size={24} /></button>
+                            <div className="modal-title-box">
+                                <h2>{selectedJob.title}</h2>
+                                <div className="modal-subtitle">
+                                    <Building size={16} /> <span>{selectedJob.company_name || selectedJob.company}</span>
+                                    <span className="dot-separator">•</span>
+                                    {renderStatusBadge(selectedJob.status)}
+                                </div>
+                            </div>
+                            <button className="close-modal-btn" onClick={() => setSelectedJob(null)}>
+                                <X size={24} />
+                            </button>
                         </div>
-                        <form onSubmit={handleAddSubmit}>
-                            <div className="form-group">
-                                <label>Job Title</label>
-                                <div className="input-with-icon">
-                                    <Briefcase size={18} className="input-icon" />
-                                    <input
-                                        className="modern-input"
-                                        name="title"
-                                        placeholder="e.g. Senior Product Designer"
-                                        required
-                                        value={newJob.title}
-                                        onChange={handleInputChange}
-                                    />
+
+                        <div className="modal-body-scroll">
+                            <div className="detail-section">
+                                <h4>Overview</h4>
+                                <div className="detail-grid-4">
+                                    <div className="detail-box">
+                                        <span className="label">Location</span>
+                                        <p><MapPin size={14}/> {selectedJob.location || 'Unknown'}</p>
+                                    </div>
+                                    <div className="detail-box">
+                                        <span className="label">Salary</span>
+                                        <p><DollarSign size={14}/> {selectedJob.salary_min && selectedJob.salary_max 
+                                            ? `$${selectedJob.salary_min} - $${selectedJob.salary_max}` 
+                                            : 'Negotiable'}</p>
+                                    </div>
+                                    <div className="detail-box">
+                                        <span className="label">Job Type</span>
+                                        <p><Briefcase size={14}/> {selectedJob.job_type || 'Full Time'}</p>
+                                    </div>
+                                    <div className="detail-box">
+                                        <span className="label">Posted By</span>
+                                        <p><User size={14}/> {selectedJob.recruiter_name || 'Recruiter'}</p>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="form-group">
-                                <label>Company Name</label>
-                                <div className="input-with-icon">
-                                    <Building size={18} className="input-icon" />
-                                    <input
-                                        className="modern-input"
-                                        name="company"
-                                        placeholder="e.g. Acme Corp"
-                                        required
-                                        value={newJob.company}
-                                        onChange={handleInputChange}
-                                    />
+
+                            <div className="detail-section">
+                                <h4>Job Description</h4>
+                                <div className="text-content">
+                                    {selectedJob.description || "No description provided."}
                                 </div>
                             </div>
-                            <div className="modal-actions">
-                                <button type="button" className="btn-cancel" onClick={() => setShowAddModal(false)}>Cancel</button>
-                                <button type="submit" className="btn-submit">Create Job</button>
+
+                            <div className="detail-section">
+                                <h4>Requirements / Skills</h4>
+                                <div className="skills-tags">
+                                    {selectedJob.skills ? selectedJob.skills.split(',').map((skill, index) => (
+                                        <span key={index} className="skill-tag">{skill.trim()}</span>
+                                    )) : <span className="no-skills">No specific skills listed.</span>}
+                                </div>
                             </div>
-                        </form>
+                        </div>
+
+                        <div className="modal-footer-actions">
+                            <button className="btn-secondary" onClick={() => setSelectedJob(null)}>Close</button>
+                            {selectedJob.status !== 'Rejected' && (
+                                <button className="btn-danger" onClick={() => handleStatusChange(selectedJob.id, 'Rejected')}>
+                                    <XCircle size={18} /> Reject Post
+                                </button>
+                            )}
+                            {selectedJob.status !== 'Approved' && (
+                                <button className="btn-primary" onClick={() => handleStatusChange(selectedJob.id, 'Approved')}>
+                                    <CheckCircle size={18} /> Approve Post
+                                </button>
+                            )}
+                        </div>
                     </div>
                 </div>
             )}

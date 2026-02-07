@@ -1,5 +1,7 @@
 {
   "dependencies": {
-    "axios": "^1.13.4"
+    "axios": "^1.13.4",
+    "raf": "^3.4.1",
+    "rgbcolor": "^1.0.1"
   }
 }
