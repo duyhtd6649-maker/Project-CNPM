@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
     Search, Home, Users, Briefcase, Bot, FileText,
@@ -13,15 +13,53 @@ const CandidateNavbar = () => {
     const [isNotifyOpen, setIsNotifyOpen] = useState(false);
     const [activeTab, setActiveTab] = useState('All');
 
-    const notifications = [
-        { id: 1, type: 'Admin', user: 'System Admin', msg: 'Your account security settings have been updated successfully.', time: '12/26/2026 4:04 PM' },
-        { id: 2, type: 'Recruiter', user: 'Techcombank HR', msg: 'We have received your application for Senior Frontend Developer position.', time: '12/27/2026 9:15 AM' },
-        { id: 3, type: 'Recruiter', user: 'FPT Software', msg: 'Invitation to interview: Monday at 2:00 PM via Google Meet.', time: '12/28/2026 10:30 AM' }
-    ];
+    const [notifications, setNotifications] = useState([]);
+
+    // Fetch Notifications from API
+    useEffect(() => {
+        const fetchNotifications = async () => {
+            try {
+                const token = localStorage.getItem('access_token');
+                const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000';
+                const response = await fetch(`${API_BASE.replace(/\/$/, '')}/api/notification`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    let mappedData = [];
+
+                    if (Array.isArray(data) && data.length > 0) {
+                        mappedData = data.map((item, index) => ({
+                            id: index,
+                            type: 'System',
+                            title: item.title || 'Notification',
+                            user: item.actor || 'System',
+                            msg: item.message,
+                            time: new Date(item.created_date).toLocaleString()
+                        }));
+                    }
+                    setNotifications(mappedData);
+                }
+            } catch (error) {
+                console.error("Failed to fetch notifications", error);
+                setNotifications([]);
+            }
+        };
+
+        if (isNotifyOpen) {
+            fetchNotifications();
+        }
+    }, [isNotifyOpen]);
 
     const filteredNotifications = notifications.filter(item => {
         if (activeTab === 'All') return true;
-        return item.type === activeTab;
+        if (activeTab === 'Admin') return item.user && (item.user.toLowerCase().includes('admin') || item.type === 'System');
+        if (activeTab === 'Recruiter') return item.user && item.user.toLowerCase().includes('recruiter');
+        return false;
     });
 
     const isActive = (path) => location.pathname === path;
@@ -112,16 +150,16 @@ const CandidateNavbar = () => {
                             {filteredNotifications.length > 0 ? (
                                 filteredNotifications.map(item => (
                                     <div key={item.id} className="notify-item">
-                                        <div className="notify-avatar"><UserCircle size={32} color={item.type === 'Admin' ? '#4b49ac' : '#666'} /></div>
+                                        <div className="notify-avatar"><UserCircle size={32} color={'#4b49ac'} /></div>
                                         <div className="notify-info">
-                                            <div className="notify-user">{item.user} <span className={`type-tag-small ${item.type.toLowerCase()}`}>{item.type}</span></div>
+                                            <div className="notify-user">{item.user} <span className="type-tag-small admin">{item.title}</span></div>
                                             <div className="notify-msg">{item.msg}</div>
                                             <div className="notify-time">{item.time}</div>
                                         </div>
                                     </div>
                                 ))
                             ) : (
-                                <div className="empty-state-notify">No notifications in {activeTab}</div>
+                                <div className="empty-state-notify">No notifications</div>
                             )}
                         </div>
                     </div>

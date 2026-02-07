@@ -59,18 +59,12 @@ const RecruiterDashboard = () => {
         setNotifications(response.data);
       } else {
         // Mock Data for Testing
-        setNotifications([
-          { title: 'New Candidate', message: 'John Doe applied for Java Developer.', created_date: new Date().toISOString() },
-          { title: 'System Alert', message: 'Maintenance scheduled for tonight.', created_date: new Date(Date.now() - 3600000).toISOString() }
-        ]);
+        setNotifications([]);
       }
     } catch (error) {
       console.error("Failed to fetch notifications", error);
       // Fallback Mock Data
-      setNotifications([
-        { title: 'New Candidate', message: 'John Doe applied for Java Developer.', created_date: new Date().toISOString() },
-        { title: 'System Alert', message: 'Maintenance scheduled for tonight.', created_date: new Date(Date.now() - 3600000).toISOString() }
-      ]);
+      setNotifications([]);
     }
   };
 
