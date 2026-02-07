@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../app/AppProviders';
 import {
     LayoutDashboard, UserCog, ClipboardList,
     Menu, X, Bell, ChevronDown, Search, Filter,
     FileText, User, Calendar, Briefcase, Building,
-    Eye, CheckCircle, XCircle, LogOut
+    Eye, CheckCircle, XCircle, LogOut, Check, X as XIcon
 } from 'lucide-react';
+import axiosClient from '../../../infrastructure/http/axiosClient';
 import '../components/ApplyJobsReview.css';
 
 const ApplyJobsReview = () => {
@@ -14,65 +15,80 @@ const ApplyJobsReview = () => {
     const { user } = useAuth();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-    // --- Mock Data ---
-    const [applications, setApplications] = useState([
-        {
-            id: 1,
-            candidateName: "Nguyen Van A",
-            role: "Frontend Developer",
-            company: "Tech Solutions Inc.",
-            dateApplied: "2023-10-25",
-            status: "Pending",
-            email: "nguyenvana@example.com",
-            phone: "0901234567"
-        },
-        {
-            id: 2,
-            candidateName: "Tran Thi B",
-            role: "Backend Engineer",
-            company: "DataCorp",
-            dateApplied: "2023-10-24",
-            status: "Reviewed",
-            email: "tranthib@example.com",
-            phone: "0912345678"
-        },
-        {
-            id: 3,
-            candidateName: "Le Van C",
-            role: "Product Manager",
-            company: "Creative Studio",
-            dateApplied: "2023-10-22",
-            status: "Interviewing",
-            email: "levanc@example.com",
-            phone: "0923456789"
-        },
-        {
-            id: 4,
-            candidateName: "Pham Thi D",
-            role: "UX/UI Designer",
-            company: "DesignHub",
-            dateApplied: "2023-10-20",
-            status: "Rejected",
-            email: "phamthid@example.com",
-            phone: "0934567890"
-        },
-        {
-            id: 5,
-            candidateName: "Hoang Van E",
-            role: "DevOps Engineer",
-            company: "CloudSystem",
-            dateApplied: "2023-10-18",
-            status: "Hired",
-            email: "hoangvane@example.com",
-            phone: "0945678901"
-        }
-    ]);
+    // State for real data
+    const [applications, setApplications] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     const [filterStatus, setFilterStatus] = useState('All');
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedApp, setSelectedApp] = useState(null);
+    const [processingId, setProcessingId] = useState(null); // To track which app is being updated
 
     const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+
+    // Fetch Applications from API
+    const fetchApplications = async () => {
+        try {
+            setLoading(true);
+            // Using the search endpoint to get all applications (can add filters if needed)
+            const response = await axiosClient.get('/applications/search/');
+
+            // Map API data to component state structure
+            const mappedData = response.data.map(app => ({
+                id: app.id,
+                candidateName: app.user_name || 'Unknown Candidate',
+                role: app.job_title || 'Unknown Role',
+                company: app.company || 'Unknown Company',
+                dateApplied: new Date(app.created_date).toLocaleDateString(),
+                status: app.system_status, // Ensure API returns 'Pending', 'Approved', 'Rejected', etc.
+                email: app.user_email || 'N/A',
+                phone: app.user_phone || 'N/A',
+                cvsid: app.cvsid
+            }));
+
+            setApplications(mappedData);
+            setError(null);
+        } catch (err) {
+            console.error("Error fetching applications:", err);
+            setError("Failed to load applications. Please try again.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchApplications();
+    }, []);
+
+    // Handle Approve/Reject
+    const handleUpdateStatus = async (id, newStatus) => {
+        try {
+            setProcessingId(id);
+            // Call API to update status
+            await axiosClient.put(`/applications/${id}/UpdateStatus/`, {
+                new_status: newStatus
+            });
+
+            // Update local state to reflect change
+            setApplications(prev => prev.map(app =>
+                app.id === id ? { ...app, status: newStatus } : app
+            ));
+
+            // If the updated app is currently selected in modal, update it too
+            if (selectedApp && selectedApp.id === id) {
+                setSelectedApp(prev => ({ ...prev, status: newStatus }));
+            }
+
+            // Optional: Close modal if open
+            // setSelectedApp(null); 
+        } catch (err) {
+            console.error(`Error updating status to ${newStatus}:`, err);
+            alert(`Failed to update status. ${err.response?.data?.error || ''}`);
+        } finally {
+            setProcessingId(null);
+        }
+    };
 
     // Filter Logic
     const filteredApps = applications.filter(app => {
@@ -180,17 +196,26 @@ const ApplyJobsReview = () => {
                             >
                                 <option value="All">All Status</option>
                                 <option value="Pending">Pending</option>
+                                <option value="Approved">Approved</option>
+                                <option value="Rejected">Rejected</option>
                                 <option value="Reviewed">Reviewed</option>
                                 <option value="Interviewing">Interviewing</option>
                                 <option value="Hired">Hired</option>
-                                <option value="Rejected">Rejected</option>
                             </select>
                         </div>
                     </div>
 
                     {/* Applications List */}
                     <div className="applications-list">
-                        {filteredApps.length > 0 ? (
+                        {loading ? (
+                            <div className="empty-state">
+                                <p>Loading applications...</p>
+                            </div>
+                        ) : error ? (
+                            <div className="empty-state">
+                                <p style={{ color: 'red' }}>{error}</p>
+                            </div>
+                        ) : filteredApps.length > 0 ? (
                             filteredApps.map(app => (
                                 <div key={app.id} className="application-card">
                                     <div className="app-info-group">
@@ -239,7 +264,7 @@ const ApplyJobsReview = () => {
                             <div className="modal-title-box">
                                 <h2>Application Details</h2>
                                 <div className="modal-subtitle">
-                                    ID: #{selectedApp.id} <span className="dot-separator">•</span> {renderStatusBadge(selectedApp.status)}
+                                    ID: #{selectedApp.id.substring(0, 8)}... <span className="dot-separator">•</span> {renderStatusBadge(selectedApp.status)}
                                 </div>
                             </div>
                             <button className="close-modal-btn" onClick={() => setSelectedApp(null)}>
@@ -281,8 +306,26 @@ const ApplyJobsReview = () => {
                         </div>
 
                         <div className="modal-footer-actions">
+                            {/* Review Actions - Only show if Pending or can be changed */}
+                            <button
+                                className="btn-secondary"
+                                style={{ borderColor: '#EF4444', color: '#EF4444' }}
+                                onClick={() => handleUpdateStatus(selectedApp.id, 'Rejected')}
+                                disabled={processingId === selectedApp.id}
+                            >
+                                {processingId === selectedApp.id ? 'Processing...' : 'Reject'}
+                            </button>
+                            <button
+                                className="btn-primary"
+                                style={{ backgroundColor: '#10B981' }}
+                                onClick={() => handleUpdateStatus(selectedApp.id, 'Approved')}
+                                disabled={processingId === selectedApp.id}
+                            >
+                                {processingId === selectedApp.id ? 'Processing...' : 'Approve'}
+                            </button>
+                            <div style={{ width: '20px' }}></div> {/* Spacer */}
                             <button className="btn-secondary" onClick={() => setSelectedApp(null)}>Close</button>
-                            <button className="btn-primary">Download CV</button>
+                            {/* <button className="btn-primary">Download CV</button> */}
                         </div>
                     </div>
                 </div>
