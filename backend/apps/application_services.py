@@ -75,9 +75,9 @@ class ApplicationService:
         return applications
 
     @staticmethod
-    def get_applications_of_user(user_id):
+    def get_applications_of_user(user):
         try:
-            candidate = Candidates.objects.get(user_id=user_id)
+            candidate = Candidates.objects.get(user = user)
             applications = Applications.objects.filter(candidate=candidate, isdeleted=False)
             return applications
         except Candidates.DoesNotExist:

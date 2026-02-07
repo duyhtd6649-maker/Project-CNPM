@@ -51,7 +51,7 @@ urlpatterns = [
     path('recruiter/jobs/',job_views.jobs_of_recruiter), #filter lấy về các job của recruiter
     path('recruiter/applications/', application_views.applications_of_recruiter),
     path('recruiter/applications/<uuid:id>/UpdateStatus/', application_views.update_application_job_status), #recruiter update status của application
-    path('user/<uuid:id>/applications/', application_views.applications_of_user), #candidate tự xem application
+    path('user/applications/me', application_views.applications_of_user), #candidate tự xem application
     path('user/profile/<uuid:id>', user_views.profile_view),
     path('user/profile/update/<uuid:id>', user_views.update_profile), #update profile cho admin, recruiter
     # ===== RECRUITER =====

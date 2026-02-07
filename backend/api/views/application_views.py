@@ -80,9 +80,9 @@ def applications_of_recruiter(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def applications_of_user(request,id):
+def applications_of_user(request):
     try:
-        applications = ApplicationService.get_applications_of_user(user_id = id)
+        applications = ApplicationService.get_applications_of_user(user = request.user)
         serializer = ApplicationSerializer(applications, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:
