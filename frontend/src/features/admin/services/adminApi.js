@@ -6,7 +6,7 @@ const adminApi = {
     // ============================================================
     getSystemStatus: async () => {
         try {
-            const response = await axiosClient.get("/admins/dashboard/");
+            const response = await axiosClient.get("/dashboard/admin/stats/");
             return response.data;
         } catch (error) {
             console.warn("API Error (getSystemStatus), using mock data:", error);

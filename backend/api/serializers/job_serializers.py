@@ -4,6 +4,7 @@ from database.models.services import Notifications
 
 class JobSerializer(serializers.ModelSerializer):
     company = serializers.CharField(source="company.name", read_only=True)
+    status = serializers.CharField(read_only = True)
     class Meta:
         model = Jobs
         fields = ['id', 'company', 'title', 'description', 'location', 'skill', 'salary_min', 'salary_max','status']
